@@ -1,0 +1,183 @@
+<nodeDefs> 
+   <nodeDef id="controller" nls="nlscontroller">
+      <editors />
+      <sts>
+         <st id="ST" editor="NODE_ST" />
+         <st id="GV0" editor="API" />
+         <st id="GV1" editor="NBREV" />
+         <st id="GV2" editor="D_UNIT" />
+         <st id="GV3" editor="T_UNIT" />
+      </sts>
+      <cmds>
+         <sends>
+            <cmd id="DON" /> 
+            <cmd id="DOF" /> 
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+       
+         </accepts>
+      </cmds>
+   </nodeDef> 
+
+   <nodeDef id="evstatus" nls="nlsevstatus">
+      <editors />
+      <sts>
+         <st id="ST" editor="NODE_ST" />
+         <st id="GV1" editor="CONSOLE" />
+         <st id="GV2" editor="BOOLSTATE" />
+         <st id="GV0" editor="NUMBER" />
+         <st id="GV3" editor="BOOLSTATE" />
+         <st id="GV4" editor="ODOMETER" />
+         <st id="GV5" editor="BOOLSTATE" />
+         <st id="GV6" editor="WINDOW" />
+         <st id="GV7" editor="WINDOW" />
+         <st id="GV8" editor="WINDOW" />
+         <st id="GV9" editor="WINDOW" />
+         <st id="GV10" editor="PERCENT" />
+         <st id="GV11" editor="OPENCLOSE" />
+         <st id="GV12" editor="OPENCLOSE" />
+         <st id="GV13" editor="CARSTATE" />
+         <!-- <st id="GV16" editor="IDEA_DIST" /> !-->
+         <st id="GV17" editor="LONGITUDE" />         
+         <st id="GV18" editor="LATITUDE" />  
+         <st id="GV19" editor="DURATION_H" />         
+         <st id="GV20" editor="DURATION_H" />     
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="WAKEUP" />
+            <cmd id="HONKHORN" />
+            <cmd id="FLASHLIGHT" />   
+            <cmd id="DOORS" > 
+               <p id="" editor="LOCKUNLOCK" init="GV3" /> 
+            </cmd>
+            <cmd id="SUNROOF" > 
+               <p id="" editor="SUNROOFCTRL" init="GV10" /> 
+            </cmd >
+            <cmd id="TRUNK" /> 
+            <cmd id="FRUNK" /> 
+            <cmd id="HOMELINK" /> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+
+   <nodeDef id="evclimate" nls="nlsevclimate">
+      <editors />
+      <sts>
+         <st id="ST" editor="NODE_ST" />
+         <st id="GV1" editor="TEMP" />
+         <st id="GV2" editor="TEMP" />
+         <st id="GV3" editor="TEMP" />
+         <st id="GV4" editor="TEMP" />
+         <st id="GV5" editor="HEAT_LVL" />
+         <st id="GV6" editor="HEAT_LVL" />
+         <st id="GV7" editor="HEAT_LVL" />
+         <st id="GV8" editor="HEAT_LVL" />
+         <st id="GV9" editor="HEAT_LVL" />
+         <st id="GV10" editor="PREC_STATUS" />
+         <st id="GV11" editor="PREC_STATUS" />
+         <st id="GV12" editor="TEMP" />
+         <st id="GV13" editor="TEMP" />
+         <st id="GV14" editor="ONOFF" />
+
+         <st id="GV19" editor="DURATION_H" />
+         <st id="GV20" editor="DURATION_H" />   
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SUNROOF" > 
+                  <p id="" editor="SUNROOFCTRL" init="" /> 
+            </cmd>
+            <cmd id="WINDOWS" > 
+                  <p id="" editor="WINDOWCTRL" init="GV1" /> 
+            </cmd >            
+            <cmd id="AUTOCON"> 
+                  <p id="" editor="AUTOCONCTRL" init="GV1" /> 
+            </cmd >            
+            <cmd id="CABINTEMP" >
+                  <p id="" editor="CABINTEMP" init="GV1" /> 
+            </cmd>            
+  
+            <cmd id="DEFROST" > 
+                  <p id="" editor="DEFROST" init="GV1" /> 
+            </cmd >                    
+
+            <cmd id="SEAT1" > 
+                  <p id="" editor="HEAT" init="GV5" /> 
+            </cmd >            
+            <cmd id="SEAT2" > 
+                  <p id="" editor="HEAT" init="GV6" /> 
+            </cmd>            
+            <cmd id="SEAT3" >
+                  <p id="" editor="HEAT" init="GV7" /> 
+            </cmd >            
+            <cmd id="SEAT4" > 
+                  <p id="" editor="HEAT" init="GV8" /> 
+            </cmd>            
+            <cmd id="SEAT5" > 
+                  <p id="" editor="HEAT" init="GV9" /> 
+            </cmd >            
+            <cmd id="STEERINGW" > 
+                  <p id="" editor="STEERINGW" init="GV1" /> 
+            </cmd >
+         </accepts>
+      </cmds>
+   </nodeDef> 
+
+   <nodeDef id="evcharge" nls="nlsevcharge">
+      <editors />
+      <sts>
+         <st id="ST" editor="NODE_ST" />
+         <st id="GV1" editor="PRESENT" />
+         <st id="GV2" editor="OPENCLOSE" />
+         <st id="GV3" editor="CPLSTATE" />
+         <st id="GV4" editor="DISTANCE" />
+         <st id="BATLVL" editor="PERCENT" />
+         <st id="GV5" editor="AMPS" />
+         <st id="GV6" editor="CHGSTATE" />
+         <st id="GV7" editor="STARTSTOP" />
+         <st id="GV8" editor="KW" />
+         <st id="GV9" editor="PERCENT" />
+         <st id="GV10" editor="VOLT" />
+         <st id="GV11" editor="AMPS" />
+         <st id="GV12" editor="AMPS" />
+      <!--  <st id="GV13" editor="AMPS" /> -->
+         <st id="GV14" editor="MINU" />
+         <st id="GV15" editor="KWH" />
+         <st id="GV16" editor="DISTANCE" />
+
+         <st id="GV19" editor="DURATION_H" />
+         <st id="GV20" editor="DURATION_H" />
+
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="CHARGEPORT" >
+                   <p id="" editor="CHARGEPORT" init="GV3" /> 
+            </cmd >
+            <cmd id="CHARGECTRL" >
+                   <p id="" editor="CHARGECTRL" init="GV6" /> 
+            </cmd >
+            <cmd id="BATPERCENT" >
+                  <p id="" editor="PERCENT" init="GV9" /> 
+            </cmd >
+            <cmd id="CHARGEAMPS" >
+                   <p id="" editor="AMPS" init="GV5" /> 
+            </cmd >
+
+         </accepts>
+      </cmds>
+   </nodeDef> 
+
+  
+</nodeDefs> 
