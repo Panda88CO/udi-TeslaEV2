@@ -14,8 +14,8 @@ except ImportError:
 
 
 from TeslaEVStatusNode import teslaEV_StatusNode
-from TeslaCloudEVapi  import teslaCloudEVapi
-
+#from TeslaCloudEVapi  import teslaCloudEVapi
+from TeslaEVOauth import teslaAccess
 
 
 class TeslaEVController(udi_interface.Node):
@@ -34,7 +34,7 @@ class TeslaEVController(udi_interface.Node):
         self.Rtoken = None
         self.dUnit = 1 #  Miles = 1, Kilometer = 0
         self.tUnit = 0 #  C = 0, F=1, K=2
-        self.supportedParams = ['REFRESH_TOKEN', 'DIST_UNIT', 'TEMP_UNIT']
+        self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
         self.Parameters = Custom(polyglot, 'customParams')      
         self.Notices = Custom(polyglot, 'notices')
@@ -142,7 +142,7 @@ class TeslaEVController(udi_interface.Node):
             while self.Rtoken == '':
                 logging.info('Waiting for token')
                 time.sleep(10)
-            self.TEV = teslaCloudEVapi(self.Rtoken)
+            self.TEV = teslaAccess(self.poly, 'vehicle_device_data vehicle_cmds vehicle_charging_cmds open_id offline_access')
             self.connected = self.TEV.isConnectedToEV()
             if not self.connected:
                 logging.error ('Failed to get acces to Tesla Cloud')
