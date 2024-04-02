@@ -15,6 +15,7 @@ import json
 import requests
 import time
 from datetime import timedelta, datetime
+from TeslaOauth import teslaOauth
 #from udi_interface import logging, Custom
 #from oauth import OAuth
 try:
@@ -36,7 +37,7 @@ except ImportError:
 
 # Implements the API calls to your external service
 # It inherits the OAuth class
-class teslaAccess(udi_interface.OAuth):
+class teslaEVAccess(teslaOauth):
     yourApiEndpoint = 'https://fleet-api.prd.na.vn.cloud.tesla.com'
 
     def __init__(self, polyglot, scope):

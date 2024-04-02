@@ -12,7 +12,7 @@ except ImportError:
     import logging
     logging.basicConfig(level=20)
 
-
+from TeslaEVOauth import teslaEVAccess
 from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
@@ -31,7 +31,7 @@ class TeslaEVController(udi_interface.Node):
         self.primary = primary
         self.address = address
         #self.tokenPassword = ""
-        self.Rtoken = None
+
         self.dUnit = 1 #  Miles = 1, Kilometer = 0
         self.tUnit = 0 #  C = 0, F=1, K=2
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
@@ -39,13 +39,20 @@ class TeslaEVController(udi_interface.Node):
         self.Parameters = Custom(polyglot, 'customParams')      
         self.Notices = Custom(polyglot, 'notices')
 
+        self.TEV  = teslaEVAccess(self.poly, 'vehicle_cmds vehicle_device_data open_id offline_access')
+        #self.TPW_cloud = TeslaCloud(self.poly, 'energy_device_data energy_cmds open_id offline_access')
+        #self.TPW_cloud = TeslaCloud(self.poly, 'vehicle_device_data')
         self.poly.subscribe(self.poly.START, self.start, address)
         self.poly.subscribe(self.poly.LOGLEVEL, self.handleLevelChange)
-        self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
+        #self.poly.subscribe(self.poly.NOTICES, self.handleNotices)
+        #self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
         self.poly.subscribe(self.poly.POLL, self.systemPoll)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        self.poly.subscribe(self.poly.CONFIGDONE, self.validate_params)
-
+        #self.poly.subscribe(self.poly.CONFIGDONE, self.check_config)
+        self.poly.subscribe(self.poly.CUSTOMPARAMS, self.customParamsHandler)
+        #self.poly.subscribe(self.poly.CUSTOMDATA, self.myNetatmo.customDataHandler)
+        self.poly.subscribe(self.poly.CUSTOMNS, self.TPW_cloud.customNsHandler)
+        self.poly.subscribe(self.poly.OAUTH, self.TPW_cloud.oauthHandler)
 
 
         #logging.debug('self.address : ' + str(self.address))
@@ -76,6 +83,52 @@ class TeslaEVController(udi_interface.Node):
             time.sleep(0.1)
         self.n_queue.pop()
 
+    def customParamsHandler(self, userParams):
+        self.customParameters.load(userParams)
+        logging.debug('customParamsHandler called {}'.format(userParams))
+
+        oauthSettingsUpdate = {}
+        #oauthSettingsUpdate['parameters'] = {}
+        oauthSettingsUpdate['token_parameters'] = {}
+        # Example for a boolean field
+
+        if 'region' in userParams:
+            if self.customParameters['region'] != 'enter region (NA, EU, CN)':
+                self.region = str(self.customParameters['region'])
+                if self.region.upper() not in ['NA', 'EU', 'CN']:
+                    logging.error('Unsupported region {}'.format(self.region))
+                    self.poly.Notices['region'] = 'Unknown Region specified (NA = North America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
+                #else:
+
+        else:
+            logging.warning('No region found')
+            self.customParameters['region'] = 'enter region (NA, EU, CN)'
+            self.region = None
+            self.poly.Notices['region'] = 'Region not specified (NA = Nort America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
+   
+        if 'DIST_UNIT' in userParams:
+            if self.customParameters['DIST_UNIT'] != 'enter Km or Miles':
+                self.dist_unit = str(self.customParameters['DIST_UNIT'])
+                if self.region.upper() not in ['KM', 'MILES']:
+                    logging.error('Unsupported distance unit {}'.format(self.dist_unit))
+                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                #else:
+
+        else:
+            logging.warning('No DIST_UNIT')
+            self.customParameters['DIST_UNIT'] = 'Km or Miles'
+
+        if 'TEMP_UNIT' in userParams:
+            if self.customParameters['TEMP_UNIT'] != 'enter C or Fs':
+                self.temp_unit = str(self.customParameters['TEMP_UNIT'])
+                if self.region.upper() not in ['C', 'F']:
+                    logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
+                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                #else:
+
+        else:
+            logging.warning('No DIST_UNIT')
+            self.customParameters['DIST_UNIT'] = 'Km or Miles'    
 
     def start(self):
         logging.info('start')
@@ -89,8 +142,8 @@ class TeslaEVController(udi_interface.Node):
         '''
         while not self.paramsProcessed:
             time.sleep(2)
-        if len(self.Rtoken) > 1 : # token has a value
-            self.tesla_start()
+
+        self.TEV.set_region(self.region)
 
         # Wait for things to initialize....
         # Poll for current values (and update drivers)
@@ -189,7 +242,7 @@ class TeslaEVController(udi_interface.Node):
                 if not self.poly.getNode(nodeAdr):
                     logging.info('Creating Status node for {}'.format(nodeAdr))
                     statusNode = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, vehicleId, self.TEV)
-                    self.poly.addNode(statusNode )             
+                    #self.poly.addNode(statusNode )             
                     self.wait_for_node_done()     
                     self.statusNodeReady = True
                     
