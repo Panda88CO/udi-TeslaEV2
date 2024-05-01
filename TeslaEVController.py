@@ -17,12 +17,15 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-
+VERSION = '0.1.1'
 class TeslaEVController(udi_interface.Node):
-    def __init__(self, polyglot, primary, address, name):
+    from  udiLib import node_queue, wait_for_node_done, mask2key, heartbeat, bool2ISY, PW_setDriver
+
+    def __init__(self, polyglot, primary, address, name, EV_cloud):
         super(TeslaEVController, self).__init__(polyglot, primary, address, name)
         logging.setLevel(10)
         self.poly = polyglot
+        self.ev_cloud = EV_cloud
         self.n_queue = []
         self.TEV = None
         logging.info('_init_ Tesla EV Controller ')
@@ -31,7 +34,7 @@ class TeslaEVController(udi_interface.Node):
         self.primary = primary
         self.address = address
         #self.tokenPassword = ""
-
+        self.n_queue = []
         self.dUnit = 1 #  Miles = 1, Kilometer = 0
         self.tUnit = 0 #  C = 0, F=1, K=2
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
@@ -39,21 +42,7 @@ class TeslaEVController(udi_interface.Node):
         self.Parameters = Custom(polyglot, 'customParams')      
         self.Notices = Custom(polyglot, 'notices')
 
-        self.TEV  = teslaEVAccess(self.poly, 'vehicle_cmds vehicle_device_data open_id offline_access')
-        #self.TPW_cloud = TeslaCloud(self.poly, 'energy_device_data energy_cmds open_id offline_access')
-        #self.TPW_cloud = TeslaCloud(self.poly, 'vehicle_device_data')
-        self.poly.subscribe(self.poly.START, self.start, address)
-        self.poly.subscribe(self.poly.LOGLEVEL, self.handleLevelChange)
-        #self.poly.subscribe(self.poly.NOTICES, self.handleNotices)
-        #self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
-        self.poly.subscribe(self.poly.POLL, self.systemPoll)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        #self.poly.subscribe(self.poly.CONFIGDONE, self.check_config)
-        self.poly.subscribe(self.poly.CUSTOMPARAMS, self.customParamsHandler)
-        #self.poly.subscribe(self.poly.CUSTOMDATA, self.myNetatmo.customDataHandler)
-        self.poly.subscribe(self.poly.CUSTOMNS, self.TPW_cloud.customNsHandler)
-        self.poly.subscribe(self.poly.OAUTH, self.TPW_cloud.oauthHandler)
-
 
         #logging.debug('self.address : ' + str(self.address))
         #logging.debug('self.name :' + str(self.name))
@@ -75,13 +64,7 @@ class TeslaEVController(udi_interface.Node):
         #self.poly.setLogLevel('debug')
         logging.info('Controller init DONE')
 
-    def node_queue(self, data):
-        self.n_queue.append(data['address'])
 
-    def wait_for_node_done(self):
-        while len(self.n_queue) == 0:
-            time.sleep(0.1)
-        self.n_queue.pop()
 
     def customParamsHandler(self, userParams):
         self.customParameters.load(userParams)
@@ -325,14 +308,6 @@ class TeslaEVController(udi_interface.Node):
         logging.debug('done processing parameter')
         
 
-    def heartbeat(self):
-        logging.debug('heartbeat: ' + str(self.hb))
-        if self.hb == 0:
-            self.reportCmd('DON',2)
-            self.hb = 1
-        else:
-            self.reportCmd('DOF',2)
-            self.hb = 0
         
     def systemPoll(self, pollList):
         logging.debug('systemPoll')
@@ -428,9 +403,34 @@ if __name__ == "__main__":
     try:
         logging.info('Starting TeslaEV Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.2.31')
-        TeslaEVController(polyglot, 'controller', 'controller', 'Tesla EVs')
 
+        #TeslaEVController(polyglot, 'controller', 'controller', 'Tesla EVs')
+        polyglot.start(VERSION)
+        #polyglot.updateProfile()
+        polyglot.setCustomParamsDoc()
+
+        TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds vehicle_device_data vehicle_cmds open_id offline_access')
+        #TEV_cloud = teslaEVAccess(polyglot, 'vehicle_device_data vehicle_cmds open_id offline_access')
+        logging.debug('TEV_Cloud {}'.format(TEV_cloud))
+        TEV =TeslaEVController(polyglot, 'controller', 'controller', 'Tesla EVs', TEV_cloud)
+
+        
+        logging.debug('before subscribe')
+        polyglot.subscribe(polyglot.STOP, TEV.stop)
+        polyglot.subscribe(polyglot.CUSTOMPARAMS, TEV.customParamsHandler)
+        polyglot.subscribe(polyglot.CUSTOMDATA, None) # ytService.customDataHandler)
+        polyglot.subscribe(polyglot.CONFIGDONE, TEV.configDoneHandler)
+        #polyglot.subscribe(polyglot.ADDNODEDONE, TEV.node_queue)        
+        polyglot.subscribe(polyglot.LOGLEVEL, TEV.handleLevelChange)
+        polyglot.subscribe(polyglot.NOTICES, TEV.handleNotices)
+        polyglot.subscribe(polyglot.POLL, TEV.systemPoll)
+        polyglot.subscribe(polyglot.START, TEV.start, 'controller')
+        logging.debug('Calling start')
+        polyglot.subscribe(polyglot.CUSTOMNS, TEV_cloud.customNsHandler)
+        polyglot.subscribe(polyglot.OAUTH, TEV_cloud.oauthHandler)
+        logging.debug('after subscribe')
+        polyglot.ready()
+        polyglot.runForever()
 
         polyglot.setCustomParamsDoc()
         polyglot.runForever()
