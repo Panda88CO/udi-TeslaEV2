@@ -166,8 +166,9 @@ class TeslaEVController(udi_interface.Node):
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV0', 1)
-        for EvId, vehicle in enumerate(self.EVs):
-            vehicleId = vehicle['vehicle_id']
+        for indx, EvId in enumerate(self.vehicleList):
+            #vehicleId = vehicle['vehicle_id']
+            logging.debug('loop: {} {}'.format(indx, EvId ))
             nodeName = None
             #vehicleId = self.vehicleList[vehicle]
             #logging.debug('vehicleId {}'.format(vehicleId))
@@ -179,14 +180,14 @@ class TeslaEVController(udi_interface.Node):
 
             if nodeName == ''  or nodeName == None:
                 nodeName = 'EV'+str(EvId) 
-            nodeAdr = 'ev'+str(vehicleId)
+            nodeAdr = 'ev'+str(EvId)
             nodeName = self.poly.getValidName(nodeName)
             nodeAdr = self.poly.getValidAddress(nodeAdr)
 
             if not self.poly.getNode(nodeAdr):
                 logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
-                self.TEV.teslaEV_UpdateCloudInfo(vehicleId)
-                teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, vehicleId, self.TEV)                  
+                self.TEV.teslaEV_UpdateCloudInfo(EvId)
+                teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEV)                  
                 #self.wait_for_node_done()     
                 #self.statusNodeReady = True
         
