@@ -84,7 +84,7 @@ class TeslaEVController(udi_interface.Node):
     def handleNotices(self, level):
         logging.info('handleNotices:')
     def oauthHandler(self, token):
-        self.TPW_cloud.oauthHandler(token)
+        self.TEV.oauthHandler(token)
 
 
     def customParamsHandler(self, userParams):
@@ -146,7 +146,7 @@ class TeslaEVController(udi_interface.Node):
             logging.info('Waiting for node to initialize')
             logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEV.customNsDone(), self.config_done))
             time.sleep(1)
-        while not self.TPW.cloud_authenticated():
+        while not self.TEV.cloud_authenticated():
             logging.info('Waiting to authenticate to complete - press authenticate button')
             self.poly.Notices['auth'] = 'Please initiate authentication'
             time.sleep(5)
