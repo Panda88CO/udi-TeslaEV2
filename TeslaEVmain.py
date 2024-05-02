@@ -59,7 +59,7 @@ class TeslaEVController(udi_interface.Node):
         self.poly.addNode(self)
         self.wait_for_node_done()
         self.EV_setDriver('ST', 1)
-
+        self.node = self.poly.getNode(self.address)
         self.tempUnit = 0 # C
         self.distUnit = 0 # KM
         self.customParam_done = False

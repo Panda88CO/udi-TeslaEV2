@@ -24,14 +24,20 @@ class teslaEV_ClimateNode(udi_interface.Node):
         self.name = name
         self.nodeReady = False
         #self.node = self.poly.getNode(address)
-        self.poly.subscribe(polyglot.START, self.start, address)
-        #self.tempUnit = 0
+        self.n_queue = []
+        self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
+        self.poly.subscribe(self.poly.START, self.start, address)
+
+        self.poly.ready()
+        self.poly.addNode(self)
+        self.wait_for_node_done()
+        self.node = self.poly.getNode(address)
 
     def start(self):                
         logging.debug('Start TeslaEV Climate Node')  
         self.ev_setDriver('ST', 1)
         self.nodeReady = True
-        #self.updateISYdrivers()
+        self.updateISYdrivers()
         #self.tempUnit = self.TEV.teslaEV_GetTempUnit()
 
     def stop(self):

@@ -24,14 +24,24 @@ class teslaEV_ChargeNode(udi_interface.Node):
         self.address = address 
         self.name = name
         self.nodeReady = False
+
+
+
+        self.n_queue = []
+        self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
+        self.poly.subscribe(self.poly.START, self.start, address)
+
+        self.poly.ready()
+        self.poly.addNode(self)
+        self.wait_for_node_done()
         self.node = self.poly.getNode(address)
-        self.poly.subscribe(polyglot.START, self.start, address)
+
         
     def start(self):                
         logging.info('Start Tesla EV charge Node: {}'.format(self.EVid))  
         self.EV_setDriver('ST', 1)
         self.nodeReady = True
-        #self.updateISYdrivers()
+        self.updateISYdrivers()
 
         
 
