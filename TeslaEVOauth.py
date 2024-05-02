@@ -244,7 +244,7 @@ class teslaEVAccess(teslaAccess):
     ########################################
     ############################################
 
-    '''def tesla_get_products(self) -> dict:
+    def tesla_get_products(self) -> dict:
         self.products= {}
         EVs = {}
         logging.debug('tesla_get_products ')
@@ -262,8 +262,9 @@ class teslaEVAccess(teslaAccess):
             return(EVs)
         except Exception as e:
             logging.error('tesla_get_products Exception : {}'.format(e))
-    '''
-    def tesla_get_products(self) -> dict:
+    
+
+    '''def tesla_get_products(self) -> dict:
         self.products= {}
         EVs = {}
         logging.debug('tesla_get_products ')
@@ -281,7 +282,7 @@ class teslaEVAccess(teslaAccess):
             return(EVs)
         except Exception as e:
             logging.error('tesla_get_products Exception : {}'.format(e))
-
+    '''
 
 
     def teslaEV_GetIdList(self ):
