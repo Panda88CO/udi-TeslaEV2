@@ -19,7 +19,7 @@ from TeslaEVOauth import teslaAccess
 
 VERSION = '0.0.2'
 class TeslaEVController(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
+    from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
     def __init__(self, polyglot, primary, address, name, ev_cloud_access):
         super(TeslaEVController, self).__init__(polyglot, primary, address, name)
@@ -27,6 +27,7 @@ class TeslaEVController(udi_interface.Node):
         self.poly = polyglot
 
         self.n_queue = []
+        self.vehicleList = []
         self.TEV = ev_cloud_access
         
         logging.info('_init_ Tesla EV Controller ')
@@ -57,7 +58,7 @@ class TeslaEVController(udi_interface.Node):
         self.poly.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
-        self.setDriver('ST', 1, True, True)
+        self.EV_setDriver('ST', 1)
 
         self.tempUnit = 0 # C
         self.distUnit = 0 # KM
@@ -158,13 +159,45 @@ class TeslaEVController(udi_interface.Node):
         self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']             
-        #self.TEV.set_region(self.region)
+        self.vehicleList = self.TEV.teslaEV_GetIdList()
 
-        # Wait for things to initialize....
-        # Poll for current values (and update drivers)
-        #self.TEV.pollSystemData('all')          
-        #self.updateISYdrivers('all')
-        #self.systemReady = True
+        logging.debug('vehicleList: {}'.format(self.vehicleList))
+        self.GV1 = len(self.vehicleList)
+        self.EV_setDriver('GV1', self.GV1)
+        self.EV_setDriver('GV0', 1)
+        for vehicle_nbr in range(0,len(self.vehicleList)):
+            vehicleId = self.vehicleList[vehicle_nbr]
+            nodeName = None
+            #vehicleId = self.vehicleList[vehicle]
+            #logging.debug('vehicleId {}'.format(vehicleId))
+            self.TEV.teslaEV_UpdateCloudInfo(vehicleId)
+            #logging.debug('self.TEV.teslaEV_UpdateCloudInfo')
+            vehicleInfo = self.TEV.teslaEV_GetInfo(vehicleId)
+            logging.info('EV info: {} = {}'.format(vehicleId, vehicleInfo))
+            nodeName = self.TEV.teslaEV_GetName(vehicleId)
+
+            if nodeName == ''  or nodeName == None:
+                nodeName = 'EV'+str(vehicleId) 
+            nodeAdr = 'ev'+str(vehicleId)
+            nodeName = self.poly.getValidName(nodeName)
+            nodeAdr = self.poly.getValidAddress(nodeAdr)
+
+            if not self.poly.getNode(nodeAdr):
+                logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
+                self.TEV.teslaEV_UpdateCloudInfo(vehicleId)
+                teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, vehicleId, self.TEV)                  
+                #self.wait_for_node_done()     
+                #self.statusNodeReady = True
+        
+        for nde in range(0, len(self.nodes_in_db)):
+            node = self.nodes_in_db[nde]
+            logging.debug('Scanning db for extra nodes : {}'.format(node))
+            if node['primaryNode'] not in assigned_addresses:
+                logging.debug('Removing node : {} {}'.format(node['name'], node))
+                self.poly.delNode(node['address'])
+        self.updateISYdrivers()
+        self.initialized = True
+
 
     def validate_params(self):
         logging.debug('validate_params: {}'.format(self.Parameters.dump()))
@@ -175,7 +208,7 @@ class TeslaEVController(udi_interface.Node):
         self.Notices.clear()
         #if self.TEV:
         #    self.TEV.disconnectTEV()
-        self.setDriver('ST', 0 , True, True)
+        self.EV_setDriver('ST', 0 )
         logging.debug('stop - Cleaning up')
         self.poly.stop()
 
@@ -208,7 +241,7 @@ class TeslaEVController(udi_interface.Node):
     def tesla_initialize(self):
         logging.info('starting Login process')
         try:
-            self.setDriver('GV0', 1, True, True)
+            self.EV_setDriver('GV0', 1)
             #self.TEV.teslaEV_SetDistUnit(self.dUnit)
             #self.TEV.teslaEV_SetTempUnit(self.tUnit)
             #self.TEV.teslaEV_SetRegion(self.region)
@@ -220,13 +253,13 @@ class TeslaEVController(udi_interface.Node):
 
         logging.debug ('Controller - initialization done')
 
-    def createNodes(self):
+    ''' def createNodes(self):
         try:
             self.vehicleList = self.TEV.teslaEV_GetIdList()
             logging.debug('vehicleList: {}'.format(self.vehicleList))
             self.GV1 =len(self.vehicleList)
-            self.setDriver('GV1', self.GV1, True, True)
-            self.setDriver('GV0', 1, True, True)
+            self.EV_setDriver('GV1', self.GV1)
+            self.EV_setDriver('GV0', 1)
             for vehicleId in range(0,len(self.vehicleList)):
                 nodeName = None
                 #vehicleId = self.vehicleList[vehicle]
@@ -253,7 +286,7 @@ class TeslaEVController(udi_interface.Node):
         except Exception as e:
             logging.error('Exception Controller start: '+ str(e))
             logging.info('Did not obtain data from EV ')
-
+    '''
         
     def systemPoll(self, pollList):
         logging.debug('systemPoll')
@@ -313,10 +346,10 @@ class TeslaEVController(udi_interface.Node):
     def updateISYdrivers(self):
         logging.debug('System updateISYdrivers - Controller')       
         value = self.TEV.authenticated()
-        self.setDriver('GV0', value, True, True)
-        self.setDriver('GV1', self.GV1, True, True)
-        self.setDriver('GV2', self.dUnit, True, True)
-        self.setDriver('GV3', self.tUnit, True, True)
+        self.EV_setDriver('GV0', value)
+        self.EV_setDriver('GV1', self.GV1)
+        self.EV_setDriver('GV2', self.dUnit)
+        self.EV_setDriver('GV3', self.tUnit)
 
 
 
