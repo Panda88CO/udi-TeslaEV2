@@ -244,7 +244,7 @@ class teslaEVAccess(teslaAccess):
     ########################################
     ############################################
 
-    def tesla_get_products(self) -> dict:
+    '''def tesla_get_products(self) -> dict:
         self.products= {}
         EVs = {}
         logging.debug('tesla_get_products ')
@@ -262,6 +262,27 @@ class teslaEVAccess(teslaAccess):
             return(EVs)
         except Exception as e:
             logging.error('tesla_get_products Exception : {}'.format(e))
+    '''
+    def tesla_get_products(self) -> dict:
+        self.products= {}
+        EVs = {}
+        logging.debug('tesla_get_products ')
+        try:
+            temp = self._callApi('GET','/vehicles' )
+            logging.debug('products: {} '.format(temp))
+            if 'response' in temp:
+                for indx in range(0,len(temp['response'])):
+                    site = temp['response'][indx]
+                    if 'vehicle_id' in site:
+                        EVs[str(site['id'])] = site
+                        self.ev_list.append(site['id'])
+            self.evs = EVs
+            self.products = temp
+            return(EVs)
+        except Exception as e:
+            logging.error('tesla_get_products Exception : {}'.format(e))
+
+
 
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
