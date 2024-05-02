@@ -157,7 +157,7 @@ class TeslaEVController(udi_interface.Node):
         self.tesla_initialize()
 
         self.EVs = self.TEV.tesla_get_products()
-        self.EVs_installed = {}
+        #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']             
         self.vehicleList = self.TEV.teslaEV_GetIdList()
@@ -166,19 +166,19 @@ class TeslaEVController(udi_interface.Node):
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV0', 1)
-        for vehicle_nbr in range(0,len(self.vehicleList)):
-            vehicleId = self.vehicleList[vehicle_nbr]
+        for EvId, vehicle in enumerate(self.EVs):
+            vehicleId = vehicle['vehicle_id']
             nodeName = None
             #vehicleId = self.vehicleList[vehicle]
             #logging.debug('vehicleId {}'.format(vehicleId))
-            self.TEV.teslaEV_UpdateCloudInfo(vehicleId)
+            self.TEV.teslaEV_UpdateCloudInfo(EvId)
             #logging.debug('self.TEV.teslaEV_UpdateCloudInfo')
-            vehicleInfo = self.TEV.teslaEV_GetInfo(vehicleId)
-            logging.info('EV info: {} = {}'.format(vehicleId, vehicleInfo))
-            nodeName = self.TEV.teslaEV_GetName(vehicleId)
+            vehicleInfo = self.TEV.teslaEV_GetInfo(EvId)
+            logging.info('EV info: {} = {}'.format(EvId, vehicleInfo))
+            nodeName = self.TEV.teslaEV_GetName(EvId)
 
             if nodeName == ''  or nodeName == None:
-                nodeName = 'EV'+str(vehicleId) 
+                nodeName = 'EV'+str(EvId) 
             nodeAdr = 'ev'+str(vehicleId)
             nodeName = self.poly.getValidName(nodeName)
             nodeAdr = self.poly.getValidAddress(nodeAdr)
@@ -389,9 +389,9 @@ if __name__ == "__main__":
         #polyglot.updateProfile()
         polyglot.setCustomParamsDoc()
 
-        TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds vehicle_device_data vehicle_cmds vehicle_charging_cmds open_id offline_access')
+        #TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds vehicle_device_data vehicle_cmds vehicle_charging_cmds open_id offline_access')
         #TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds open_id offline_access')
-        #TEV_cloud = teslaEVAccess(polyglot, 'vehicle_device_data vehicle_cmds open_id offline_access')
+        TEV_cloud = teslaEVAccess(polyglot, 'vehicle_device_data vehicle_cmds open_id offline_access')
         logging.debug('TEV_Cloud {}'.format(TEV_cloud))
         TEV =TeslaEVController(polyglot, 'controller', 'controller', 'Tesla EVs', TEV_cloud)
 
