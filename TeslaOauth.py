@@ -11,7 +11,6 @@ Copyright (C) 2023 Universal Devices
 
 MIT License
 '''
-
 import requests
 import time
 from threading import Lock
