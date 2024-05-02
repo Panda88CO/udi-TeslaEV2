@@ -86,34 +86,34 @@ class teslaEVAccess(teslaAccess):
         # self.getAccessToken()
     
     # The OAuth class needs to be hooked to these 3 handlers
-    def customDataHandler(self, data):
-        logging.debug('customDataHandler called')
+    #def customDataHandler(self, data):
+    #    logging.debug('customDataHandler called')
         #while not self.handleCustomParamsDone:
         #    logging.debug('Waiting for customDataHandler to complete')
         #    time.sleep(1)
-        super().customDataHandler(data)
-        self.customDataHandlerDone = True
-        logging.debug('customDataHandler Finished')
+    #    super().customDataHandler(data)
+    #    self.customDataHandlerDone = True
+    #    logging.debug('customDataHandler Finished')
 
-    def customNsHandler(self, key, data):
-        logging.debug('customNsHandler called')
-        #while not self.customParamsDone():
-        #    logging.debug('Waiting for customNsHandler to complete')
-        #    time.sleep(1)
-        #self.updateOauthConfig()
-        super().customNsHandler(key, data)
-        self.customNsHandlerDone = True
-        logging.debug('customNsHandler Finished')
+    ##def customNsHandler(self, key, data):
+    ##    logging.debug('customNsHandler called')
+    #    #while not self.customParamsDone():
+    #    #    logging.debug('Waiting for customNsHandler to complete')
+    #    #    time.sleep(1)
+    #    #self.updateOauthConfig()
+    #    super().customNsHandler(key, data)
+    #    self.customNsHandlerDone = True
+    #    logging.debug('customNsHandler Finished')
 
-    def oauthHandler(self, token):
-        logging.debug('oauthHandler called')
-        while not (self.customParamsDone() and self.customNsDone()):
-            logging.debug('Waiting for initilization to complete before oAuth')
-            time.sleep(5)
-        #logging.debug('oauth Parameters: {}'.format(self.getOauthSettings()))
-        super().oauthHandler(token)
+    #def oauthHandler(self, token):
+    #    logging.debug('oauthHandler called')
+    #    while not (self.customParamsDone() and self.customNsDone()):
+    #        logging.debug('Waiting for initilization to complete before oAuth')
+    #        time.sleep(5)
+    #    #logging.debug('oauth Parameters: {}'.format(self.getOauthSettings()))
+    #    super().oauthHandler(token)
         #self.customOauthHandlerDone = True
-        logging.debug('oauthHandler Finished')
+    #    logging.debug('oauthHandler Finished')
 
     def customNsDone(self):
         return(self.customNsHandlerDone)
