@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
@@ -258,7 +258,7 @@ class TeslaEVController(udi_interface.Node):
     def systemPoll(self, pollList):
         logging.debug('systemPoll')
         if self.TEV:
-            if self.TEV.isConnectedToEV(): 
+            if self.TEV.authenticated(): 
                 if 'longPoll' in pollList:
                     self.longPoll()
                 elif 'shortPoll' in pollList:
@@ -270,7 +270,7 @@ class TeslaEVController(udi_interface.Node):
     def shortPoll(self):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
         self.heartbeat()    
-        if self.TEV.isConnectedToEV():
+        if self.TEV.authenticated():
             for vehicle in range(0,len(self.vehicleList)):                
                 try:
                     self.TEV.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
@@ -287,9 +287,9 @@ class TeslaEVController(udi_interface.Node):
 #                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
         
     def longPoll(self):
-        logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEV.isConnectedToEV()))
+        logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEV.authenticated()))
         
-        if self.TEV.isConnectedToEV():
+        if self.TEV.authenticated():
             for vehicle in range(0,len(self.vehicleList)):
                  self.TEV.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
             try:
@@ -312,7 +312,7 @@ class TeslaEVController(udi_interface.Node):
 
     def updateISYdrivers(self):
         logging.debug('System updateISYdrivers - Controller')       
-        value = self.TEV.isConnectedToEV()
+        value = self.TEV.authenticated()
         self.setDriver('GV0', value, True, True)
         self.setDriver('GV1', self.GV1, True, True)
         self.setDriver('GV2', self.dUnit, True, True)
