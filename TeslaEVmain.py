@@ -58,13 +58,14 @@ class TeslaEVController(udi_interface.Node):
         self.poly.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
-        self.EV_setDriver('ST', 1)
+        
         self.node = self.poly.getNode(self.address)
         self.tempUnit = 0 # C
         self.distUnit = 0 # KM
         self.customParam_done = False
         self.config_done = False
         #self.poly.setLogLevel('debug')
+        self.EV_setDriver('ST', 1)
         logging.info('Controller init DONE')
 
     def check_config(self):
