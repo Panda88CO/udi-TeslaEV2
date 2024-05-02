@@ -245,8 +245,8 @@ class teslaEVAccess(teslaAccess):
     ############################################
 
     def tesla_get_products(self) -> dict:
-        products= {}
-
+        self.products= {}
+        EVs = {}
         logging.debug('tesla_get_products ')
         try:
             temp = self._callApi('GET','/products' )
@@ -255,11 +255,11 @@ class teslaEVAccess(teslaAccess):
                 for indx in range(0,len(temp['response'])):
                     site = temp['response'][indx]
                     if 'vehicle_id' in site:
-                        products[str(site['id'])] = site
+                        EVs[str(site['id'])] = site
                         self.ev_list.append(site['id'])
-            self.evs = products
-
-            return(products)
+            self.evs = EVs
+            self.products = temp
+            return(EVs)
         except Exception as e:
             logging.error('tesla_get_products Exception : {}'.format(e))
 

@@ -356,8 +356,8 @@ if __name__ == "__main__":
         polyglot.setCustomParamsDoc()
 
         #TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds vehicle_device_data vehicle_cmds vehicle_charging_cmds open_id offline_access')
-        TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds open_id offline_access')
-        #TEV_cloud = teslaEVAccess(polyglot, 'vehicle_device_data vehicle_cmds open_id offline_access')
+        #TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds open_id offline_access')
+        TEV_cloud = teslaEVAccess(polyglot, 'vehicle_device_data vehicle_cmds open_id offline_access')
         logging.debug('TEV_Cloud {}'.format(TEV_cloud))
         TEV =TeslaEVController(polyglot, 'controller', 'controller', 'Tesla EVs', TEV_cloud)
 
