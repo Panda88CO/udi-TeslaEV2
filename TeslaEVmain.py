@@ -28,7 +28,7 @@ class TeslaEVController(udi_interface.Node):
 
         self.n_queue = []
         self.TEV = ev_cloud_access
-        self.config_done = False
+        
         logging.info('_init_ Tesla EV Controller ')
         self.ISYforced = False
         self.name = 'Tesla EV Info'
@@ -61,7 +61,8 @@ class TeslaEVController(udi_interface.Node):
 
         self.tempUnit = 0 # C
         self.distUnit = 0 # KM
-
+        self.customParam_done = False
+        self.config_done = False
         #self.poly.setLogLevel('debug')
         logging.info('Controller init DONE')
 
