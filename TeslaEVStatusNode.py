@@ -16,7 +16,7 @@ except ImportError:
                
                
 class teslaEV_StatusNode(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
+    from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
     def __init__(self, polyglot, primary, address, name, id, TEV):
         super(teslaEV_StatusNode, self).__init__(polyglot, primary, address, name)
