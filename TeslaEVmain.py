@@ -102,7 +102,8 @@ class TeslaEVController(udi_interface.Node):
                 if self.region.upper() not in ['NA', 'EU', 'CN']:
                     logging.error('Unsupported region {}'.format(self.region))
                     self.poly.Notices['region'] = 'Unknown Region specified (NA = North America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
-                #else:
+
+                    
 
         else:
             logging.warning('No region found')
@@ -113,7 +114,7 @@ class TeslaEVController(udi_interface.Node):
         if 'DIST_UNIT' in userParams:
             if self.customParameters['DIST_UNIT'] != 'enter Km or Miles':
                 self.dist_unit = str(self.customParameters['DIST_UNIT'])
-                if self.region.upper() not in ['KM', 'MILES']:
+                if self.dist_unit.upper() not in ['KM', 'MILES']:
                     logging.error('Unsupported distance unit {}'.format(self.dist_unit))
                     self.poly.Notices['region'] = 'Unknown distance Unit specified'
                 #else:
@@ -125,14 +126,14 @@ class TeslaEVController(udi_interface.Node):
         if 'TEMP_UNIT' in userParams:
             if self.customParameters['TEMP_UNIT'] != 'enter C or Fs':
                 self.temp_unit = str(self.customParameters['TEMP_UNIT'])
-                if self.region.upper() not in ['C', 'F']:
+                if self.temp_unit.upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
                     self.poly.Notices['region'] = 'Unknown distance Unit specified'
                 #else:
 
         else:
-            logging.warning('No DIST_UNIT')
-            self.customParameters['DIST_UNIT'] = 'Km or Miles'    
+            logging.warning('No TEMP_UNIT')
+            self.customParameters['TEMP_UNIT'] = 'C or F'    
         logging.debug('customParamsHandler finish ')
         self.customParam_done = True
 
@@ -146,6 +147,7 @@ class TeslaEVController(udi_interface.Node):
             logging.info('Waiting for node to initialize')
             logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEV.customNsDone(), self.config_done))
             time.sleep(1)
+        self.TEV.cloud_set_region(self.region)
         while not self.TEV.authenticated():
             logging.info('Waiting to authenticate to complete - press authenticate button')
             self.poly.Notices['auth'] = 'Please initiate authentication'
@@ -154,6 +156,7 @@ class TeslaEVController(udi_interface.Node):
 
         self.EVs = self.TEV.tesla_get_products()
         self.EVs_installed = {}
+        logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']             
         #self.TEV.set_region(self.region)
 
@@ -250,77 +253,6 @@ class TeslaEVController(udi_interface.Node):
         except Exception as e:
             logging.error('Exception Controller start: '+ str(e))
             logging.info('Did not obtain data from EV ')
-
-
-
-
-
-    '''
-    def handleParams (self, customParams ):
-        logging.debug('handleParams')
-        tempDict1 = customParams
-        self.Parameters.load(customParams)
-        tempDict2 = customParams
-        logging.debug('handleParams load - {} Before: {} After:{}'.format(customParams,tempDict1, tempDict2 ))
-        #logging.debug(self.Parameters)  ### TEMP
-        self.poly.Notices.clear()
-        self.cloudAccess = False
-
-        if 'REFRESH_TOKEN' in customParams:
-            
-            self.Rtoken = customParams['REFRESH_TOKEN']
-            logging.debug('REFRESH_TOKEN : {}'.format(self.Rtoken[0:25]))
-            if self.Rtoken  == '' or self.Rtoken == None:
-                self.poly.Notices['REFRESH_TOKEN'] = 'Missing Cloud Refresh Token'
-
-            else:
-                if 'REFRESH_TOKEN' in self.poly.Notices:
-                    self.poly.Notices.delete('REFRESH_TOKEN')                   
-        else:
-            self.poly.Notices['REFRESH_TOKEN'] = 'Missing Cloud Refresh Token'
-            self.Rtoken  = ''
-           
-        if 'DIST_UNIT' in customParams:
-            
-            temp  = customParams['DIST_UNIT']
-            logging.debug('DIST_UNIT: {}'.format(temp))
-            if temp == '' or temp == None:
-                self.poly.Notices['DIST_UNIT'] = 'Missing Distance Unit ((M)iles/(K)ilometers)'
-            else:
-                if temp[0] == 'k' or temp[0] == 'K':
-                    self.dUnit = 0
-                    if 'DIST_UNIT' in self.poly.Notices:
-                        self.poly.Notices.delete('DIST_UNIT')
-
-                elif temp[0] == 'm' or temp[0] == 'M':
-                    self.dUnit = 1
-                    if 'DIST_UNIT' in self.poly.Notices:
-                        self.poly.Notices.delete('DIST_UNIT')
-
-        if 'TEMP_UNIT' in customParams:
-             
-            temp  = customParams['TEMP_UNIT']
-            logging.debug('TEMP_UNIT: {}'.format(temp))
-            if temp == '' or temp == None:
-                self.poly.Notices['TEMP_UNIT'] = 'Missing Distance Unit ((M)iles/(K)ilometers)'
-            else:
-                if temp[0] == 'C' or temp[0] == 'c':
-                    self.tUnit = 0
-                    if 'TEMP_UNIT' in self.poly.Notices:
-                        self.poly.Notices.delete('TEMP_UNIT')
-
-                elif temp[0] == 'F' or temp[0] == 'f':
-                    self.tUnit = 1
-                    if 'TEMP_UNIT' in self.poly.Notices:
-                        self.poly.Notices.delete('TEMP_UNIT')
-                elif temp[0] == 'K' or temp[0] == 'k':
-                    self.tUnit = 2
-                    if 'TEMP_UNIT' in self.poly.Notices:
-                        self.poly.Notices.delete('TEMP_UNIT')
-                
-
-        logging.debug('done processing parameter')
-    '''
 
         
     def systemPoll(self, pollList):
