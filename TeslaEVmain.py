@@ -21,13 +21,14 @@ VERSION = '0.1.1'
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, mask2key, heartbeat, bool2ISY, PW_setDriver
 
-    def __init__(self, polyglot, primary, address, name, EV_cloud):
+    def __init__(self, polyglot, primary, address, name, ev_cloud_access):
         super(TeslaEVController, self).__init__(polyglot, primary, address, name)
         logging.setLevel(10)
         self.poly = polyglot
-        self.ev_cloud = EV_cloud
+
         self.n_queue = []
-        self.TEV = None
+        self.TEV = ev_cloud_access
+        self.config_done = False
         logging.info('_init_ Tesla EV Controller ')
         self.ISYforced = False
         self.name = 'Tesla EV Info'
@@ -64,6 +65,21 @@ class TeslaEVController(udi_interface.Node):
         #self.poly.setLogLevel('debug')
         logging.info('Controller init DONE')
 
+    def check_config(self):
+        self.nodes_in_db = self.poly.getNodesFromDb()
+        self.config_done= True
+
+
+    def configDoneHandler(self):
+        logging.debug('configDoneHandler - config_done')
+        # We use this to discover devices, or ask to authenticate if user has not already done so
+        self.poly.Notices.clear()
+        self.nodes_in_db = self.poly.getNodesFromDb()
+        self.config_done= True
+
+    
+    def oauthHandler(self, token):
+        self.TPW_cloud.oauthHandler(token)
 
 
     def customParamsHandler(self, userParams):
@@ -112,21 +128,29 @@ class TeslaEVController(udi_interface.Node):
         else:
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'    
+        logging.debug('customParamsHandler finish ')
+        self.customParam_done = True
 
     def start(self):
         logging.info('start')
         #self.Parameters.load(customParams)
         self.poly.updateProfile()
         #self.poly.setCustomParamsDoc()
-        '''
-        for param in self.supportedParams:
-            if param not in self.Parameters:
-                self.Parameters[param] = ''
-        '''
-        while not self.paramsProcessed:
-            time.sleep(2)
 
-        self.TEV.set_region(self.region)
+        while not self.customParam_done or not self.TEV.customNsDone() and not self.config_done:
+            logging.info('Waiting for node to initialize')
+            logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEV.customNsDone(), self.config_done))
+            time.sleep(1)
+        while not self.TPW.cloud_authenticated():
+            logging.info('Waiting to authenticate to complete - press authenticate button')
+            self.poly.Notices['auth'] = 'Please initiate authentication'
+            time.sleep(5)
+        self.tesla_initialize()
+
+        self.EVs = self.TEV.tesla_get_products()
+        self.EVs_installed = {}
+        assigned_addresses =['controller']             
+        #self.TEV.set_region(self.region)
 
         # Wait for things to initialize....
         # Poll for current values (and update drivers)
@@ -147,7 +171,7 @@ class TeslaEVController(udi_interface.Node):
         logging.debug('stop - Cleaning up')
         self.poly.stop()
 
-    def query(self,command=None):
+    def query(self, command=None):
         """
         Optional.
 
@@ -167,6 +191,8 @@ class TeslaEVController(udi_interface.Node):
     could be enabling or disabling the various types of access.  So if the
     user changes something, we want to re-initialize.
     '''
+
+
     def tesla_start(self):
         self.tesla_initialize()
         self.createNodes()
@@ -174,19 +200,11 @@ class TeslaEVController(udi_interface.Node):
     def tesla_initialize(self):
         logging.info('starting Login process')
         try:
-            logging.debug('token = {}'.format(self.Rtoken[0:25]))
-            while self.Rtoken == '':
-                logging.info('Waiting for token')
-                time.sleep(10)
-            self.TEV = teslaAccess(self.poly, 'vehicle_device_data vehicle_cmds vehicle_charging_cmds open_id offline_access')
-            self.connected = self.TEV.isConnectedToEV()
-            if not self.connected:
-                logging.error ('Failed to get acces to Tesla Cloud')
-                exit()
-            else:
-                self.setDriver('GV0', 1, True, True)
-                self.TEV.teslaEV_SetDistUnit(self.dUnit)
-                self.TEV.teslaEV_SetTempUnit(self.tUnit)
+            self.setDriver('GV0', 1, True, True)
+            #self.TEV.teslaEV_SetDistUnit(self.dUnit)
+            #self.TEV.teslaEV_SetTempUnit(self.tUnit)
+            #self.TEV.teslaEV_SetRegion(self.region)
+
 
         except Exception as e:
             logging.debug('Exception Controller start: '+ str(e))
@@ -201,33 +219,27 @@ class TeslaEVController(udi_interface.Node):
             self.GV1 =len(self.vehicleList)
             self.setDriver('GV1', self.GV1, True, True)
             self.setDriver('GV0', 1, True, True)
-            for vehicle in range(0,len(self.vehicleList)):
+            for vehicleId in range(0,len(self.vehicleList)):
                 nodeName = None
-                vehicleId = self.vehicleList[vehicle]
+                #vehicleId = self.vehicleList[vehicle]
                 #logging.debug('vehicleId {}'.format(vehicleId))
                 self.TEV.teslaEV_UpdateCloudInfo(vehicleId)
                 #logging.debug('self.TEV.teslaEV_UpdateCloudInfo')
                 vehicleInfo = self.TEV.teslaEV_GetInfo(vehicleId)
                 logging.info('EV info: {} = {}'.format(vehicleId, vehicleInfo))
+                nodeName = self.TEV.teslaEV_GetName(vehicleId)
 
-                if 'display_name' in vehicleInfo:
-                    nodeName = vehicleInfo['display_name']                                          
-                if 'vehicle_config' in vehicleInfo:
-                    logging.debug( 'display_name = {}'.format(nodeName))
-                    if  'vehicle_name' in vehicleInfo['vehicle_config']:
-                        nodeName = vehicleInfo['vehicle_config']['vehicle_name']
-                if 'vehicle_state' in vehicleInfo:
-                    if  'vehicle_name' in vehicleInfo['vehicle_state']:
-                        nodeName = vehicleInfo['vehicle_state']['vehicle_name']
-                if nodeName == '' or nodeName == None:
-                    nodeName = 'EV'+str(vehicle+1) 
-                nodeAdr = 'vehicle'+str(vehicle+1)
+                if nodeName == ''  or nodeName == None:
+                    nodeName = 'EV'+str(vehicleId) 
+                nodeAdr = 'ev'+str(vehicleId)
+                nodeName = self.poly.getValidName(nodeName)
+                nodeAdr = self.poly.getValidAddress(nodeAdr)
+
                 if not self.poly.getNode(nodeAdr):
                     logging.info('Creating Status node for {}'.format(nodeAdr))
-                    statusNode = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, vehicleId, self.TEV)
-                    #self.poly.addNode(statusNode )             
-                    self.wait_for_node_done()     
-                    self.statusNodeReady = True
+                    statusNode = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, vehicleId, self.TEV)                  
+                    #self.wait_for_node_done()     
+                    #self.statusNodeReady = True
                     
             self.longPoll()
         except Exception as e:
@@ -242,6 +254,7 @@ class TeslaEVController(udi_interface.Node):
         #logging.setLevel(lev)
 
 
+    '''
     def handleParams (self, customParams ):
         logging.debug('handleParams')
         tempDict1 = customParams
@@ -306,7 +319,7 @@ class TeslaEVController(udi_interface.Node):
                 
 
         logging.debug('done processing parameter')
-        
+    '''
 
         
     def systemPoll(self, pollList):
@@ -327,7 +340,7 @@ class TeslaEVController(udi_interface.Node):
         if self.TEV.isConnectedToEV():
             for vehicle in range(0,len(self.vehicleList)):                
                 try:
-                    self.TEV.teslaEV_getLatestCloudInfo(self.vehicleList[vehicle])
+                    self.TEV.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
                     nodes = self.poly.getNodes()
                     for node in nodes:
                         #if node != 'controller'    
@@ -336,9 +349,9 @@ class TeslaEVController(udi_interface.Node):
                 except Exception as E:
                     logging.info('Not all nodes ready: {}'.format(E))
 
-            self.Rtoken  = self.TEV.getRtoken()
-            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
-                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
+#            self.Rtoken  = self.TEV.getRtoken()
+#            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
+#                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
         
     def longPoll(self):
         logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEV.isConnectedToEV()))
@@ -355,9 +368,9 @@ class TeslaEVController(udi_interface.Node):
             except Exception as E:
                 logging.info('Not all nodes ready: {}'.format(E))
 
-            self.Rtoken  = self.TEV.getRtoken()
-            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
-                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
+#            self.Rtoken  = self.TEV.getRtoken()
+#            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
+#                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
 
 
     def poll(self): # dummey poll function 
@@ -409,7 +422,7 @@ if __name__ == "__main__":
         #polyglot.updateProfile()
         polyglot.setCustomParamsDoc()
 
-        TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds vehicle_device_data vehicle_cmds open_id offline_access')
+        TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds vehicle_device_data vehicle_cmds vehicle_charging_cmds open_id offline_access')
         #TEV_cloud = teslaEVAccess(polyglot, 'vehicle_device_data vehicle_cmds open_id offline_access')
         logging.debug('TEV_Cloud {}'.format(TEV_cloud))
         TEV =TeslaEVController(polyglot, 'controller', 'controller', 'Tesla EVs', TEV_cloud)

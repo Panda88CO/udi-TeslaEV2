@@ -41,7 +41,7 @@ class teslaEVAccess(teslaAccess):
     yourApiEndpoint = 'https://fleet-api.prd.na.vn.cloud.tesla.com'
 
     def __init__(self, polyglot, scope):
-        super().__init__(polyglot)
+        super().__init__(polyglot, scope)
         logging.info('OAuth initializing')
         self.poly = polyglot
         self.scope = scope
@@ -74,7 +74,8 @@ class teslaEVAccess(teslaAccess):
         self.steeringWheeelHeat = False
         self.steeringWheelHeatDetected = False
         self.distUnit = 1
-
+        self.evs = {}
+        self.ev_list = []
         self.poly = polyglot
 
         time.sleep(1)
@@ -238,166 +239,35 @@ class teslaEVAccess(teslaAccess):
         else:
             return(False)
 
-    def getAccessToken(self):
-        # Make sure we have received tokens before attempting to renew
-
-        if self._oauthTokens is not None and self._oauthTokens.get('refresh_token'):
-            expiry = self._oauthTokens.get('expiry')
-
-            # If expired or expiring in less than 60 seconds, refresh
-            if (expiry is None or datetime.fromisoformat(expiry) - timedelta(seconds=60) < datetime.now()):
-
-                logging.info(f"Access tokens: Token is expired since { expiry }. Initiating refresh.")
-                self._oAuthTokensRefresh()
-            else:
-                logging.info(f"Access tokens: Token is still valid until { expiry }, no need to refresh")
-
-            return self._oauthTokens.get('access_token')
-        else:
-            raise ValueError('Access token is not available')
-
-
-    
-    def _oAuthTokensRefresh(self):
-        logging.debug(f"Refresh token before: { self._oauthTokens }")
-        data = {
-            'grant_type': 'refresh_token',
-            'refresh_token': self._oauthTokens['refresh_token'],
-            'client_id': self._oauthConfig['client_id'],
-            'client_secret': self._oauthConfig['client_secret']
-        }
-
-        if self._oauthConfig['addRedirect']:
-            data['redirect_uri'] = 'https://my.isy.io/api/cloudlink/redirect'
-
-        if self._oauthConfig['scope']:
-            data['scope'] = self._oauthConfig['scope']
-
-        if self._oauthConfig['token_parameters'] and isinstance(self._oauthConfig['token_parameters'], dict):
-            for key, value in self._oauthConfig['token_parameters'].items():
-                data[key] = value
-
-        logging.debug(f"Token refresh body { json.dumps(data) }")
-
-        try:
-            response = requests.post(self._oauthConfig['token_endpoint'], data=data)
-            response.raise_for_status()
-            token = response.json()
-            logging.info('Refreshing oAuth tokens successfully')
-            logging.debug(f"Token refresh result [{ type(token) }]: { token }")
-            self._setExpiry(token)
-            self._oauthTokens.load(token)
-
-        except requests.exceptions.HTTPError as error:
-            logging.error(f"Failed to refresh oAuth token: { error }")
-            # NOTE: If refresh tokens fails, we keep the existing tokens available.        
-    
-    def authendicated(self):
-        try:
-            
-            accessToken = self.getAccessToken()
-        except ValueError as err:
-            logging.warning('Access token is not yet available. Please authenticate.')
-            self.poly.Notices['auth'] = 'Please initiate authentication'
-            logging.debug('oauth error: {}'.format(err))
-            return(False)
-        if accessToken is None:
-            logging.error('Access token is not available')
-            return(False)
-        else:
-            return(True)
-    '''
-    def setOauthScope(self, scope):
-        oauthSettingsUpdate = {}
-        logging.debug('Set Scope to {}'.format(scope))
-        oauthSettingsUpdate['scope'] = str(scope)
-        self.updateOauthSettings(oauthSettingsUpdate)
-    
-    def setOauthName(self, name):
-        oauthSettingsUpdate = {} 
-        logging.debug('Set name to {}'.format(name))
-        oauthSettingsUpdate['name'] = str(name)
-        self.updateOauthSettings(oauthSettingsUpdate)
-    
-
-    def _insert_refreshToken(self, refresh_token, clientId, clientSecret):
-        data = {
-                'grant_type': 'refresh_token',
-                'refresh_token': refresh_token,
-                'client_id': clientId,
-                'client_secret':  clientSecret
-                }
-        try:
-            response = requests.post('https://api.netatmo.com/oauth2/token' , data=data)
-            response.raise_for_status()
-            token = response.json()
-            logging.info('Refreshing tokens successful')
-            logging.debug(f"Token refresh result [{ type(token) }]: { token }")
-            self._saveToken(token)
-            return('Success')
-          
-        except requests.exceptions.HTTPError as error:
-            logging.error(f"Failed to refresh  token: { error }")
-            return(None)
-            # NOTE: If refresh tokens fails, we keep the existing tokens available.
-    '''
-
-    # Call your external service API
-    def _callApi(self, method='GET', url=None, body=None):
-        # When calling an API, get the access token (it will be refreshed if necessary)
-        try:
-            accessToken = self.getAccessToken()
-        except ValueError as err:
-            logging.warning('Access token is not yet available. Please authenticate.')
-            self.poly.Notices['auth'] = 'Please initiate authentication'
-            logging.debug('_callAPI oauth error: {}'.format(err))
-            return
-        if accessToken is None:
-            logging.error('Access token is not available')
-            return None
-
-        if url is None:
-            logging.error('url is required')
-            return None
-
-        completeUrl = self.yourApiEndpoint + url
-
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer { accessToken }'
-            
-        }
-
-        if method in [ 'PATCH', 'POST'] and body is None:
-            logging.error(f"body is required when using { method } { completeUrl }")
-        logging.debug(' call info url={}, header {}, body ={}'.format(completeUrl, headers, body))
-
-        try:
-            if method == 'GET':
-                response = requests.get(completeUrl, headers=headers, json=body)
-            elif method == 'DELETE':
-                response = requests.delete(completeUrl, headers=headers, json=body)
-            elif method == 'PATCH':
-                response = requests.patch(completeUrl, headers=headers, json=body)
-            elif method == 'POST':
-                response = requests.post(completeUrl, headers=headers, json=body)
-            elif method == 'PUT':
-                response = requests.put(completeUrl, headers=headers, json=body)
-
-            response.raise_for_status()
-            try:
-                return response.json()
-            except requests.exceptions.JSONDecodeError:
-                return response.text
-
-        except requests.exceptions.HTTPError as error:
-            logging.error(f"Call { method } { completeUrl } failed: { error }")
-            return None
 
     # Then implement your service specific APIs
     ########################################
     ############################################
 
+    def tesla_get_products(self) -> dict:
+        products= {}
+
+        logging.debug('tesla_get_products ')
+        try:
+            temp = self._callApi('GET','/products' )
+            logging.debug('products: {} '.format(temp))
+            if 'response' in temp:
+                for indx in range(0,len(temp['response'])):
+                    site = temp['response'][indx]
+                    if 'vehicle_id' in site:
+                        products[str(site['id'])] = site
+                        self.ev_list.append(site['id'])
+            self.evs = products
+
+            return(products)
+        except Exception as e:
+            logging.error('tesla_get_products Exception : {}'.format(e))
+
+    def teslaEV_GetIdList(self ):
+        logging.debug('teslaEV_GetVehicleIdList:')
+        return(self.ev_list)
+
+    '''
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
         #3S = self.teslaApi.teslaConnect()
@@ -413,9 +283,9 @@ class teslaEVAccess(teslaAccess):
             logging.error('Error getting vehicle list')
             logging.error('Trying to reconnect')
             return(None)
+    '''
 
-
-    def teslaEV_getLatestCloudInfo(self, EVid):
+    '''def teslaEV_getLatestCloudInfo(self, EVid):
             #if self.connectionEstablished:
         logging.debug('teslaEV_getLatestCloudInfo: {}'.format(EVid))
         self.carInfo[EVid] = None
@@ -450,10 +320,17 @@ class teslaEVAccess(teslaAccess):
 
             self.carState = 'Offline'
             return(None)
+    '''
+    def teslaEV_UpdateCloudInfo(self, EVid):
+        logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
+        try:
+            temp = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
+            logging.debug('EV {} info : {} '.format(EVid, temp))
+            self.carInfo[EVid] = self.process_EV_data(temp)
 
-
-
-
+        except Exception as e:
+            logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
+    '''
     def teslaEV_UpdateCloudInfo(self, EVid):
             #if self.connectionEstablished:
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
@@ -566,7 +443,8 @@ class teslaEVAccess(teslaAccess):
                 logging.error('Trying to reconnect')
                 self.carState = 'Offline'
                 return(None)
-
+    '''
+    
     def process_EV_data(self, carData):
         logging.debug('process_EV_data')
         if 'response' in carData:
@@ -584,6 +462,15 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_GetCarState(self, EVid):
         logging.debug('teslaEV_GetCarState: {}'.format(self.carState))
         return(self.carState)
+
+    def teslaEV_GetName(self, EVid):
+        try:
+            return(self.carInfo[EVid]['vehicle_state']['vehicle_name'])
+
+        except:
+            logging.debug('teslaEV_GetName - No EV name found')
+            return(None)
+
 
     def teslaEV_GetInfo(self, EVid):
         logging.debug('teslaEV_GetInfo {}'.format(self.carInfo))
@@ -625,6 +512,10 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_GetDistUnit: {}'.format(self.distUnit))
         return(self.distUnit)
 
+
+    def teslaEV_SetRegion(self, tRegion):
+        logging.debug('teslaEV_SetRegion: {}'.format(tRegion))
+        self.region = tRegion
 
     def teslaEV_GetTimeSinceLastCarUpdate(self, EVid):
         try:
