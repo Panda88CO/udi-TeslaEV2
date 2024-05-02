@@ -40,7 +40,7 @@ class TeslaEVController(udi_interface.Node):
         self.tUnit = 0 #  C = 0, F=1, K=2
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
-        self.Parameters = Custom(polyglot, 'customParams')      
+        self.customParameters = Custom(self.poly, 'customparams')
         self.Notices = Custom(polyglot, 'notices')
 
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
@@ -77,7 +77,11 @@ class TeslaEVController(udi_interface.Node):
         self.nodes_in_db = self.poly.getNodesFromDb()
         self.config_done= True
 
-    
+    def handleLevelChange(self, level):
+        logging.info('New log level: {}'.format(level))
+
+    def handleNotices(self, level):
+        logging.info('handleNotices:')
     def oauthHandler(self, token):
         self.TPW_cloud.oauthHandler(token)
 
@@ -248,10 +252,6 @@ class TeslaEVController(udi_interface.Node):
 
 
 
-
-    def handleLevelChange(self, lev):
-        logging.info('New log level: {}'.format(lev))
-        #logging.setLevel(lev)
 
 
     '''
