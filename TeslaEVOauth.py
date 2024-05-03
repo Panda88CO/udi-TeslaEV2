@@ -249,15 +249,15 @@ class teslaEVAccess(teslaAccess):
         EVs = {}
         logging.debug('tesla_get_products ')
         try:
-            #temp = self._callApi('GET','/products' )
-            temp = self._callApi('GET','/vehicles' )
+            temp = self._callApi('GET','/products' )
+            #temp = self._callApi('GET','/vehicles' )
             logging.debug('products: {} '.format(temp))
             if 'response' in temp:
                 for indx in range(0,len(temp['response'])):
                     site = temp['response'][indx]
-                    if 'vehicle_id' in site:
-                        EVs[str(site['vehicle_id'])] = site
-                        self.ev_list.append(site['vehicle_id'])
+                    if 'vin' in site:
+                        EVs[str(site['vin'])] = site
+                        self.ev_list.append(site['vin'])
             self.evs = EVs
             self.products = temp
             return(EVs)
