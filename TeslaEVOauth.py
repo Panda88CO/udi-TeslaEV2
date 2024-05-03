@@ -255,9 +255,9 @@ class teslaEVAccess(teslaAccess):
             if 'response' in temp:
                 for indx in range(0,len(temp['response'])):
                     site = temp['response'][indx]
-                    if 'vin' in site:
-                        EVs[str(site['vin'])] = site
-                        self.ev_list.append(site['vin'])
+                    if 'vehicle_id' in site:
+                        EVs[str(site['vehicle_id'])] = site
+                        self.ev_list.append(site['vehicle_id'])
             self.evs = EVs
             self.products = temp
             return(EVs)
