@@ -12,7 +12,7 @@ import time
 
 class teslaEV_ChargeNode(udi_interface.Node):
     #from  udiLib import node_queue, wait_for_node_done, mask2key, latch2ISY, cond2ISY, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
-    from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
+    from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
     def __init__(self, polyglot, parent, address, name, id,  TEV):
         super(teslaEV_ChargeNode, self).__init__(polyglot, parent, address, name)
@@ -24,14 +24,24 @@ class teslaEV_ChargeNode(udi_interface.Node):
         self.address = address 
         self.name = name
         self.nodeReady = False
+
+
+
+        self.n_queue = []
+        self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
+        self.poly.subscribe(self.poly.START, self.start, address)
+
+        self.poly.ready()
+        self.poly.addNode(self)
+        self.wait_for_node_done()
         self.node = self.poly.getNode(address)
-        self.poly.subscribe(polyglot.START, self.start, address)
+
         
     def start(self):                
         logging.info('Start Tesla EV charge Node: {}'.format(self.EVid))  
         self.EV_setDriver('ST', 1)
         self.nodeReady = True
-        #self.updateISYdrivers()
+        self.updateISYdrivers()
 
         
 

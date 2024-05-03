@@ -193,18 +193,20 @@ class teslaAccess(udi_interface.OAuth):
 
 
 
-    def authendicated(self):
+    def authenticated(self):
         #self.apiLock.acquire()
-        logging.debug('authendicated : {} {}'.format(self._oauthTokens.get('expiry') != None, self._oauthTokens))
-        while not self._oauthTokens:
-            time.sleep(1)
-            logging.debug('Waiting for system to initialize')
-            #self.poly.Notices['auth'] = 'Please initiate authentication'
-        if 'expiry' not in self._oauthTokens:            
-            self.getAccessToken()
+        logging.debug('authenticated : {} {}'.format(self._oauthTokens.get('expiry') != None, self._oauthTokens))
+        if self._oauthTokens:
+        #    time.sleep(1)
+        #    logging.debug('Waiting for system to initialize')
+        #    self.poly.Notices['auth'] = 'Please initiate authentication'
+            if 'expiry' not in self._oauthTokens:            
+                self.getAccessToken()
             #time.sleep(2)
         #self.apiLock.release()
-        return(self._oauthTokens.get('expiry') != None)
+            return(self._oauthTokens.get('expiry') != None)
+        else:
+            return(False)
         #return('expiry' in self._oauthTokens)
  
 

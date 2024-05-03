@@ -12,9 +12,11 @@ try:
 except ImportError:
     import logging
     logging.basicConfig(level=logging.DEBUG)
+
+               
                
 class teslaEV_StatusNode(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
+    from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
     def __init__(self, polyglot, primary, address, name, id, TEV):
         super(teslaEV_StatusNode, self).__init__(polyglot, primary, address, name)
@@ -30,9 +32,16 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.climateNodeReady = False
         self.chargeNodeReady = False
 
-        self.poly.subscribe(self.poly.START, self.start, address)
+
+        self.n_queue = []
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        
+        self.poly.subscribe(self.poly.START, self.start, address)
+
+        self.poly.ready()
+        self.poly.addNode(self)
+        self.wait_for_node_done()
+        self.node = self.poly.getNode(address)
+
     def start(self):       
         logging.info('Start Tesla EV Status Node for {}'.format(self.EVid)) 
         tmpStr = re.findall('[0-9]+', self.address)
@@ -49,19 +58,19 @@ class teslaEV_StatusNode(udi_interface.Node):
         if not self.poly.getNode(nodeAdr):
             logging.info('Creating ClimateNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr,'EV climate Info',  self.EVid ))
             climateNode = teslaEV_ClimateNode(self.poly, self.address, nodeAdr, 'EV climate Info', self.EVid, self.TEV )
-            self.poly.addNode(climateNode)             
-            self.wait_for_node_done()   
-            self.climateNodeReady =True
-            climateNode.updateISYdrivers()
+            #self.poly.addNode(climateNode)             
+            #self.wait_for_node_done()   
+            #self.climateNodeReady =True
+            #climateNode.updateISYdrivers()
 
         nodeAdr = 'charge'+self.nbrStr
         if not self.poly.getNode(nodeAdr):
             logging.info('Creating ChargingNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr,'EV Charging Info',  self.EVid ))
             chargeNode = teslaEV_ChargeNode(self.poly, self.address, nodeAdr, 'EV Charging Info', self.EVid, self.TEV )
-            self.poly.addNode(chargeNode)             
-            self.wait_for_node_done()   
-            self.chargeNodeReady = True
-            chargeNode.updateISYdrivers()
+            #self.poly.addNode(chargeNode)             
+            #self.wait_for_node_done()   
+            #self.chargeNodeReady = True
+            #chargeNode.updateISYdrivers()
 
     def subnodesReady(self):
         return(self.climateNodeReady and self.chargeNodeReady )

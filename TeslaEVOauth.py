@@ -86,34 +86,34 @@ class teslaEVAccess(teslaAccess):
         # self.getAccessToken()
     
     # The OAuth class needs to be hooked to these 3 handlers
-    def customDataHandler(self, data):
-        logging.debug('customDataHandler called')
+    #def customDataHandler(self, data):
+    #    logging.debug('customDataHandler called')
         #while not self.handleCustomParamsDone:
         #    logging.debug('Waiting for customDataHandler to complete')
         #    time.sleep(1)
-        super().customDataHandler(data)
-        self.customDataHandlerDone = True
-        logging.debug('customDataHandler Finished')
+    #    super().customDataHandler(data)
+    #    self.customDataHandlerDone = True
+    #    logging.debug('customDataHandler Finished')
 
-    def customNsHandler(self, key, data):
-        logging.debug('customNsHandler called')
-        #while not self.customParamsDone():
-        #    logging.debug('Waiting for customNsHandler to complete')
-        #    time.sleep(1)
-        #self.updateOauthConfig()
-        super().customNsHandler(key, data)
-        self.customNsHandlerDone = True
-        logging.debug('customNsHandler Finished')
+    ##def customNsHandler(self, key, data):
+    ##    logging.debug('customNsHandler called')
+    #    #while not self.customParamsDone():
+    #    #    logging.debug('Waiting for customNsHandler to complete')
+    #    #    time.sleep(1)
+    #    #self.updateOauthConfig()
+    #    super().customNsHandler(key, data)
+    #    self.customNsHandlerDone = True
+    #    logging.debug('customNsHandler Finished')
 
-    def oauthHandler(self, token):
-        logging.debug('oauthHandler called')
-        while not (self.customParamsDone() and self.customNsDone()):
-            logging.debug('Waiting for initilization to complete before oAuth')
-            time.sleep(5)
-        #logging.debug('oauth Parameters: {}'.format(self.getOauthSettings()))
-        super().oauthHandler(token)
+    #def oauthHandler(self, token):
+    #    logging.debug('oauthHandler called')
+    #    while not (self.customParamsDone() and self.customNsDone()):
+    #        logging.debug('Waiting for initilization to complete before oAuth')
+    #        time.sleep(5)
+    #    #logging.debug('oauth Parameters: {}'.format(self.getOauthSettings()))
+    #    super().oauthHandler(token)
         #self.customOauthHandlerDone = True
-        logging.debug('oauthHandler Finished')
+    #    logging.debug('oauthHandler Finished')
 
     def customNsDone(self):
         return(self.customNsHandlerDone)
@@ -245,23 +245,46 @@ class teslaEVAccess(teslaAccess):
     ############################################
 
     def tesla_get_products(self) -> dict:
-        products= {}
-
+        self.products= {}
+        EVs = {}
         logging.debug('tesla_get_products ')
         try:
             temp = self._callApi('GET','/products' )
+            #temp = self._callApi('GET','/vehicles' )
+            logging.debug('products: {} '.format(temp))
+            if 'response' in temp:
+                for indx in range(0,len(temp['response'])):
+                    site = temp['response'][indx]
+                    if 'vin' in site:
+                        EVs[str(site['vin'])] = site
+                        self.ev_list.append(site['vin'])
+            self.evs = EVs
+            self.products = temp
+            return(EVs)
+        except Exception as e:
+            logging.error('tesla_get_products Exception : {}'.format(e))
+    
+
+    '''def tesla_get_products(self) -> dict:
+        self.products= {}
+        EVs = {}
+        logging.debug('tesla_get_products ')
+        try:
+            temp = self._callApi('GET','/vehicles' )
             logging.debug('products: {} '.format(temp))
             if 'response' in temp:
                 for indx in range(0,len(temp['response'])):
                     site = temp['response'][indx]
                     if 'vehicle_id' in site:
-                        products[str(site['id'])] = site
+                        EVs[str(site['id'])] = site
                         self.ev_list.append(site['id'])
-            self.evs = products
-
-            return(products)
+            self.evs = EVs
+            self.products = temp
+            return(EVs)
         except Exception as e:
             logging.error('tesla_get_products Exception : {}'.format(e))
+    '''
+
 
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
