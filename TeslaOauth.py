@@ -258,7 +258,7 @@ class teslaAccess(udi_interface.OAuth):
                 response = requests.post(completeUrl, headers=headers, json=body)
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
-
+            logging.debug('API response: {}'.format(response))
             response.raise_for_status()
             #self.apiLock.release()
             

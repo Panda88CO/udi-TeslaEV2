@@ -255,9 +255,9 @@ class teslaEVAccess(teslaAccess):
             if 'response' in temp:
                 for indx in range(0,len(temp['response'])):
                     site = temp['response'][indx]
-                    if 'vin' in site:
-                        EVs[str(site['vin'])] = site
-                        self.ev_list.append(site['vin'])
+                    if 'id' in site:
+                        EVs[str(site['id'])] = site
+                        self.ev_list.append(site['id'])
             self.evs = EVs
             self.products = temp
             return(EVs)
@@ -347,9 +347,20 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
-            temp = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
-            logging.debug('EV {} info : {} '.format(EVid, temp))
-            self.carInfo[EVid] = self.process_EV_data(temp)
+            res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
+            logging.debug('EV {} info : {} '.format(EVid, res))
+            if res is None:
+                wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                logging.debug('Wake_up result : {}'.format(wu_res))
+                if 'state' in wu_res:
+                    while wu_res['state'] == 'asleep' or wu_res['state'] == None:
+                        time.sleep(5)
+                        wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                else:
+                    return(None)
+            res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
+            logging.debug('EV {} info : {} '.format(EVid, res))                                
+            self.carInfo[EVid] = self.process_EV_data(res)
 
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
