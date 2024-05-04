@@ -352,8 +352,15 @@ class teslaEVAccess(teslaAccess):
             if res is None:
                 wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
                 logging.debug('Wake_up result : {}'.format(wu_res))
-            else:    
-                self.carInfo[EVid] = self.process_EV_data(res)
+                if 'state' in wu_res:
+                    while wu_res['state'] == 'asleep' or wu_res['state'] == None:
+                        time.sleep(5)
+                        wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                else:
+                    return(None)
+            res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
+            logging.debug('EV {} info : {} '.format(EVid, res))                                
+            self.carInfo[EVid] = self.process_EV_data(res)
 
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
