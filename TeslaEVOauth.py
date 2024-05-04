@@ -347,9 +347,13 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
-            temp = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
-            logging.debug('EV {} info : {} '.format(EVid, temp))
-            self.carInfo[EVid] = self.process_EV_data(temp)
+            res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
+            logging.debug('EV {} info : {} '.format(EVid, res))
+            if res is None:
+                wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                logging.debug('Wake_up result : {}'.format(wu_res))
+            else:    
+                self.carInfo[EVid] = self.process_EV_data(res)
 
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
