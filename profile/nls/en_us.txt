@@ -10,15 +10,15 @@ ST-nlscontroller-GV1-NAME = Number of EVs
 ST-nlscontroller-GV2-NAME = Distance Unit
 D_UNIT-0 = Km
 D_UNIT-1 = Miles
-
+ST-nlscontroller-GV3-NAME = Temperature Unit
 T_UNIT-0 = Celcius
 T_UNIT-1 = Farenheit
-T_UNIT-2 = Kelvin
+
 
 
 ND-evstatus-NAME = EV Status
 ND-evstatus-ICON = EnergyMonitor
-ST-evstatus-ST-NAME = Controller Connected
+ST-nlsevstatus-ST-NAME = Controller Connected
 ST-nlsevstatus-GV1-NAME = Console Display State
 CONSOLE-0 = Off
 CONSOLE-1 = TBD
