@@ -14,12 +14,12 @@ class teslaEV_ChargeNode(udi_interface.Node):
     #from  udiLib import node_queue, wait_for_node_done, mask2key, latch2ISY, cond2ISY, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
     from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
-    def __init__(self, polyglot, parent, address, name, id,  TEV):
+    def __init__(self, polyglot, parent, address, name, evid,  TEV):
         super(teslaEV_ChargeNode, self).__init__(polyglot, parent, address, name)
         logging.info('_init_ Tesla Charge Node')
         self.poly = polyglot
         self.ISYforced = False
-        self.EVid = id
+        self.EVid = evid
         self.TEV = TEV
         self.address = address 
         self.name = name
@@ -32,10 +32,10 @@ class teslaEV_ChargeNode(udi_interface.Node):
         self.poly.subscribe(self.poly.START, self.start, address)
 
         self.poly.ready()
-        self.poly.addNode(self)
+        self.poly.addNode(self, conn_status = None, rename = True)
         self.wait_for_node_done()
         self.node = self.poly.getNode(address)
-
+        logging.info('_init_ Tesla Charge Node COMPLETE')
         
     def start(self):                
         logging.info('Start Tesla EV charge Node: {}'.format(self.EVid))  

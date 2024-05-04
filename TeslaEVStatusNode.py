@@ -18,13 +18,13 @@ except ImportError:
 class teslaEV_StatusNode(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
-    def __init__(self, polyglot, primary, address, name, id, TEV):
+    def __init__(self, polyglot, primary, address, name, evid, TEV):
         super(teslaEV_StatusNode, self).__init__(polyglot, primary, address, name)
         logging.info('_init_ Tesla EV  Status Node')
         self.poly = polyglot
         self.n_queue = []
         self.ISYforced = False
-        self.EVid = id
+        self.EVid = evid
         self.TEV = TEV
         self.primary = primary
         self.address = address
@@ -32,16 +32,16 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.statusNodeReady = False
         self.climateNodeReady = False
         self.chargeNodeReady = False
-
-
         self.n_queue = []
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.poly.subscribe(self.poly.START, self.start, address)
 
         self.poly.ready()
-        self.poly.addNode(self)
+        self.poly.addNode(self, conn_status = None, rename = True)
         self.wait_for_node_done()
         self.node = self.poly.getNode(address)
+        logging.info('_init_ Tesla EV  Status Node COMLETE')
+
 
     def start(self):       
         logging.info('Start Tesla EV Status Node for {}'.format(self.EVid)) 

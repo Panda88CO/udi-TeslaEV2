@@ -186,7 +186,7 @@ class TeslaEVController(udi_interface.Node):
 
             if not self.poly.getNode(nodeAdr):
                 logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
-                self.TEV.teslaEV_UpdateCloudInfo(EvId)
+                #self.TEV.teslaEV_UpdateCloudInfo(EvId)
                 teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEV)                  
                 #self.wait_for_node_done()     
                 #self.statusNodeReady = True
