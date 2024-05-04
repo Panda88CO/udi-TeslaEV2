@@ -57,7 +57,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         nodeAdr = 'climate'+self.nbrStr
         if not self.poly.getNode(nodeAdr):
             logging.info('Creating ClimateNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr,'EV climate Info',  self.EVid ))
-            climateNode = teslaEV_ClimateNode(self.poly, self.address, nodeAdr, 'EV climate Info', self.EVid, self.TEV )
+            teslaEV_ClimateNode(self.poly, self.address, nodeAdr, 'EV climate Info', self.EVid, self.TEV )
             #self.poly.addNode(climateNode)             
             #self.wait_for_node_done()   
             #self.climateNodeReady =True
@@ -66,7 +66,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         nodeAdr = 'charge'+self.nbrStr
         if not self.poly.getNode(nodeAdr):
             logging.info('Creating ChargingNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr,'EV Charging Info',  self.EVid ))
-            chargeNode = teslaEV_ChargeNode(self.poly, self.address, nodeAdr, 'EV Charging Info', self.EVid, self.TEV )
+            teslaEV_ChargeNode(self.poly, self.address, nodeAdr, 'EV Charging Info', self.EVid, self.TEV )
             #self.poly.addNode(chargeNode)             
             #self.wait_for_node_done()   
             #self.chargeNodeReady = True
