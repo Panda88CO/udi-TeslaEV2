@@ -255,9 +255,9 @@ class teslaEVAccess(teslaAccess):
             if 'response' in temp:
                 for indx in range(0,len(temp['response'])):
                     site = temp['response'][indx]
-                    if 'id' in site:
-                        EVs[str(site['id'])] = site
-                        self.ev_list.append(site['id'])
+                    if 'vehicle_id' in site:
+                        EVs[str(site['vehicle_id'])] = site
+                        self.ev_list.append(site['ivehicle_idd'])
             self.evs = EVs
             self.products = temp
             return(EVs)
@@ -356,9 +356,12 @@ class teslaEVAccess(teslaAccess):
                 logging.debug('Wake_up result : {}'.format(wu_res))
 
                 if 'state' in wu_res:
+                    logging.debug('Wak-up state: {}'.format( wu_res['state'] ))
                     while wu_res['state'] == 'asleep' or wu_res['state'] == None:
                         time.sleep(5)
                         wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                        if 'response' in wu_res:
+                            wu_res = wu_res['response']
                 else:
                     return(None)
                 res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
