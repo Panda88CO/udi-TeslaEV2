@@ -310,7 +310,7 @@ class TeslaEVController(udi_interface.Node):
         if self.TEV.authenticated():
             for vehicle in range(0,len(self.vehicleList)):                
                 try:
-                    self.TEV.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
+                    self.TEV.teslaEV_UpdateCloudInfoAwake(self.vehicleList[vehicle])
                     nodes = self.poly.getNodes()
                     for node in nodes:
                         #if node != 'controller'    

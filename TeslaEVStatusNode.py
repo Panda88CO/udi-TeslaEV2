@@ -104,6 +104,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             #self.TEV.teslaEV_GetInfo(self.EVid)
             temp = {}
             logging.debug('StatusNode updateISYdrivers {}'.format(self.TEV.teslaEV_GetStatusInfo(self.EVid)))
+
             self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid))
             self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)))
             self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid))
@@ -127,7 +128,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV7', temp['FrontRight'])
             self.EV_setDriver('GV8', temp['RearLeft'])
             self.EV_setDriver('GV9', temp['RearRight'])
-            self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
+            #self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
             #elif self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
             #    logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofState(self.EVid)))
             #    self.EV_setDriver('GV10', self.openClose2ISY(self.TEV.teslaEV_GetSunRoofState(self.EVid)), True, True, 25)
@@ -274,7 +275,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
 
     drivers = [
-            {'driver': 'ST', 'value': 0, 'uom': 2},
+            #{'driver': 'ST', 'value': 0, 'uom': 2},
             
             {'driver': 'GV1', 'value': 99, 'uom': 25},  #center_display_state
             {'driver': 'GV2', 'value': 99, 'uom': 25},  # Homelink Nearby
@@ -286,7 +287,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             {'driver': 'GV7', 'value': 99, 'uom': 25},  #fp_window
             {'driver': 'GV8', 'value': 99, 'uom': 25},  #rd_window
             {'driver': 'GV9', 'value': 99, 'uom': 25},  #rp_window
-            {'driver': 'GV10', 'value': 0, 'uom': 51}, #sun_roof_percent_open
+            #{'driver': 'GV10', 'value': 0, 'uom': 51}, #sun_roof_percent_open
             {'driver': 'GV11', 'value': 0, 'uom': 25}, #trunk
             {'driver': 'GV12', 'value': 0, 'uom': 25}, #frunk
             {'driver': 'GV13', 'value': 99, 'uom': 25}, #car State

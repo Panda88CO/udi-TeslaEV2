@@ -56,7 +56,7 @@ def bool2Nbr(self, bool):
     elif bool == False:
         return(0)
     else:
-        return(None)
+        return(99)
     
 def round2ISY(self,nbr, res):
     if isinstance(nbr, numbers.Number):
@@ -65,7 +65,9 @@ def round2ISY(self,nbr, res):
         return(None)
 
 def bool2ISY (self, data):
-    if data:
+    if data == None:
+        return(99)
+    elif data:
         return(1)
     else:
         return(0)
@@ -119,7 +121,7 @@ def state2ISY(self, state):
         return(0)
     elif state.lower() == 'online':
         return(1)
-    elif state.lower() == 'sleeping':
+    elif state.lower() == 'asleep':
         return(2) 
     elif state.lower() == 'unknown':
         return(99)
@@ -159,6 +161,23 @@ def latch2ISY(self, state):
     else:
         return(99)
 
+def chargeState2ISY(self, state):
+    stateL = state.lower()
+    if stateL == 'disconnected':
+        return(0)
+    elif stateL == 'nopower':
+        return(1)          
+    elif stateL == 'starting':
+        return(2)
+    elif stateL == 'charging':
+        return(3)
+    elif stateL == 'stopped':
+        return(4)
+    elif stateL == 'complete':
+        return(5)
+    else:
+        return(99)  
+
 def period2ISY(self, period):
     logging.debug('period2ISY {}'.format(period))
     if period.upper() == 'OFF_PEAK':
@@ -196,7 +215,7 @@ def setDriverTemp(self, Id, value):
     elif self.TEV.teslaEV_GetTempUnit()  == 1:
         self.ev_setDriver(Id, round(32+ 1.8*value, 0),17)
     else:
-        self.ev_setDriver(Id, round(round(2*(value+273.15),0)/2,1),26)
+        return (None)
 
 def send_rel_temp_to_isy(self, temperature, stateVar):
     logging.debug('convert_temp_to_isy - {}'.format(temperature))

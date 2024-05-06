@@ -12,7 +12,7 @@ import time
 
 class teslaEV_ChargeNode(udi_interface.Node):
     #from  udiLib import node_queue, wait_for_node_done, mask2key, latch2ISY, cond2ISY, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
-    from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
+    from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust, chargeState2ISY, setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
     def __init__(self, polyglot, parent, address, name, evid,  TEV):
         super(teslaEV_ChargeNode, self).__init__(polyglot, parent, address, name)
@@ -98,7 +98,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
                 self.EV_setDriver('GV5', 99, 25)
             
             #logging.debug('GV6: {}'.format(self.TEV.teslaEV_ChargeState(self.EVid)))   
-            self.EV_setDriver('GV6',self.state2ISY(self.TEV.teslaEV_ChargeState(self.EVid)), 25)
+            self.EV_setDriver('GV6',self.chargeState2ISY(self.TEV.teslaEV_ChargeState(self.EVid)), 25)
  
             #logging.debug('GV7: {}'.format(self.TEV.teslaEV_ChargingRequested(self.EVid)))
             self.EV_setDriver('GV7', self.cond2ISY(self.TEV.teslaEV_ChargingRequested(self.EVid)))

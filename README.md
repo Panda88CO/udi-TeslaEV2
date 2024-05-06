@@ -20,6 +20,12 @@ Note, there are limitations emposed by the API:
 Commands limits	50 API requests / car / day
 Wake limits	5 API requests / car / hour.
 
+ShortPoll 
+    Polls data from car if it is awake - does nothing if car is asleep
+
+LongPoll
+    Polls data from car. If it is asleep it will wake the csara and retrieve data
+
 ## Notes 
 If additional fields for control or display is desired contact author @ https://github.com/Panda88CO/udi-TeslaEV
 Tesla is changing the log in procedures at times so code may needs to be updated in case they change the login requirement

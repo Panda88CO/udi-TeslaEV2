@@ -23,7 +23,7 @@
    <nodeDef id="evstatus" nls="nlsevstatus">
       <editors />
       <sts>
-         <st id="ST" editor="NODE_ST" />
+         <!--<st id="ST" editor="NODE_ST" />-->
          <st id="GV1" editor="CONSOLE" />
          <st id="GV2" editor="BOOLSTATE" />
          <st id="GV0" editor="NUMBER" />
@@ -34,7 +34,7 @@
          <st id="GV7" editor="WINDOW" />
          <st id="GV8" editor="WINDOW" />
          <st id="GV9" editor="WINDOW" />
-         <st id="GV10" editor="PERCENT" />
+         <!--<st id="GV10" editor="PERCENT" />-->
          <st id="GV11" editor="OPENCLOSE" />
          <st id="GV12" editor="OPENCLOSE" />
          <st id="GV13" editor="CARSTATE" />
@@ -68,7 +68,7 @@
    <nodeDef id="evclimate" nls="nlsevclimate">
       <editors />
       <sts>
-         <st id="ST" editor="NODE_ST" />
+         <!--<st id="ST" editor="NODE_ST" />-->
          <st id="GV1" editor="TEMP" />
          <st id="GV2" editor="TEMP" />
          <st id="GV3" editor="TEMP" />
