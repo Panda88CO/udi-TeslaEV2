@@ -46,7 +46,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def start(self):       
         logging.info('Start Tesla EV Status Node for {}'.format(self.EVid)) 
 
-        self.EV_setDriver('ST', 1)
+        #self.EV_setDriver('ST', 1)
         #self.forceUpdateISYdrivers()
         self.createSubNodes()
         self.updateISYdrivers()
@@ -220,12 +220,12 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.TEV.teslaEV_SunRoof(self.EVid, 'close')            
         else:
             logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl))         
-        if self.TEV.teslaEV_GetSunRoofPercent(self.EVid) != None:
-            logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofPercent(self.EVid)))
-            self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
-        elif self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
-            logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofState(self.EVid)))
-            self.EV_setDriver('GV10', self.openClose2ISY(self.TEV.teslaEV_GetSunRoofState(self.EVid)), 25)
+        #if self.TEV.teslaEV_GetSunRoofPercent(self.EVid) != None:
+            #logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofPercent(self.EVid)))
+            #self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
+        #elif self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
+            #logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofState(self.EVid)))
+            #self.EV_setDriver('GV10', self.openClose2ISY(self.TEV.teslaEV_GetSunRoofState(self.EVid)), 25)
 
         self.forceUpdateISYdrivers()
 
@@ -293,9 +293,9 @@ class teslaEV_StatusNode(udi_interface.Node):
             {'driver': 'GV13', 'value': 99, 'uom': 25}, #car State
             #{'driver': 'GV16', 'value': 99, 'uom': 25}, #longitude
             {'driver': 'GV17', 'value': 99, 'uom': 25}, #longitude
-            {'driver': 'GV18', 'value': 99, 'uom': 25}, #latitude   
-            {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours           
-            {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update hours                        
+            {'driver': 'GV18', 'value': 99, 'uom': 25}, #latitude
+            {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours
+            {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update hours
             ]
 
 

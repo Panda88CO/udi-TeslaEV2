@@ -134,7 +134,7 @@
    <nodeDef id="evcharge" nls="nlsevcharge">
       <editors />
       <sts>
-         <st id="ST" editor="NODE_ST" />
+         <!--<st id="ST" editor="NODE_ST" />-->
          <st id="GV1" editor="PRESENT" />
          <st id="GV2" editor="OPENCLOSE" />
          <st id="GV3" editor="CPLSTATE" />

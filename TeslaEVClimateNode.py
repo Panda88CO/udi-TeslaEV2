@@ -36,7 +36,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     def start(self):                
         logging.debug('Start TeslaEV Climate Node')  
-        self.EV_setDriver('ST', 1)
+        #self.EV_setDriver('ST', 1)
         self.nodeReady = True
         self.updateISYdrivers()
         #self.tempUnit = self.TEV.teslaEV_GetTempUnit()

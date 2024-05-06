@@ -39,7 +39,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
         
     def start(self):                
         logging.info('Start Tesla EV charge Node: {}'.format(self.EVid))  
-        self.EV_setDriver('ST', 1)
+        #self.EV_setDriver('ST', 1)
         self.nodeReady = True
         self.updateISYdrivers()
 
@@ -215,7 +215,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
                 }
 
     drivers = [
-            {'driver': 'ST', 'value': 0, 'uom': 2},
+            #{'driver': 'ST', 'value': 0, 'uom': 2},
             {'driver': 'GV1', 'value': 0, 'uom': 25},  #fast_charger_present
             {'driver': 'GV2', 'value': 0, 'uom': 25},  #charge_port_door_open
             {'driver': 'GV3', 'value': 0, 'uom': 25},  #charge_port_latch
