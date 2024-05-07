@@ -190,7 +190,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             logging.error('Wrong command for evDefrostMax: {}'.format(defrost)) 
 
         #self.forceUpdateISYdrivers()
-
+#################
     def evSetCabinTemp (self, command):
         logging.info('evSetCabinTemp called') 
         cabinTemp = float(command.get('value'))  
@@ -205,40 +205,14 @@ class teslaEV_ClimateNode(udi_interface.Node):
         #self.setDriverTemp('GV3', self.TEV.teslaEV_GetLeftTemp(self.EVid))
         #self.setDriverTemp('GV4', self.TEV.teslaEV_GetRightTemp(self.EVid))
 
-    def evSetSeat0Heat (self, command):
-        logging.info('evSetSeat0Heat called')
-
-        seatTemp = int(float(command.get('value')))  
-        #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_SetSeatHeating(self.EVid, 0, seatTemp)
-        temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
-
-        self.forceUpdateISYdrivers()
-        #self.EV_setDriver('GV5', self.cond2ISY(temp['FrontLeft']))
-        #self.EV_setDriver('GV6', self.cond2ISY(temp['FrontRight']))
-        #self.EV_setDriver('GV7', self.cond2ISY(temp['RearLeft']))
-        #self.EV_setDriver('GV8', self.cond2ISY(temp['RearMiddle']))
-        #self.EV_setDriver('GV9', self.cond2ISY(temp['RearRight']))
-
-    def evSetSeat1Heat (self, command):
-        logging.info('evSetSeat1Heat called')
-  
-        seatTemp = int(float(command.get('value')))  
-        #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_SetSeatHeating(self.EVid, 1, seatTemp)
-        temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
-
-        self.forceUpdateISYdrivers()
-        #self.EV_setDriver('GV5', self.cond2ISY(temp['FrontLeft']))
-        #self.EV_setDriver('GV6', self.cond2ISY(temp['FrontRight']))
-        #self.EV_setDriver('GV7', self.cond2ISY(temp['RearLeft']))
-        #self.EV_setDriver('GV8', self.cond2ISY(temp['RearMiddle']))
-        #self.EV_setDriver('GV9', self.cond2ISY(temp['RearRight']))
-
-    def evSetSeat2Heat (self, command):
+################
+    def evSetSeatHeat (self, command):
         logging.info('evSetSea2tHeat called')
 
         seatTemp = int(float(command.get('value')))
+        query = command.get("query")
+        imp_mode = int(query.get("import.uom25"))
+        exp_mode = int(query.get("export.uom25"))
         #self.TEV.teslaEV_Wake(self.EVid)  
         self.TEV.teslaEV_SetSeatHeating(self.EVid, 2, seatTemp)
         temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
@@ -250,34 +224,6 @@ class teslaEV_ClimateNode(udi_interface.Node):
         #self.EV_setDriver('GV8', self.cond2ISY(temp['RearMiddle']))
         #self.EV_setDriver('GV9', self.cond2ISY(temp['RearRight']))
 
-    def evSetSeat4Heat (self, command):
-        logging.info('evSetSeat4Heat called')
-
-        seatTemp = int(float(command.get('value')))  
-        #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_SetSeatHeating(self.EVid, 4, seatTemp)
-        temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
- 
-        self.forceUpdateISYdrivers()
-        #self.EV_setDriver('GV5', self.cond2ISY(temp['FrontLeft']))
-        #self.EV_setDriver('GV6', self.cond2ISY(temp['FrontRight']))
-        #self.EV_setDriver('GV7', self.cond2ISY(temp['RearLeft']))
-        #self.EV_setDriver('GV8', self.cond2ISY(temp['RearMiddle']))
-        #self.EV_setDriver('GV9', self.cond2ISY(temp['RearRight']))
-
-    def evSetSeat5Heat (self, command):
-        logging.info('evSetSeat5Heat called') 
-        seatTemp = int(float(command.get('value'))) 
-        #self.TEV.teslaEV_Wake(self.EVid) 
-        self.TEV.teslaEV_SetSeatHeating(self.EVid, 5, seatTemp)
-        temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
-
-        self.forceUpdateISYdrivers()
-        #self.EV_setDriver('GV5', self.cond2ISY(temp['FrontLeft']))
-        #self.EV_setDriver('GV6', self.cond2ISY(temp['FrontRight']))
-        #self.EV_setDriver('GV7', self.cond2ISY(temp['RearLeft']))
-        #self.EV_setDriver('GV8', self.cond2ISY(temp['RearMiddle']))
-        #self.EV_setDriver('GV9', self.cond2ISY(temp['RearRight']))
 
 
     def evSteeringWheelHeat (self, command):
@@ -311,11 +257,8 @@ class teslaEV_ClimateNode(udi_interface.Node):
                  'AUTOCON' : evAutoCondition,
                  'CABINTEMP' : evSetCabinTemp,
                  'DEFROST' : evDefrostMax,            
-                 'SEAT1' :evSetSeat0Heat,
-                 'SEAT2' :evSetSeat1Heat,
-                 'SEAT3' :evSetSeat2Heat,
-                 'SEAT4' :evSetSeat4Heat,
-                 'SEAT5' :evSetSeat5Heat,
+                 'SEATs' :evSetSeatHeat,
+
                  'STEERINGW' : evSteeringWheelHeat,   
 
                 }

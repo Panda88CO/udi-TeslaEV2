@@ -138,6 +138,8 @@ WINDOWCTRL-1 = Vent
 CMD-nlsevclimate-AUTOCON-NAME = Precondition Control
 
 CMD-nlsevclimate-CABINTEMP-NAME = Cabin Temperature
+CMDP-driver-NAME = Driver side Temp
+CMDP-passenger-NAME = Passenger side Temp
 CMD-nlsevclimate-DEFROST-NAME = Max defrosting
 DEFROST-0 = Disabled
 DEFROST-1 = Enabled

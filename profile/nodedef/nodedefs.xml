@@ -105,7 +105,7 @@
                   <p id="" editor="AUTOCONCTRL" init="GV10" /> 
             </cmd >            
             <cmd id="CABINTEMP" >
-                  <p id="driverr" editor="CABINTEMP" init="GV3" />
+                  <p id="driver" editor="CABINTEMP" init="GV3" />
                   <p id="passenger" editor="CABINTEMP" init="GV4" /> 
             </cmd>            
   
@@ -113,20 +113,12 @@
                   <p id="" editor="DEFROST" init="GV1" /> 
             </cmd >                    
 
-            <cmd id="SEAT1" > 
-                  <p id="" editor="HEAT" init="GV5" /> 
-            </cmd >            
-            <cmd id="SEAT2" > 
-                  <p id="" editor="HEAT" init="GV6" /> 
-            </cmd>            
-            <cmd id="SEAT3" >
-                  <p id="" editor="HEAT" init="GV7" /> 
-            </cmd >            
-            <cmd id="SEAT4" > 
-                  <p id="" editor="HEAT" init="GV8" /> 
-            </cmd>            
-            <cmd id="SEAT5" > 
-                  <p id="" editor="HEAT" init="GV9" /> 
+            <cmd id="SEATSs" > 
+                  <p id="fl" editor="HEAT" init="GV5" /> 
+                  <p id="fr" editor="HEAT" init="GV6" /> 
+                  <p id="rl" editor="HEAT" init="GV7" /> 
+                  <p id="rm" editor="HEAT" init="GV8" /> 
+                  <p id="rr" editor="HEAT" init="GV9" /> 
             </cmd >            
             <cmd id="STEERINGW" > 
                   <p id="" editor="STEERINGW" init="GV1" /> 
