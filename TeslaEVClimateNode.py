@@ -184,7 +184,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if self.TEV.teslaEV_DefrostMax(self.EVid, 'on'):
                 self.EV_setDriver('GV11', 2)
         elif defrost == 0:
-            if self.TEV.teslaEV_DefrostMax(self.EVid, 'off')            
+            if self.TEV.teslaEV_DefrostMax(self.EVid, 'off'):
                 self.EV_setDriver('GV11', self.TEVteslaEV_PreConditioningEnabled(self.EVid))
         else:
             logging.error('Wrong command for evDefrostMax: {}'.format(defrost)) 
@@ -193,11 +193,20 @@ class teslaEV_ClimateNode(udi_interface.Node):
 #################
     def evSetCabinTemp (self, command):
         logging.info('evSetCabinTemp called') 
-        cabinTemp = float(command.get('value'))  
-        #self.TEV.teslaEV_Wake(self.EVid)
-        if self.TEV.teslaEV_GetTempUnit() == 1:
-            cabinTemp = round((cabinTemp-32)/1.8,2) # Must be set in C
-        self.TEV.teslaEV_SetCabinTemps(self.EVid, cabinTemp):
+        cabinTemp = float(command.get('value'))
+        query = command.get("query")
+        if 'driver.uom4' in query:
+            driverTempC    = int(query.get('driver.uom4'))
+        elif 'driver.uom17' in query:
+            driverTempC    = int((query.get('driver.uom17')-32)*5/9)
+        if 'passenger.uom4' in query:
+            passengerTempC = int(query.get('passenger.uom4'))  
+        elif 'passenger.uom17' in query:
+            passengerTempC    = int((query.get('passenger.uom17')-32)*5/9)
+
+        if self.TEV.teslaEV_SetCabinTemps(self.EVid, driverTempC, passengerTempC):
+            self.setDriverTemp(self.EVid, 'GV3', driverTempC )
+            self.setDriverTemp(self.EVid, 'GV4', passengerTempC )
     
         #temp = self.TEV.tesleEV_GetCabinTemp(self.EVid)
 
@@ -217,7 +226,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         self.TEV.teslaEV_SetSeatHeating(self.EVid, 2, seatTemp)
         temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
 
-        self.forceUpdateISYdrivers()
+        #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV5', self.cond2ISY(temp['FrontLeft']))
         #self.EV_setDriver('GV6', self.cond2ISY(temp['FrontRight']))
         #self.EV_setDriver('GV7', self.cond2ISY(temp['RearLeft']))

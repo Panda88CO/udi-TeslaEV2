@@ -391,8 +391,8 @@ class teslaEVAccess(teslaAccess):
         self.tempUnit = tUnit
 
     def teslaEV_GetTempUnit(self):
-        logging.debug('teslaEV_GetDistUnit: {}'.format(self.distUnit))
-        return(self.distUnit)
+        logging.debug('teslaEV_GetDistUnit: {}'.format(self.tempUnit))
+        return(self.tempUnit)
 
 
     def teslaEV_SetRegion(self, tRegion):
@@ -993,14 +993,14 @@ class teslaEVAccess(teslaAccess):
             return(False)
 
 
-    def teslaEV_SetCabinTemps(self, EVid, tempC):
+    def teslaEV_SetCabinTemps(self, EVid, driverTempC, passergerTempC):
         logging.debug('teslaEV_AutoCondition {} for {}'.format(tempC, EVid))
         
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {'driver_temp' : float(tempC), 'passenger_temp':float(tempC) }      
+            payload = {'driver_temp' : int(driverTempC), 'passenger_temp':int(passergerTempC) }      
             temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/set_temps', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
@@ -1040,7 +1040,7 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_SetSeatHeating (self, EVid, seat, levelHeat):
         logging.debug('teslaEV_SetSeatHeating {}, {} for {}'.format(levelHeat, seat, EVid))
-        seats = [0,1, 2, 4, 5 ] 
+        seats = [0, 1, 2, 4, 5 ] 
         rearSeats =  [2, 4, 5 ] 
         if int(levelHeat) > 3 or int(levelHeat) < 0:
             logging.error('Invalid seat heat level passed (0-3) : {}'.format(levelHeat))
