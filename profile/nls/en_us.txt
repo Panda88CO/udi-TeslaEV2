@@ -41,7 +41,7 @@ NUMBER-99 = Unknown
 BOOLSTATE-0 = False
 BOOLSTATE-1 = True
 BOOLSTATE-99 = Unknown
-ST-nlsevstatus-GV3-NAME = EV Locked
+ST-nlsevstatus-GV3-NAME = EV Door State
 ST-nlsevstatus-GV4-NAME = Odometer 
 ST-nlsevstatus-GV5-NAME = EV Online
 ST-nlsevstatus-GV6-NAME = Front Driver Window
@@ -79,13 +79,16 @@ CMD-nlsevstatus-FLASHLIGHT-NAME = Flash Lights
 CMD-nlsevstatus-DOORS-NAME = Control Doors
 LOCKUNLOCK-0 = Lock Doors
 LOCKUNLOCK-1 = Unlock Doors
+LOCKUNLOCK-99 = Unknown 
 CMD-nlsevstatus-SUNROOF-NAME = Sunroof Control
 SUNROOFCTRL-0 = Close
 SUNROOFCTRL-1 = Vent
 CMD-nlsevstatus-TRUNK-NAME = Actuate Trunk
 CMD-nlsevstatus-FRUNK-NAME = Actuate Frunk
 CMD-nlsevstatus-HOMELINK-NAME = Toggle HomeLink
-
+CMD-nlsevstatus-PLAYSOUND-NAME = Play Sounds
+SOUNDS-0 = Random Fart
+SOUNDS-2000 = Locate Ping
 
 
 
@@ -110,7 +113,7 @@ HEAT_LVL-0 = Off
 HEAT_LVL-1 = Low Heat
 HEAT_LVL-2 = Medium Heat
 HEAT_LVL-3 = Maximum Heat
-HEAT_LVL-99 = Unknown
+HEAT_LVL-99 = Unknown/Not installed
 ST-nlsevclimate-GV10-NAME = Auto Conditioning
 ST-nlsevclimate-GV11-NAME = Cabin Preconditioning
 PREC_STATUS-0 = Disabled

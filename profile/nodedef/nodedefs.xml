@@ -27,14 +27,14 @@
          <st id="GV1" editor="CONSOLE" />
          <st id="GV2" editor="BOOLSTATE" />
          <st id="GV0" editor="NUMBER" />
-         <st id="GV3" editor="BOOLSTATE" />
+         <st id="GV3" editor="LOCKUNLOCK" />
          <st id="GV4" editor="ODOMETER" />
          <st id="GV5" editor="BOOLSTATE" />
          <st id="GV6" editor="WINDOW" />
          <st id="GV7" editor="WINDOW" />
          <st id="GV8" editor="WINDOW" />
          <st id="GV9" editor="WINDOW" />
-         <!--<st id="GV10" editor="PERCENT" />-->
+         <st id="GV10" editor="PERCENT" />
          <st id="GV11" editor="OPENCLOSE" />
          <st id="GV12" editor="OPENCLOSE" />
          <st id="GV13" editor="CARSTATE" />
@@ -61,6 +61,9 @@
             <cmd id="TRUNK" /> 
             <cmd id="FRUNK" /> 
             <cmd id="HOMELINK" /> 
+            <cmd id="PLAYSOUND" > 
+               <p id="" editor="SOUNDS" init=0 /> 
+            </cmd >
          </accepts>
       </cmds>
    </nodeDef> 
@@ -82,7 +85,7 @@
          <st id="GV11" editor="PREC_STATUS" />
          <st id="GV12" editor="TEMP" />
          <st id="GV13" editor="TEMP" />
-         <st id="GV14" editor="ONOFF" />
+         <st id="GV14" editor="HEAT_LVL" />
 
          <st id="GV19" editor="DURATION_H" />
          <st id="GV20" editor="DURATION_H" />   

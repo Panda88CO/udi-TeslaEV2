@@ -9,6 +9,7 @@
 
   <editor id = "DURATION_H" > 
      <range  uom="20"  min="0" max="1000" prec="2" />
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor> 
 
   <editor id = "NBREVS" > 
@@ -32,14 +33,20 @@
      <range  uom="25" subset="0-1,99" nls="BOOLSTATE"/>
   </editor> 
   
+ <editor id = "BOOLOCKLSTATE" > 
+     <range  uom="25" subset="0-1,99" nls="LOCKSTATE"/>
+  </editor> 
+
   <editor id = "ODOMETER" > 
       <range  uom="83" min="0" max="999999" prec="1" />
       <range  uom="116" min="0" max="999999" prec="1" />
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor>
   
    <editor id = "DISTANCE" > 
       <range  uom="83" min="0" max="800" prec="0" />
       <range  uom="116" min="0" max="500" prec="0" />
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor>
 
   <editor id = "WINDOW" > 
@@ -48,6 +55,10 @@
 
    <editor id = "WINDOWCTRL" > 
      <range  uom="25" subset="0-1" nls="WINDOWCTRL" />
+  </editor>
+
+   <editor id = "SOUNDS" > 
+     <range  uom="25" subset="0,2000" nls="SOUNDS" />
   </editor>
 
   <editor id = "LOCKUNLOCK" > 
@@ -86,7 +97,7 @@
   </editor>
   
   <editor id = "SUNROOFCTRL" > 
-     <range  uom="25" subset="0-1" nls="SUNROOFCTRL"  />  
+     <range  uom="25" subset="0-2" nls="SUNROOFCTRL"  />  
   </editor>
   
   <editor id = "AUTOCONCTRL" > 
@@ -96,6 +107,7 @@
   <editor id = "CABINTEMP" > 
       <range  uom="17" min="59" max="83" prec="1"  /> 
       <range  uom="4" min="15" max="28" prec="1"  />  
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />      
   </editor>
   
   <editor id = "DEFROST" > 

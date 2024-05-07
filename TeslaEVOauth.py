@@ -266,85 +266,15 @@ class teslaEVAccess(teslaAccess):
             logging.error('tesla_get_products Exception : {}'.format(e))
     
 
-    '''def tesla_get_products(self) -> dict:
-        self.products= {}
-        EVs = {}
-        logging.debug('tesla_get_products ')
-        try:
-            temp = self._callApi('GET','/vehicles' )
-            logging.debug('products: {} '.format(temp))
-            if 'response' in temp:
-                for indx in range(0,len(temp['response'])):
-                    site = temp['response'][indx]
-                    if 'vehicle_id' in site:
-                        EVs[str(site['id'])] = site
-                        self.ev_list.append(site['id'])
-            self.evs = EVs
-            self.products = temp
-            return(EVs)
-        except Exception as e:
-            logging.error('tesla_get_products Exception : {}'.format(e))
-    '''
 
 
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
         return(self.ev_list)
 
-    '''
-    def teslaEV_GetIdList(self ):
-        logging.debug('teslaEV_GetVehicleIdList:')
-        #3S = self.teslaApi.teslaConnect()
-        #3with requests.Session() as s:
-        try:
-            lst = self._callApi('GET','/vehicles', )
-            temp = []
-            for id in range(0,len(lst['response'])):
-                temp.append(lst['response'][id]['id'])
-            return (temp)
-        except Exception as e:
-            logging.debug('Exception teslaEV_GetIdList: ' + str(e))
-            logging.error('Error getting vehicle list')
-            logging.error('Trying to reconnect')
-            return(None)
-    '''
 
-    '''def teslaEV_getLatestCloudInfo(self, EVid):
-            #if self.connectionEstablished:
-        logging.debug('teslaEV_getLatestCloudInfo: {}'.format(EVid))
-        self.carInfo[EVid] = None
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
-        try:      
-            carRaw = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data')          
 
-            self.carInfo[EVid] = self.process_EV_data(carRaw) # handle different formats and remove 'response'
-            #logging.debug('self.carInfo[EVid]1 {}'.format(self.carInfo[EVid]))
-            if 'state' in self.carInfo[EVid]: 
-                #logging.debug('if state in self.carInfo[EVid]: ')
-                if self.carInfo[EVid]['state'] == 'online':
-                    self.carState = 'Online'
-                    #logging.debug('self.carState = Online')
 
-                else:
-                    self.carState = 'Sleeping'                            
-            elif self.carInfo[EVid] == None:
-                self.carState = 'Offline'
-            else:
-                self.carState = 'Offline'
-                #logging.debug( 'carState4 : {}'.format(self.carState))
-                cloudInfo = False
-
-            logging.debug('teslaEV_UpdateCloudInfo END - carinfo[{}]:{}'.format(EVid, self.carInfo[EVid] ))
-
-        except Exception as e:
-            logging.debug('Exception teslaEV_getLatestCloudInfo: {}'.format(e))
-            logging.error('Error getting data from vehicle id: {}'.format(EVid))
-            logging.error('Trying to reconnect')
-
-            self.carState = 'Offline'
-            return(None)
-    '''
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
@@ -359,7 +289,7 @@ class teslaEVAccess(teslaAccess):
                 if 'state' in wu_res:
                     logging.debug('Wak-up state: {}'.format( wu_res['state'] ))
                     while wu_res['state'] == 'asleep' or wu_res['state'] == None:
-                        time.sleep(5)
+                        time.sleep(10)
                         wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
                         if 'response' in wu_res:
                             wu_res = wu_res['response']
@@ -983,10 +913,16 @@ class teslaEVAccess(teslaAccess):
         
     def teslaEV_SteeringWheelHeatOn(self, EVid):
         #logging.debug('teslaEV_SteeringWheelHeatOn for {}'.format(EVid))
+        try:
+            if (self.carInfo[EVid]['climate_state']['steering_wheel_heater']):
+                return(self.carInfo[EVid]['climate_state']['steering_wheel_heat_level'])
+            else:
+                return(None)
+            
 
-        return(self.steeringWheeelHeat)  
-
-
+        except Exception as e:
+            logging.error('teslaEV_SteeringWheelHeatOn Exception : {}'.format(e))
+            return(None)
 
     def teslaEV_Windows(self, EVid, cmd):
         logging.debug('teslaEV_Windows {} for {}'.format(cmd, EVid))
@@ -1016,7 +952,7 @@ class teslaEVAccess(teslaAccess):
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
         try:
-            if cmd != 'vent' and cmd != 'close':
+            if cmd not in ['vent','close', 'stop'] :
                 logging.error('Wrong command passed to (vent or close) to teslaEV_SunRoof: {} '.format(cmd))
                 return(False)
             #s.auth = OAuth2BearerToken(S['access_token'])    
@@ -1302,23 +1238,27 @@ class teslaEVAccess(teslaAccess):
             return(None)
         
 
-    def teslaEV_GetSunRoofPercent(self, EVid):
+    #def teslaEV_GetSunRoofPercent(self, EVid):
+    #    try:
+    #        #logging.debug('teslaEV_GetSunRoofState: for {}'.format(EVid))
+    #        if 'sun_roof_percent_open' in self.carInfo[EVid]['vehicle_state']:
+    #            return(round(self.carInfo[EVid]['vehicle_state']['sun_roof_percent_open']))
+    #        else:
+    #            return(None)
+    #    except Exception as e:
+    #       logging.debug(' Exception teslaEV_GetSunRoofPercent - {}'.format(e))
+    #        return(None)
+        
+    def teslaEV_GetSunRoofState(self, EVid):
+        #logging.debug('teslaEV_GetSunRoofState: for {}'.format(EVid))
         try:
-            #logging.debug('teslaEV_GetSunRoofState: for {}'.format(EVid))
-            if 'sun_roof_percent_open' in self.carInfo[EVid]['vehicle_state']:
-                return(round(self.carInfo[EVid]['vehicle_state']['sun_roof_percent_open']))
+            if 'sun_roof_state' in self.carInfo[EVid]['vehicle_config'] and self.sunroofInstalled:
+                return(round(self.carInfo[EVid]['vehicle_state']['sun_roof_state']))
             else:
                 return(None)
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetSunRoofPercent - {}'.format(e))
+            logging.error('teslaEV_GetSunRoofState Excaption: {}'.format(e))
             return(None)
-        
-    #def teslaEV_GetSunRoofState(self, EVid):
-    #    #logging.debug('teslaEV_GetSunRoofState: for {}'.format(EVid))
-    #    if 'sun_roof_state' in self.carInfo[EVid]['vehicle_state'] and self.sunroofInstalled:
-    #        return(round(self.carInfo[EVid]['vehicle_state']['sun_roof_state']))
-    #    else:
-    #        return(99)
 
     def teslaEV_GetTrunkState(self, EVid):
         #logging.debug('teslaEV_GetTrunkState: for {}'.format(EVid))
@@ -1350,12 +1290,12 @@ class teslaEVAccess(teslaAccess):
         #with requests.Session() as s:
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])            
-            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/vehicle_data')          
+            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/flash_lights')          
             #temp = r.json()
             self.carInfo[EVid] = temp['response']
             return(self.carInfo[EVid])
         except Exception as e:
-            logging.error('Exception teslaEV_FlashLight for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Exception teslaEV_FlashLightc for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             
             return(None)
@@ -1398,7 +1338,7 @@ class teslaEVAccess(teslaAccess):
             temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/honk_horn', payload ) 
             logging.debug('teslaEV_HonkHorn {}'.format(temp))
             #temp = r.json()
-            logging.debug('teslaEV_HonkHorn {}'.format(temp))
+
             if temp['response']:
                 if temp['response']['result']:
                     logging.debug(temp['response']['result'])
@@ -1415,7 +1355,31 @@ class teslaEVAccess(teslaAccess):
             return(False)
 
 
-  
+    def teslaEV_PlaySound(self, EVid, sound):
+        logging.debug('teslaEV_PlaySound for {}'.format(EVid))
+        #S = self.teslaApi.teslaConnect()
+        #with requests.Session() as s:
+        try:
+            #s.auth = OAuth2BearerToken(S['access_token'])    
+            payload = {'sound' : sound}        
+            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_boombox', payload ) 
+            logging.debug('teslaEV_PlaySound {}'.format(temp))
+            #temp = r.json()
+
+            if temp['response']:
+                if temp['response']['result']:
+                    logging.debug(temp['response']['result'])
+                    return(temp['response']['result'])
+                else:
+                    return(False)
+            else:
+                return(False)
+    
+        except Exception as e:
+            logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Trying to reconnect')
+            
+            return(False)
 
     def teslaEV_Doors(self, EVid, ctrl):
         logging.debug('teslaEV_Doors {} for {}'.format(ctrl, EVid))
@@ -1436,7 +1400,7 @@ class teslaEVAccess(teslaAccess):
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
         except Exception as e:
-            logging.error('Exception teslaEV_FlashLights for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Exception teslaEV_Doors for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             
             return(False)
