@@ -190,7 +190,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             logging.error('Wrong command for evDefrostMax: {}'.format(defrost)) 
 
         #self.forceUpdateISYdrivers()
-#################
+
     def evSetCabinTemp (self, command):
         logging.info('evSetCabinTemp called') 
         cabinTemp = float(command.get('value'))
@@ -214,7 +214,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         #self.setDriverTemp('GV3', self.TEV.teslaEV_GetLeftTemp(self.EVid))
         #self.setDriverTemp('GV4', self.TEV.teslaEV_GetRightTemp(self.EVid))
 
-################
+    '''        
     def evSetSeatHeat (self, command):
         logging.info('evSetSea2tHeat called')
 
@@ -232,8 +232,50 @@ class teslaEV_ClimateNode(udi_interface.Node):
         #self.EV_setDriver('GV7', self.cond2ISY(temp['RearLeft']))
         #self.EV_setDriver('GV8', self.cond2ISY(temp['RearMiddle']))
         #self.EV_setDriver('GV9', self.cond2ISY(temp['RearRight']))
+    '''
+    def evSetSeat0Heat (self, command):
+        logging.info('evSetSeat0Heat called')
+
+        seatTemp = int(command.get('value'))  
+        self.TEV.teslaEV_Wake(self.EVid)
+        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 0, seatTemp):
+            self.EV_setDriver('GV5', seatTemp)
 
 
+    def evSetSeat1Heat (self, command):
+        logging.info('evSetSeat1Heat called')
+  
+        seatTemp = int(float(command.get('value')))  
+        self.TEV.teslaEV_Wake(self.EVid)
+        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 1, seatTemp):
+            self.EV_setDriver('GV6', seatTemp)
+
+
+    def evSetSeat2Heat (self, command):
+        logging.info('evSetSea2tHeat called')
+
+        seatTemp = int(float(command.get('value')))
+        self.TEV.teslaEV_Wake(self.EVid)  
+        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 2, seatTemp):
+            self.EV_setDriver('GV7', seatTemp)        
+
+
+
+    def evSetSeat4Heat (self, command):
+        logging.info('evSetSeat4Heat called')
+
+        seatTemp = int(float(command.get('value')))  
+        self.TEV.teslaEV_Wake(self.EVid)
+        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 4, seatTemp):
+            self.EV_setDriver('GV8', seatTemp)  
+ 
+
+    def evSetSeat5Heat (self, command):
+        logging.info('evSetSeat5Heat called') 
+        seatTemp = int(float(command.get('value'))) 
+        self.TEV.teslaEV_Wake(self.EVid) 
+        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 5, seatTemp):
+            self.EV_setDriver('GV9', seatTemp)   
 
     def evSteeringWheelHeat (self, command):
         logging.info('evSteeringWheelHeat called')  
