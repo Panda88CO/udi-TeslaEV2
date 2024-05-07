@@ -286,6 +286,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                  'TRUNK' : evOpenTrunk,
                  'FRUNK' : evOpenFrunk,
                  'HOMELINK' : evHomelink,
+                 'PLAYSOUND' : evPlaySound,
                 }
 
 

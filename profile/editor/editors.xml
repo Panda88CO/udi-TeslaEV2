@@ -73,6 +73,9 @@
      <range uom="51" min="0" max="100" prec="1" />
      <range uom="25" subset="0-1, 99" nls="OPENCLOSE"/>
   </editor>
+   <editor id = "PERCENT_INP" > 
+     <range uom="51" min="0" max="100" prec="1" />
+  </editor>
   
   <editor id = "OPENCLOSE" > 
      <range  uom="25" subset="0-1, 99" nls="OPENCLOSE" />
@@ -89,7 +92,7 @@
   </editor>
   
   <editor id = "PREC_STATUS" > 
-     <range  uom="25" subset="0-1,99" nls="PREC_STATUS" />
+     <range  uom="25" subset="0-2,99" nls="PREC_STATUS" />
   </editor>
   
   <editor id = "ONOFF" > 
@@ -101,7 +104,7 @@
   </editor>
   
   <editor id = "AUTOCONCTRL" > 
-     <range  uom="25" subset="0-1" nls="AUTOCONCTRL"  />  
+     <range  uom="25" subset="0-1" nls="PREC_STATUS"  />  
   </editor>
   
   <editor id = "CABINTEMP" > 
@@ -131,6 +134,11 @@
      <range  uom="1" min="0" max="300" prec="1" />
      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor>
+
+  <editor id = "AMPS_INP" > 
+     <range  uom="1" min="0" max="300" prec="1" />
+  </editor>
+
     <editor id = "VOLT" > 
      <range  uom="72" min="0" max="800" prec="1" />
      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />

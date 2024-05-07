@@ -1020,9 +1020,9 @@ class teslaEVAccess(teslaAccess):
         try:
             payload = {}    
             if ctrl == 'on':
-                payload = {'on':True}  
+                payload = {'on':True,'manual_override':True }  
             elif  ctrl == 'off':
-                payload = {'on':False}  
+                payload = {'on':False,'manual_override':True }  
             else:
                 logging.error('Wrong parameter for teslaEV_DefrostMax (on/off) for vehicle id {}: {}'.format(EVid, ctrl))
                 return(False)
