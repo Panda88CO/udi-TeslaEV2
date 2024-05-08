@@ -278,6 +278,7 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
+            payload = {'endpoints':'charge_state;climate_state;drive_state;closures_state;location_data;vehicle_config;vehicle_state;vehicle_data_combo'}
             res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
             logging.debug('EV {} info : {} '.format(EVid, res))
             if res is None:
@@ -382,7 +383,7 @@ class teslaEVAccess(teslaAccess):
         self.distUnit = dUnit
 
     def teslaEV_GetDistUnit(self):
-        logging.debug('teslaEV_GetDistUnit: {}'.format(self.distUnit))
+        #logging.debug('teslaEV_GetDistUnit: {}'.format(self.distUnit))
         return(self.distUnit)
 
     def teslaEV_SetTempUnit(self, tUnit):
@@ -390,7 +391,7 @@ class teslaEVAccess(teslaAccess):
         self.tempUnit = tUnit
 
     def teslaEV_GetTempUnit(self):
-        logging.debug('teslaEV_GetDistUnit: {}'.format(self.tempUnit))
+        #logging.debug('teslaEV_GetDistUnit: {}'.format(self.tempUnit))
         return(self.tempUnit)
 
 
