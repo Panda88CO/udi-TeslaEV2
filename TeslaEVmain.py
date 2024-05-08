@@ -198,19 +198,24 @@ class TeslaEVController(udi_interface.Node):
                 logging.debug('Node Address : {} {}'.format(self.poly.getNode(nodeAdr),nodeAdr ))
             logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
             #self.TEV.teslaEV_UpdateCloudInfo(EvId)
-            teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEV)        
-                     
+            ev_temp = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEV)        
+
+            while not (ev_temp.subnodesReady() or ev_temp.statusNodeReady):
+                logging.debug('waitiong for nodes to be created')
+                time.sleep(5)
+            
+
                 #self.wait_for_node_done()     
                 #self.statusNodeReady = True
         
-        '''
+        
         for nde in range(0, len(self.nodes_in_db)):
             node = self.nodes_in_db[nde]
             logging.debug('Scanning db for extra nodes : {}'.format(node))
             if node['primaryNode'] not in assigned_addresses:
                 logging.debug('Removing node : {} {}'.format(node['name'], node))
                 self.poly.delNode(node['address'])
-        '''
+        
         self.updateISYdrivers()
         self.initialized = True
 
@@ -269,40 +274,6 @@ class TeslaEVController(udi_interface.Node):
 
         logging.debug ('Controller - initialization done')
 
-    ''' def createNodes(self):
-        try:
-            self.vehicleList = self.TEV.teslaEV_GetIdList()
-            logging.debug('vehicleList: {}'.format(self.vehicleList))
-            self.GV1 =len(self.vehicleList)
-            self.EV_setDriver('GV1', self.GV1)
-            self.EV_setDriver('GV0', 1)
-            for vehicleId in range(0,len(self.vehicleList)):
-                nodeName = None
-                #vehicleId = self.vehicleList[vehicle]
-                #logging.debug('vehicleId {}'.format(vehicleId))
-                self.TEV.teslaEV_UpdateCloudInfo(vehicleId)
-                #logging.debug('self.TEV.teslaEV_UpdateCloudInfo')
-                vehicleInfo = self.TEV.teslaEV_GetInfo(vehicleId)
-                logging.info('EV info: {} = {}'.format(vehicleId, vehicleInfo))
-                nodeName = self.TEV.teslaEV_GetName(vehicleId)
-
-                if nodeName == ''  or nodeName == None:
-                    nodeName = 'EV'+str(vehicleId) 
-                nodeAdr = 'ev'+str(vehicleId)
-                nodeName = self.poly.getValidName(nodeName)
-                nodeAdr = self.poly.getValidAddress(nodeAdr)
-
-                if not self.poly.getNode(nodeAdr):
-                    logging.info('Creating Status node for {}'.format(nodeAdr))
-                    statusNode = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, vehicleId, self.TEV)                  
-                    #self.wait_for_node_done()     
-                    #self.statusNodeReady = True
-                    
-            self.longPoll()
-        except Exception as e:
-            logging.error('Exception Controller start: '+ str(e))
-            logging.info('Did not obtain data from EV ')
-    '''
         
     def systemPoll(self, pollList):
         logging.debug('systemPoll')
@@ -320,7 +291,7 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
         self.heartbeat()    
         if self.TEV.authenticated():
-            for vehicle in range(0,len(self.vehicleList)):                
+            for indx, vehicle in self.vehicleList:                
                 try:
                     self.TEV.teslaEV_UpdateCloudInfoAwake(self.vehicleList[vehicle])
                     nodes = self.poly.getNodes()
@@ -339,7 +310,7 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEV.authenticated()))
         
         if self.TEV.authenticated():
-            for vehicle in range(0,len(self.vehicleList)):
+            for indx, vehicle in self.vehicleList:
                  self.TEV.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
             try:
                 nodes = self.poly.getNodes()

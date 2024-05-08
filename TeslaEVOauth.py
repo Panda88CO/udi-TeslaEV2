@@ -356,9 +356,12 @@ class teslaEVAccess(teslaAccess):
 
 
     def teslaEV_GetInfo(self, EVid):
-        logging.debug('teslaEV_GetInfo {}'.format(self.carInfo))
-        logging.debug('teslaEV_GetInfo {}: {}'.format(EVid, self.carInfo[EVid]))
-        return(self.carInfo[EVid])
+        if EVid in self.carInfo:
+            #logging.debug('teslaEV_GetInfo {}'.format(self.carInfo))
+            logging.debug('teslaEV_GetInfo {}: {}'.format(EVid, self.carInfo[EVid]))
+            return(self.carInfo[EVid])
+        else:
+            return(None)
 
 
     def teslaEV_GetLocation(self, EVid):
