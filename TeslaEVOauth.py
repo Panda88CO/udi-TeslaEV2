@@ -131,7 +131,9 @@ class teslaEVAccess(teslaAccess):
     def location_enabled(self):
         return(self.locationEn)
     
-    
+    def teslaEV_set_location_enabled(self, state):
+        self.locationEn = ( state.upper() == 'TRUE')
+
     
     def main_module_enabled(self, node_name):
         logging.debug('main_module_enabled called {}'.format(node_name))
@@ -142,7 +144,7 @@ class teslaEVAccess(teslaAccess):
             self.poly.Notices['home_id'] = 'Check config to select which home/modules should be used (1 - used, 0 - not used) - then restart'
             return(True)
 
-                
+    '''         
     def customParamsHandler(self, userParams):
         self.customParameters.load(userParams)
         logging.debug('customParamsHandler called {}'.format(userParams))
@@ -171,7 +173,7 @@ class teslaEVAccess(teslaAccess):
                 self.dist_unit = str(self.customParameters['DIST_UNIT'])
                 if self.region.upper() not in ['KM', 'MILES']:
                     logging.error('Unsupported distance unit {}'.format(self.dist_unit))
-                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                    self.poly.Notices['dist'] = 'Unknown distance Unit specified'
                 #else:
 
         else:
@@ -183,7 +185,7 @@ class teslaEVAccess(teslaAccess):
                 self.temp_unit = str(self.customParameters['TEMP_UNIT'])
                 if self.region.upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
-                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                    self.poly.Notices['temp'] = 'Unknown distance Unit specified'
                 #else:
 
         else:
@@ -193,9 +195,9 @@ class teslaEVAccess(teslaAccess):
         if 'LOCATION_EN' in userParams:
             if self.customParameters['LOCATION'] != 'True or False':
                 self.locationEn = str(self.customParameters['LOCATION'])
-                if self.region.upper() not in ['TRUE', 'FALSE']:
+                if self.locationEn.upper() not in ['TRUE', 'FALSE']:
                     logging.error('Unsupported Location Setting {}'.format(self.locationEn))
-                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                    self.poly.Notices['location'] = 'Unknown distance Unit specified'
                 #else:
 
         else:
@@ -232,7 +234,7 @@ class teslaEVAccess(teslaAccess):
         
         self.handleCustomParamsDone = True
         self.poly.Notices.clear()
-    
+        '''
 
     def add_to_parameters(self,  key, value):
         '''add_to_parameters'''

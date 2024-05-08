@@ -104,7 +104,8 @@ class TeslaEVController(udi_interface.Node):
                 if self.region.upper() not in ['NA', 'EU', 'CN']:
                     logging.error('Unsupported region {}'.format(self.region))
                     self.poly.Notices['region'] = 'Unknown Region specified (NA = North America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
-
+                else:
+                    self.TEV.cloud_set_region(self.region)
                     
 
         else:
@@ -119,7 +120,7 @@ class TeslaEVController(udi_interface.Node):
 
                 if self.dist_unit.upper() not in ['KM', 'MILES']:
                     logging.error('Unsupported distance unit {}'.format(self.dist_unit))
-                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                    self.poly.Notices['dist'] = 'Unknown distance Unit specified'
                 else:
                     if self.dist_unit.upper() == 'KM':
                         self.TEV.teslaEV_SetDistUnit(0)
@@ -137,7 +138,7 @@ class TeslaEVController(udi_interface.Node):
                 self.temp_unit = str(self.customParameters['TEMP_UNIT'])
                 if self.temp_unit.upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
-                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                    self.poly.Notices['temp'] = 'Unknown distance Unit specified'
                 else:
                     if self.temp_unit.upper() == 'C':
                         self.TEV.teslaEV_SetTempUnit(0)
@@ -147,7 +148,24 @@ class TeslaEVController(udi_interface.Node):
             logging.warning('No TEMP_UNIT')
             self.customParameters['TEMP_UNIT'] = 'C or F'    
         logging.debug('customParamsHandler finish ')
+
+
+
+        
+        if 'LOCATION_EN' in userParams:
+            if self.customParameters['LOCATION'] != 'True or False':
+                self.locationEn = str(self.customParameters['LOCATION'])
+                if self.locationEn.upper() not in ['TRUE', 'FALSE']:
+                    logging.error('Unsupported Location Setting {}'.format(self.locationEn))
+                    self.poly.Notices['location'] = 'Unknown distance Unit specified'
+                else:
+                    self.TEV.teslaEV_set_location_enabled(self.locationEn)
+                    
+        else:
+            logging.warning('No LOCATION')
+            self.customParameters['LOCATION'] = 'True or False'   
         self.customParam_done = True
+
 
     def start(self):
         logging.info('start')
@@ -159,7 +177,7 @@ class TeslaEVController(udi_interface.Node):
             logging.info('Waiting for node to initialize')
             logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEV.customNsDone(), self.config_done))
             time.sleep(1)
-        self.TEV.cloud_set_region(self.region)
+        
         while not self.TEV.authenticated():
             logging.info('Waiting to authenticate to complete - press authenticate button')
             self.poly.Notices['auth'] = 'Please initiate authentication'
