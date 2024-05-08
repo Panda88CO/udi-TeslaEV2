@@ -203,12 +203,14 @@ class TeslaEVController(udi_interface.Node):
                 #self.wait_for_node_done()     
                 #self.statusNodeReady = True
         
+        '''
         for nde in range(0, len(self.nodes_in_db)):
             node = self.nodes_in_db[nde]
             logging.debug('Scanning db for extra nodes : {}'.format(node))
             if node['primaryNode'] not in assigned_addresses:
                 logging.debug('Removing node : {} {}'.format(node['name'], node))
                 self.poly.delNode(node['address'])
+        '''
         self.updateISYdrivers()
         self.initialized = True
 

@@ -361,12 +361,11 @@ class teslaEVAccess(teslaAccess):
 
 
     def teslaEV_GetLocation(self, EVid):
-        logging.debug('teslaEV_GetLocation: for {}'.format(EVid))
+        logging.debug('teslaEV_GetLocation: {} for {}'.format(EVid,self.carInfo[EVid]['drive_state'] ))
         temp = {}
         temp['longitude'] = None
         temp['latitude'] = None
         try:
-            temp = {}
             if 'longitude' in self.carInfo[EVid]['drive_state']:
                 temp['longitude'] = self.carInfo[EVid]['drive_state']['longitude']
                 temp['latitude'] = self.carInfo[EVid]['drive_state']['latitude']
@@ -375,7 +374,7 @@ class teslaEVAccess(teslaAccess):
                 temp['latitude'] = self.carInfo[EVid]['drive_state']['active_route_latitude']                
             return(temp)
         except Exception as e:
-            logging.debug('teslaEV_GetLocation - location error')
+            logging.error('teslaEV_GetLocation - location error')
             return(temp)
 
     def teslaEV_SetDistUnit(self, dUnit):

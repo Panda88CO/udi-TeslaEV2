@@ -147,18 +147,19 @@ class teslaEV_StatusNode(udi_interface.Node):
             '''      
             
             location = self.TEV.teslaEV_GetLocation(self.EVid)
+            logging.debug('teslaEV_GetLocation {}'.format(location))
             if location['longitude']:
                 logging.debug('GV17: {}'.format(round(location['longitude'], 3)))
                 self.EV_setDriver('GV17', round(location['longitude'], 3), 56)
             else:
                 logging.debug('GV17: {}'.format('NONE'))
-                self.EV_setDriver('GV17', 99, 25)
+                self.EV_setDriver('GV17', None)
             if location['latitude']:
                 logging.debug('GV18: {}'.format(round(location['latitude'], 3)))
                 self.EV_setDriver('GV18', round(location['latitude'], 3), 56)
             else:
                 logging.debug('GV18: {}'.format('NONE'))
-                self.EV_setDriver('GV18', 99, 25)
+                self.EV_setDriver('GV18', None)
 
             self.EV_setDriver('GV19', round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2), 20)            
             self.EV_setDriver('GV20', round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2), 20)
