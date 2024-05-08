@@ -163,7 +163,7 @@ class TeslaEVController(udi_interface.Node):
                     
         else:
             logging.warning('No LOCATION')
-            self.customParameters['LOCATION'] = 'True or False'   
+            self.customParameters['LOCATION_EN'] = 'True or False'   
         self.customParam_done = True
 
 
