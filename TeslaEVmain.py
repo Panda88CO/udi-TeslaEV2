@@ -199,7 +199,7 @@ class TeslaEVController(udi_interface.Node):
             logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
             #self.TEV.teslaEV_UpdateCloudInfo(EvId)
             ev_temp = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEV)        
-
+            assigned_addresses.append(nodeAdr)
             while not (ev_temp.subnodesReady() or ev_temp.statusNodeReady):
                 logging.debug('waitiong for nodes to be created')
                 time.sleep(5)
@@ -208,10 +208,10 @@ class TeslaEVController(udi_interface.Node):
                 #self.wait_for_node_done()     
                 #self.statusNodeReady = True
         
-        
+        logging.debug('Scanning db for extra nodes : {}'.format(assigned_addresses))
         for nde in range(0, len(self.nodes_in_db)):
             node = self.nodes_in_db[nde]
-            logging.debug('Scanning db for extra nodes : {}'.format(node))
+            logging.debug('Scanning db for node : {}'.format(node))
             if node['primaryNode'] not in assigned_addresses:
                 logging.debug('Removing node : {} {}'.format(node['name'], node))
                 self.poly.delNode(node['address'])
