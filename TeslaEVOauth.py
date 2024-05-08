@@ -994,7 +994,7 @@ class teslaEVAccess(teslaAccess):
 
 
     def teslaEV_SetCabinTemps(self, EVid, driverTempC, passergerTempC):
-        logging.debug('teslaEV_AutoCondition {} for {}'.format(tempC, EVid))
+        logging.debug('teslaEV_AutoCondition {} / {}for {}'.format(driverTempC, passergerTempC, EVid))
         
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
