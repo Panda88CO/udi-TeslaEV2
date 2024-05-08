@@ -13,14 +13,15 @@ import time
 class teslaEV_ClimateNode(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
-    def __init__(self, polyglot, parent, address, name, evid,  TEV):
-        super(teslaEV_ClimateNode, self).__init__(polyglot, parent, address, name)
+    def __init__(self, polyglot, primary, address, name, evid,  TEV):
+        super(teslaEV_ClimateNode, self).__init__(polyglot, primary, address, name)
         logging.info('_init_ Tesla ClimateNode Status Node')
         self.poly = polyglot
         self.ISYforced = False
         self.TEV = TEV
         self.EVid = evid
-        self.address = address 
+        self.primary = primary
+        self.address = address
         self.name = name
         self.nodeReady = False
         #self.node = self.poly.getNode(address)

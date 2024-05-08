@@ -38,7 +38,7 @@ class TeslaEVController(udi_interface.Node):
         #self.tokenPassword = ""
         self.n_queue = []
         self.dUnit = 1 #  Miles = 1, Kilometer = 0
-        self.tUnit = 0 #  C = 0, F=1, K=2
+        self.tUnit = 0 #  C = 0, F=1,
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
         self.customParameters = Custom(self.poly, 'customparams')
@@ -116,10 +116,17 @@ class TeslaEVController(udi_interface.Node):
         if 'DIST_UNIT' in userParams:
             if self.customParameters['DIST_UNIT'] != 'enter Km or Miles':
                 self.dist_unit = str(self.customParameters['DIST_UNIT'])
+
                 if self.dist_unit.upper() not in ['KM', 'MILES']:
                     logging.error('Unsupported distance unit {}'.format(self.dist_unit))
                     self.poly.Notices['region'] = 'Unknown distance Unit specified'
-                #else:
+                else:
+                    if self.dist_unit.upper() == 'KM':
+                        self.TEV.teslaEV_SetDistUnit(0)
+                    else:
+                        self.TEV.teslaEV_SetDistUnit(1)
+        
+
 
         else:
             logging.warning('No DIST_UNIT')
@@ -131,8 +138,11 @@ class TeslaEVController(udi_interface.Node):
                 if self.temp_unit.upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
                     self.poly.Notices['region'] = 'Unknown distance Unit specified'
-                #else:
-
+                else:
+                    if self.temp_unit.upper() == 'C':
+                        self.TEV.teslaEV_SetTempUnit(0)
+                    else:
+                        self.TEV.teslaEV_SetTempUnit(1)     
         else:
             logging.warning('No TEMP_UNIT')
             self.customParameters['TEMP_UNIT'] = 'C or F'    

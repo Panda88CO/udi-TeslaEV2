@@ -22,7 +22,6 @@ class teslaEV_StatusNode(udi_interface.Node):
         super(teslaEV_StatusNode, self).__init__(polyglot, primary, address, name)
         logging.info('_init_ Tesla EV  Status Node')
         self.poly = polyglot
-        self.n_queue = []
         self.ISYforced = False
         self.EVid = evid
         self.TEV = TEV
