@@ -282,7 +282,7 @@ class teslaEVAccess(teslaAccess):
             res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
             logging.debug('EV {} info : {} '.format(EVid, res))
             if res is None:
-                wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up', payload )
                 if 'response' in wu_res:
                     wu_res = wu_res['response']
                 logging.debug('Wake_up result : {}'.format(wu_res))
