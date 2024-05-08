@@ -175,7 +175,7 @@
                   <p id="" editor="PERCENT_INP" init="GV9" /> 
             </cmd >
             <cmd id="CHARGEAMPS" >
-                   <p id="" editor="AMPS_IMP" init="GV5" /> 
+                   <p id="" editor="AMPS_INP" init="GV5" /> 
             </cmd >
 
          </accepts>
