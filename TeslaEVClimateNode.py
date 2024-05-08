@@ -205,8 +205,8 @@ class teslaEV_ClimateNode(udi_interface.Node):
             passengerTempC    = int((query.get('passenger.uom17')-32)*5/9)
 
         if self.TEV.teslaEV_SetCabinTemps(self.EVid, driverTempC, passengerTempC):
-            self.setDriverTemp(self.EVid, 'GV3', driverTempC )
-            self.setDriverTemp(self.EVid, 'GV4', passengerTempC )
+            self.setDriverTemp( 'GV3', driverTempC )
+            self.setDriverTemp( 'GV4', passengerTempC )
     
         #temp = self.TEV.tesleEV_GetCabinTemp(self.EVid)
 
@@ -308,7 +308,11 @@ class teslaEV_ClimateNode(udi_interface.Node):
                  'AUTOCON' : evAutoCondition,
                  'CABINTEMP' : evSetCabinTemp,
                  'DEFROST' : evDefrostMax,            
-                 'SEATs' :evSetSeatHeat,
+                 'SEAT0' :evSetSeat0Heat,
+                 'SEAT1' :evSetSeat1Heat,
+                 'SEAT2' :evSetSeat2Heat,
+                 'SEAT4' :evSetSeat4Heat,
+                 'SEAT5' :evSetSeat5Heat,
 
                  'STEERINGW' : evSteeringWheelHeat,   
 
