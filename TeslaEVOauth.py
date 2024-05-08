@@ -279,10 +279,12 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
             payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
-            res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
+            res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload )
+            logging.debug('vehicel data: {}'.format(res))
             logging.debug('EV {} info : {} '.format(EVid, res))
             if res is None:
                 wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
+                logging.debug('wakeup: {}'.format(wu_res))
                 if 'response' in wu_res:
                     wu_res = wu_res['response']
                 logging.debug('Wake_up result : {}'.format(wu_res))
