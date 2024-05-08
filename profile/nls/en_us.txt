@@ -37,6 +37,7 @@ NUMBER-0 = 0
 NUMBER-1 = 1
 NUMBER-2 = 2
 NUMBER-3 = 3
+NUMBER-98 = Not Enabled
 NUMBER-99 = Unknown
 BOOLSTATE-0 = False
 BOOLSTATE-1 = True

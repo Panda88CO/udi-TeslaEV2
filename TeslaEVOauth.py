@@ -1203,7 +1203,7 @@ class teslaEVAccess(teslaAccess):
         if 'homelink_nearby' in self.carInfo[EVid]['vehicle_state']:
             return(self.carInfo[EVid]['vehicle_state']['homelink_nearby'])
         else:
-            return(None)
+            return(False)
 
     def teslaEV_nbrHomeLink(self, EVid):
         logging.debug('teslaEV_nbrHomeLink: for {}'.format(EVid))

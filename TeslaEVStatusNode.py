@@ -105,13 +105,13 @@ class teslaEV_StatusNode(udi_interface.Node):
             logging.debug('StatusNode updateISYdrivers {}'.format(self.TEV.teslaEV_GetStatusInfo(self.EVid)))
 
             self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid))
-            if self.TEV.location_enabled():
-                self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)))
-                self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid))
-            else:
-                self.EV_setDriver('GV0', 98)
-                self.EV_setDriver('GV2', 98)
-                
+            #if self.TEV.location_enabled():
+            self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)))
+            self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid))
+            #else:
+            #    self.EV_setDriver('GV0', 98)
+            #    self.EV_setDriver('GV2', 98)
+
             self.EV_setDriver('GV3', self.bool2ISY(self.TEV.teslaEV_GetLockState(self.EVid)))
             if self.TEV.teslaEV_GetDistUnit() == 1:
                 self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 116)

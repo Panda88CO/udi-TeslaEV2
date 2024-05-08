@@ -30,7 +30,7 @@
   
 
   <editor id = "BOOLSTATE" > 
-     <range  uom="25" subset="0-1,99" nls="BOOLSTATE"/>
+     <range  uom="25" subset="0-1,98,99" nls="BOOLSTATE"/>
   </editor> 
   
  <editor id = "BOOLOCKLSTATE" > 
