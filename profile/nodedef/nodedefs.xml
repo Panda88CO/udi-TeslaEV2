@@ -34,7 +34,7 @@
          <st id="GV7" editor="WINDOW" />
          <st id="GV8" editor="WINDOW" />
          <st id="GV9" editor="WINDOW" />
-         <st id="GV10" editor="PERCENT" />
+         <!--<st id="GV10" editor="PERCENT" />-->
          <st id="GV11" editor="OPENCLOSE" />
          <st id="GV12" editor="OPENCLOSE" />
          <st id="GV13" editor="CARSTATE" />

@@ -73,11 +73,11 @@ class teslaEV_ChargeNode(udi_interface.Node):
             #logging.debug('ChargeNode updateISYdrivers {}'.format(self.TEV.teslaEV_GetChargingInfo(self.EVid)))
             #if self.TEV.isConnectedToEV():
             #logging.debug('GV1: {} '.format(self.TEV.teslaEV_FastChargerPresent(self.EVid)))
-            self.EV_setDriver('GV1', self.cond2ISY(self.TEV.teslaEV_FastChargerPresent(self.EVid)))
+            self.EV_setDriver('GV1', self.bool2ISY(self.TEV.teslaEV_FastChargerPresent(self.EVid)))
             #logging.debug('GV2: {} '.format(self.TEV.teslaEV_ChargePortOpen(self.EVid)))
-            self.EV_setDriver('GV2', self.cond2ISY(self.TEV.teslaEV_ChargePortOpen(self.EVid)))
+            self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_ChargePortOpen(self.EVid)))
             #logging.debug('GV3: {}'.format(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
-            self.EV_setDriver('GV3', self.cond2ISY(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
+            self.EV_setDriver('GV3', self.latch2ISY(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
             #logging.debug('GV3: {}'.format(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
             self.EV_setDriver('GV3', self.cond2ISY(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
             #logging.debug('GV4: {} - {}'.format(self.TEV.teslaEV_GetBatteryRange(self.EVid), self.TEV.teslaEV_GetDistUnit()))
@@ -101,7 +101,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
             self.EV_setDriver('GV6',self.chargeState2ISY(self.TEV.teslaEV_ChargeState(self.EVid)), 25)
  
             #logging.debug('GV7: {}'.format(self.TEV.teslaEV_ChargingRequested(self.EVid)))
-            self.EV_setDriver('GV7', self.cond2ISY(self.TEV.teslaEV_ChargingRequested(self.EVid)))
+            self.EV_setDriver('GV7', self.bool2ISY(self.TEV.teslaEV_ChargingRequested(self.EVid)))
             if self.TEV.teslaEV_GetChargingPower(self.EVid) != None:
                 logging.debug('GV8: {}'.format(self.TEV.teslaEV_GetChargingPower(self.EVid)))
                 self.EV_setDriver('GV8', self.TEV.teslaEV_GetChargingPower(self.EVid), 30)

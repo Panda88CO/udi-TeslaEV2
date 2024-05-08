@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-VERSION = '0.0.4'
+VERSION = '0.0.5'
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
@@ -189,8 +189,8 @@ class TeslaEVController(udi_interface.Node):
             nodeName = self.TEV.teslaEV_GetName(EvId)
 
             if nodeName == ''  or nodeName == None:
-                nodeName = 'e'+str(EvId) 
-            nodeAdr = 'e'+str(EvId)
+                nodeName = 'ev'+str(EvId) 
+            nodeAdr = 'ev'+str(EvId)
             nodeName = self.poly.getValidName(nodeName)
             nodeAdr = self.poly.getValidAddress(nodeAdr)
 
