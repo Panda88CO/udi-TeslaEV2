@@ -153,8 +153,8 @@ class TeslaEVController(udi_interface.Node):
 
         
         if 'LOCATION_EN' in userParams:
-            if self.customParameters['LOCATION'] != 'True or False':
-                self.locationEn = str(self.customParameters['LOCATION'])
+            if self.customParameters['LOCATION_EN'] != 'True or False':
+                self.locationEn = str(self.customParameters['LOCATION_EN'])
                 if self.locationEn.upper() not in ['TRUE', 'FALSE']:
                     logging.error('Unsupported Location Setting {}'.format(self.locationEn))
                     self.poly.Notices['location'] = 'Unknown distance Unit specified'
