@@ -98,24 +98,22 @@ class TeslaEVController(udi_interface.Node):
         oauthSettingsUpdate['token_parameters'] = {}
         # Example for a boolean field
 
-        if 'region' in userParams:
-            if self.customParameters['region'] != 'enter region (NA, EU, CN)':
-                self.region = str(self.customParameters['region'])
+        if 'REGION' in userParams:
+            if self.customParameters['REGION'] != 'Input region NA, EU, CN':
+                self.region = str(self.customParameters['REGION'])
                 if self.region.upper() not in ['NA', 'EU', 'CN']:
                     logging.error('Unsupported region {}'.format(self.region))
-                    self.poly.Notices['region'] = 'Unknown Region specified (NA = North America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
+                    self.poly.Notices['REGION'] = 'Unknown Region specified (NA = North America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
                 else:
                     self.TEV.cloud_set_region(self.region)
-                    
-
         else:
             logging.warning('No region found')
-            self.customParameters['region'] = 'enter region (NA, EU, CN)'
+            self.customParameters['REGION'] = 'Input region NA, EU, CN'
             self.region = None
             self.poly.Notices['region'] = 'Region not specified (NA = Nort America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
    
         if 'DIST_UNIT' in userParams:
-            if self.customParameters['DIST_UNIT'] != 'enter Km or Miles':
+            if self.customParameters['DIST_UNIT'] != 'Km or Miless':
                 self.dist_unit = str(self.customParameters['DIST_UNIT'])
 
                 if self.dist_unit.upper() not in ['KM', 'MILES']:
@@ -126,15 +124,12 @@ class TeslaEVController(udi_interface.Node):
                         self.TEV.teslaEV_SetDistUnit(0)
                     else:
                         self.TEV.teslaEV_SetDistUnit(1)
-        
-
-
         else:
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'
 
         if 'TEMP_UNIT' in userParams:
-            if self.customParameters['TEMP_UNIT'] != 'enter C or Fs':
+            if self.customParameters['TEMP_UNIT'] != 'C or F':
                 self.temp_unit = str(self.customParameters['TEMP_UNIT'])
                 if self.temp_unit.upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
