@@ -179,8 +179,8 @@ class TeslaEVController(udi_interface.Node):
             nodeName = self.TEV.teslaEV_GetName(EvId)
 
             if nodeName == ''  or nodeName == None:
-                nodeName = 'EV'+str(EvId) 
-            nodeAdr = 'ev'+str(EvId)
+                nodeName = 'e'+str(EvId) 
+            nodeAdr = 'e'+str(EvId)
             nodeName = self.poly.getValidName(nodeName)
             nodeAdr = self.poly.getValidAddress(nodeAdr)
 

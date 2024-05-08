@@ -54,7 +54,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         
     def createSubNodes(self):
         logging.debug('Creating sub nodes for {}'.format(self.EVid))
-        nodeAdr = 'cl'+str(self.EVid)
+        nodeAdr = 'l'+str(self.EVid)
         nodeName = self.poly.getValidName('Climate Info')
         nodeAdr = self.poly.getValidAddress(nodeAdr)
         if not self.poly.getNode(nodeAdr):
@@ -62,7 +62,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             teslaEV_ClimateNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
 
 
-        nodeAdr = 'cg'+str(self.EVid)
+        nodeAdr = 'g'+str(self.EVid)
         nodeName = self.poly.getValidName('Charging Info')
         nodeAdr = self.poly.getValidAddress(nodeAdr)
         if not self.poly.getNode(nodeAdr):
