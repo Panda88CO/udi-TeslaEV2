@@ -126,8 +126,7 @@
             </cmd>            
             <cmd id="SEAT5" > 
                   <p id="" editor="HEAT" init="GV9" /> 
-            </cmd >            
-            </cmd >            
+            </cmd >                    
             <cmd id="STEERINGW" > 
                   <p id="" editor="STEERINGW" init="GV1" /> 
             </cmd >
