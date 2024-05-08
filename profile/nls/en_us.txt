@@ -98,6 +98,7 @@ ST-nlsevclimate-ST-NAME = Node Connected
 
 UNKNOWN-0 = No Value
 UNKNOWN-1 = Unknown
+UNKNOWN-98 = Not Enabled
 UNKNOWN-99 = Not Reported
 ST-nlsevclimate-GV1-NAME = Cabin Temperature
 ST-nlsevclimate-GV2-NAME = Outdoor Temperature

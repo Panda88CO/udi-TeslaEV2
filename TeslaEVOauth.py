@@ -51,11 +51,7 @@ class teslaEVAccess(teslaAccess):
         self.EndpointEU= 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
         self.EndpointCN= 'https://fleet-api.prd.cn.vn.cloud.tesla.cn'
         self.api  = '/api/1'
-        self.LOCAL_USER_EMAIL = ''
-        self.LOCAL_USER_PASSWORD = ''
-        self.LOCAL_IP_ADDRESS = ''
-        self.local_access_enabled = False
-        self.cloud_access_enabled = False
+
         #self.state = secrets.token_hex(16)
         self.region = ''
         self.handleCustomParamsDone = False
@@ -68,7 +64,8 @@ class teslaEVAccess(teslaAccess):
         self.carInfo = {}
         self.carStateList = ['online', 'Offline', 'aleep', 'unknown']
         self.carState = 'Unknown'
-        
+
+        self.locationEn = False
         self.canActuateTrunks = False
         self.sunroofInstalled = False
         self.readSeatHeat = False
@@ -130,11 +127,9 @@ class teslaEVAccess(teslaAccess):
     # Your service may need to access custom params as well...
 
 
-    def local_access(self):
-        return(self.local_access_enabled)
-    
-    def cloud_access(self):
-        return(self.cloud_access_enabled)
+
+    def location_enabled(self):
+        return(self.locationEn)
     
     
     
@@ -184,7 +179,7 @@ class teslaEVAccess(teslaAccess):
             self.customParameters['DIST_UNIT'] = 'Km or Miles'
 
         if 'TEMP_UNIT' in userParams:
-            if self.customParameters['TEMP_UNIT'] != 'enter C or Fs':
+            if self.customParameters['TEMP_UNIT'] != 'enter C or F':
                 self.temp_unit = str(self.customParameters['TEMP_UNIT'])
                 if self.region.upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
@@ -195,7 +190,17 @@ class teslaEVAccess(teslaAccess):
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'       
 
+        if 'LOCATION_EN' in userParams:
+            if self.customParameters['LOCATION'] != 'True or False':
+                self.locationEn = str(self.customParameters['LOCATION'])
+                if self.region.upper() not in ['TRUE', 'FALSE']:
+                    logging.error('Unsupported Location Setting {}'.format(self.locationEn))
+                    self.poly.Notices['region'] = 'Unknown distance Unit specified'
+                #else:
 
+        else:
+            logging.warning('No LOCATION')
+            self.customParameters['LOCATION'] = 'True or False'   
 
         logging.debug('region {}'.format(self.region))
         oauthSettingsUpdate['scope'] = self.scope 
@@ -278,7 +283,10 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
-            payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
+            if self.locationEn:
+                payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
+            else:
+                payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
             res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload )
             logging.debug('vehicel data: {}'.format(res))
             logging.debug('EV {} info : {} '.format(EVid, res))
@@ -385,6 +393,7 @@ class teslaEVAccess(teslaAccess):
         except Exception as e:
             logging.error('teslaEV_GetLocation - location error')
             return(temp)
+
 
     def teslaEV_SetDistUnit(self, dUnit):
         logging.debug('teslaEV_SetDistUnit: {}'.format(dUnit))

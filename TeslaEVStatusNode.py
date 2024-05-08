@@ -105,8 +105,13 @@ class teslaEV_StatusNode(udi_interface.Node):
             logging.debug('StatusNode updateISYdrivers {}'.format(self.TEV.teslaEV_GetStatusInfo(self.EVid)))
 
             self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid))
-            self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)))
-            self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid))
+            if self.TEV.location_enabled():
+                self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)))
+                self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid))
+            else:
+                self.EV_setDriver('GV0', 98)
+                self.EV_setDriver('GV2', 98)
+                
             self.EV_setDriver('GV3', self.bool2ISY(self.TEV.teslaEV_GetLockState(self.EVid)))
             if self.TEV.teslaEV_GetDistUnit() == 1:
                 self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 116)
@@ -145,21 +150,24 @@ class teslaEV_StatusNode(udi_interface.Node):
                 logging.debug('GV16: {}'.format('NONE'))
                 self.EV_setDriver('GV16', 99, True, True, 25)
             '''      
-            
-            location = self.TEV.teslaEV_GetLocation(self.EVid)
-            logging.debug('teslaEV_GetLocation {}'.format(location))
-            if location['longitude']:
-                logging.debug('GV17: {}'.format(round(location['longitude'], 3)))
-                self.EV_setDriver('GV17', round(location['longitude'], 3), 56)
+            if self.TEV.location_enabled():
+                location = self.TEV.teslaEV_GetLocation(self.EVid)
+                logging.debug('teslaEV_GetLocation {}'.format(location))
+                if location['longitude']:
+                    logging.debug('GV17: {}'.format(round(location['longitude'], 3)))
+                    self.EV_setDriver('GV17', round(location['longitude'], 3), 56)
+                else:
+                    logging.debug('GV17: {}'.format('NONE'))
+                    self.EV_setDriver('GV17', None)
+                if location['latitude']:
+                    logging.debug('GV18: {}'.format(round(location['latitude'], 3)))
+                    self.EV_setDriver('GV18', round(location['latitude'], 3), 56)
+                else:
+                    logging.debug('GV18: {}'.format('NONE'))
+                    self.EV_setDriver('GV18', None)
             else:
-                logging.debug('GV17: {}'.format('NONE'))
-                self.EV_setDriver('GV17', None)
-            if location['latitude']:
-                logging.debug('GV18: {}'.format(round(location['latitude'], 3)))
-                self.EV_setDriver('GV18', round(location['latitude'], 3), 56)
-            else:
-                logging.debug('GV18: {}'.format('NONE'))
-                self.EV_setDriver('GV18', None)
+                self.EV_setDriver('GV17', 98, 25)
+                self.EV_setDriver('GV18', 98, 25)
 
             self.EV_setDriver('GV19', round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2), 20)            
             self.EV_setDriver('GV20', round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2), 20)
