@@ -53,13 +53,13 @@ class teslaEVAccess(teslaAccess):
         self.api  = '/api/1'
 
         #self.state = secrets.token_hex(16)
-        self.region = ''
+        self.region = 'NA'
         self.handleCustomParamsDone = False
         #self.customerDataHandlerDone = False
         self.customNsHandlerDone = False
         self.customOauthHandlerDone = False
-        self.temp_unit = 'C'
-        self.dist_unit = 'KM'
+        self.temp_unit = 0
+        self.dist_unit = 1
 
         self.carInfo = {}
         self.carStateList = ['online', 'Offline', 'aleep', 'unknown']
@@ -71,7 +71,6 @@ class teslaEVAccess(teslaAccess):
         self.readSeatHeat = False
         self.steeringWheeelHeat = False
         self.steeringWheelHeatDetected = False
-        self.distUnit = 1
         self.evs = {}
         self.ev_list = []
         self.poly = polyglot
@@ -399,19 +398,19 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_SetDistUnit(self, dUnit):
         logging.debug('teslaEV_SetDistUnit: {}'.format(dUnit))
-        self.distUnit = dUnit
+        self.dist_unit = dUnit
 
     def teslaEV_GetDistUnit(self):
-        #logging.debug('teslaEV_GetDistUnit: {}'.format(self.distUnit))
-        return(self.distUnit)
+        #logging.debug('teslaEV_GetDistUnit: {}'.format(self.dist_unit))
+        return(self.dist_unit)
 
     def teslaEV_SetTempUnit(self, tUnit):
         logging.debug('teslaEV_SetDistUnit: {}'.format(tUnit))
-        self.tempUnit = tUnit
+        self.temp_unit = tUnit
 
     def teslaEV_GetTempUnit(self):
-        #logging.debug('teslaEV_GetDistUnit: {}'.format(self.tempUnit))
-        return(self.tempUnit)
+        #logging.debug('teslaEV_GetTempUnit: {}'.format(self.temp_unit))
+        return(self.temp_unit)
 
 
     def teslaEV_SetRegion(self, tRegion):

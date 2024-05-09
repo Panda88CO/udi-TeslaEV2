@@ -138,7 +138,7 @@ class TeslaEVController(udi_interface.Node):
                     if self.temp_unit.upper() == 'C':
                         self.TEV.teslaEV_SetTempUnit(0)
                     else:
-                        self.TEV.teslaEV_SetTempUnit(1)     
+                        self.TEV.teslaEV_SetTempUnit(1)
         else:
             logging.warning('No TEMP_UNIT')
             self.customParameters['TEMP_UNIT'] = 'C or F'    
