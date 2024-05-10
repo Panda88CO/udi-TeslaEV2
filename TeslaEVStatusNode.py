@@ -194,7 +194,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         logging.info('EVhonkHorn called')
         #self.TEV.teslaEV_Wake(self.EVid)
         self.TEV.teslaEV_HonkHorn(self.EVid)
-
+        #self.EV_setDriver()
         #self.forceUpdateISYdrivers()
 
     def evFlashLights (self, command):
@@ -202,7 +202,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.TEV.teslaEV_Wake(self.EVid)
         self.TEV.teslaEV_FlashLights(self.EVid)
 
-        self.forceUpdateISYdrivers()
+        #self.forceUpdateISYdrivers()
 
     def evControlDoors (self, command):
         logging.info('EVctrlDoors called')
@@ -249,7 +249,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             #logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofState(self.EVid)))
             #self.EV_setDriver('GV10', self.openClose2ISY(self.TEV.teslaEV_GetSunRoofState(self.EVid)), 25)
 
-        self.forceUpdateISYdrivers()
+        #self.forceUpdateISYdrivers()
 
     def evOpenFrunk (self, command):
         logging.info('evOpenFrunk called')

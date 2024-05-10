@@ -289,7 +289,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         else:
             logging.error('Wrong command for evDefrostMax: {}'.format(wheel)) 
         #self.EV_setDriver('GV14', self.cond2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)))
-        self.forceUpdateISYdrivers()
+        #self.forceUpdateISYdrivers()
 
 
     '''
