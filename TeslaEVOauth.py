@@ -249,14 +249,14 @@ class teslaEVAccess(teslaAccess):
 
 
     def  tesla_register_customer_key():
-    """
-    (only displays a QR code or link to be opened on the phone with the Tesla app installed)
-    Register the public key of the partner to the car, so that the car can be controlled by the app.
-    This requires that the customer has already been registered by tesla_register_customer()
-    The QR/link is to be opened on the phone, where the Tesla app is installed.
-    Installs the key to the car to enable end-to-end encrypted commands.
-    :return:
-    """
+        """
+        (only displays a QR code or link to be opened on the phone with the Tesla app installed)
+        Register the public key of the partner to the car, so that the car can be controlled by the app.
+        This requires that the customer has already been registered by tesla_register_customer()
+        The QR/link is to be opened on the phone, where the Tesla app is installed.
+        Installs the key to the car to enable end-to-end encrypted commands.
+        :return:
+        """
     url=f"https://tesla.com/_ak/my.isy.io"
     print(f"Please open the following URL on your phone with the Tesla app installed:\n{url}")
 
@@ -316,7 +316,22 @@ class teslaEVAccess(teslaAccess):
             logging.error('tesla_get_products Exception : {}'.format(e))
     
 
+    def tesla_check_registration(self):
+        logging.debug('tesla_check_registration ')
+        try:
+            temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
 
+            logging.debug('Public Keys: {} '.format(temp))
+            if 'response' in temp:
+                logging.info('Public keys registered')
+            else:
+                temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
+     
+                
+            self.products = temp
+            return(EVs)
+        except Exception as e:
+            logging.error('tesla_get_products Exception : {}'.format(e))
 
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
