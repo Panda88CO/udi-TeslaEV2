@@ -248,7 +248,7 @@ class teslaEVAccess(teslaAccess):
     ###  Register car pem
 
 
-    def  tesla_register_customer_key():
+    def  tesla_register_customer_key(self):
         """
         (only displays a QR code or link to be opened on the phone with the Tesla app installed)
         Register the public key of the partner to the car, so that the car can be controlled by the app.
@@ -257,40 +257,10 @@ class teslaEVAccess(teslaAccess):
         Installs the key to the car to enable end-to-end encrypted commands.
         :return:
         """
-    url=f"https://tesla.com/_ak/my.isy.io"
-    print(f"Please open the following URL on your phone with the Tesla app installed:\n{url}")
+        url=f"https://www.tesla.com/_ak/my.isy.io"
+        print(f"Please open the following URL on your phone with the Tesla app installed:\n{url}")
 
-    try:
-        import qrcode
-    except ImportError:
-        print("qr module not found, to install run: pip3 install qrcode")
-        return
-
-    # now we create a QR code for the URL
-    import os
-    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-    qr.add_data(url)
-    qr.make(fit=True)
-    # qc=qr.print_ascii(invert=True)
-    # Create an image from the QR code instance
-    img = qr.make_image(fill_color="black", back_color="white")
-
-    # Save the image to /tmp directory
-    file_path = 'registerkey.png'
-    img.save(file_path)
-
-    # Display the QR code using the default image viewer or web browser
-    if os.name == 'nt':  # For Windows
-        os.startfile(file_path)
-    elif os.name == 'posix':  # For macOS and Linux
-        os.system(f'xdg-open {file_path}')
-    else:
-        print("Operating system not supported for automatic image display.")
-
-
-    # Then implement your service specific APIs
-    ########################################
-    ############################################
+       
 
     def tesla_get_products(self) -> dict:
         self.products= {}
@@ -316,6 +286,7 @@ class teslaEVAccess(teslaAccess):
             logging.error('tesla_get_products Exception : {}'.format(e))
     
 
+    '''
     def tesla_check_registration(self):
         logging.debug('tesla_check_registration ')
         try:
@@ -329,10 +300,11 @@ class teslaEVAccess(teslaAccess):
      
                 
             self.products = temp
-            return(EVs)
+            return(temp)
         except Exception as e:
             logging.error('tesla_get_products Exception : {}'.format(e))
-
+    '''
+    
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
         return(self.ev_list)

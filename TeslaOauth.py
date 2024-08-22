@@ -37,8 +37,8 @@ except ImportError:
 # Implements the API calls to your external service
 # It inherits the OAuth class
 class teslaAccess(udi_interface.OAuth):
-    yourApiEndpoint = 'https://fleet-api.prd.na.vn.cloud.tesla.com'
-
+    #yourApiEndpoint = 'https://fleet-api.prd.na.vn.cloud.tesla.com'
+    yourApiEndpoint = 'https://my.isy.io/api/tesla'
     def __init__(self, polyglot, scope):
         super().__init__(polyglot)
         logging.info('OAuth initializing')

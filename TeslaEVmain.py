@@ -182,7 +182,7 @@ class TeslaEVController(udi_interface.Node):
         self.EVs = self.TEV.tesla_get_products()
         #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
-        assigned_addresses =['controller']             
+        assigned_addresses =['controller']
         self.vehicleList = self.TEV.teslaEV_GetIdList()
 
         logging.debug('vehicleList: {}'.format(self.vehicleList))
