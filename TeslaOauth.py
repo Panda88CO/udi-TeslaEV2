@@ -218,6 +218,16 @@ class teslaAccess(udi_interface.OAuth):
     def getPortalToken(self, client_id, client_secret):
         logging.debug('getPortalToken')
 
+        headers = {
+            'grant_type': 'client_credentials',
+            'client_id': client_id ,
+            'client_secret' : client_secret,            
+        }
+        response = requests.post('https://my.isy.io/02/token', headers=headers)
+        logging.debug('isy response : {}'.format(response))
+
+        
+
     # Call your external service API
     def _callApi(self, method='GET', url=None, body=''):
         # When calling an API, get the access token (it will be refreshed if necessary)
