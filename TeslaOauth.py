@@ -42,8 +42,11 @@ class teslaAccess(udi_interface.OAuth):
     def __init__(self, polyglot, scope):
         super().__init__(polyglot)
         logging.info('OAuth initializing')
+        self.yourPortalEndpoint = 'https://my.isy.io/api/tesla'
         self.poly = polyglot
         self.scope = scope
+        self.portalId = None
+        self.portalSecret = None 
         #self.customParameters = Custom(self.poly, 'customparams')
         #self.scope_str = None
         self.EndpointNA= 'https://fleet-api.prd.na.vn.cloud.tesla.com'
@@ -212,7 +215,8 @@ class teslaAccess(udi_interface.OAuth):
         #return('expiry' in self._oauthTokens)
  
 
-
+    def getPortalToken(self, client_id, client_secret):
+        logging.debug('getPortalToken')
 
     # Call your external service API
     def _callApi(self, method='GET', url=None, body=''):
@@ -221,6 +225,69 @@ class teslaAccess(udi_interface.OAuth):
         try:
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
+            portal_token = self.getPortalToken(self.portalId, self.portalSecret)
+            #refresh_token = self._oauthTokens.get('refresh_token')
+            #logging.debug('call api tokens: {} {}'.format(refresh_token, accessToken))
+            self.poly.Notices.clear()
+        except ValueError as err:
+            logging.warning('Access token is not yet available. Please authenticate.')
+            self.poly.Notices['auth'] = 'Please initiate authentication'
+            logging.debug('_callAPI oauth error: {}'.format(err))
+            return
+        if accessToken is None:
+            logging.error('Access token is not available')
+            return None
+
+        if url is None:
+            logging.error('url is required')
+            return None
+
+        completeUrl = self.yourPortalEndpoint + url
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer { portal_token }',
+            'x-tesla-auth' : accessToken
+            
+        }
+
+        if method in [ 'PATCH', 'POST'] and body is None:
+            logging.error(f"body is required when using { method } { completeUrl }")
+        logging.debug(' call info url={}, header {}, body ={}'.format(completeUrl, headers, body))
+
+        try:
+            if method == 'GET':
+                response = requests.get(completeUrl, headers=headers, json=body)
+            elif method == 'DELETE':
+                response = requests.delete(completeUrl, headers=headers)
+            elif method == 'PATCH':
+                response = requests.patch(completeUrl, headers=headers, json=body)
+            elif method == 'POST':
+                response = requests.post(completeUrl, headers=headers, json=body)
+            elif method == 'PUT':
+                response = requests.put(completeUrl, headers=headers)
+            logging.debug('API response: {}'.format(response))
+            response.raise_for_status()
+            #self.apiLock.release()
+            
+            try:
+                return response.json()
+            except requests.exceptions.JSONDecodeError:
+                return response.text
+
+        except requests.exceptions.HTTPError as error:
+            logging.error(f"Call { method } { completeUrl } failed: { error }")
+            #self.apiLock.release()
+            return None
+        
+    # Call your external service API
+    def _callApiORG(self, method='GET', url=None, body=''):
+        # When calling an API, get the access token (it will be refreshed if necessary)
+        #self.apiLock.acquire()
+        try:
+            #self._oAuthTokensRefresh()  #force refresh
+            accessToken = self.getAccessToken()
+            portal_token = self.getPortalToken(self.portalId, self.portalSecret)
             #refresh_token = self._oauthTokens.get('refresh_token')
             #logging.debug('call api tokens: {} {}'.format(refresh_token, accessToken))
             self.poly.Notices.clear()
@@ -273,4 +340,3 @@ class teslaAccess(udi_interface.OAuth):
             logging.error(f"Call { method } { completeUrl } failed: { error }")
             #self.apiLock.release()
             return None
-        

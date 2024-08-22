@@ -178,7 +178,8 @@ class TeslaEVController(udi_interface.Node):
             self.poly.Notices['auth'] = 'Please initiate authentication'
             time.sleep(5)
         self.tesla_initialize()
-
+        self.portal_initialize()
+        
         self.EVs = self.TEV.tesla_get_products()
         #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
@@ -287,7 +288,12 @@ class TeslaEVController(udi_interface.Node):
 
         logging.debug ('Controller - initialization done')
 
-        
+    def portal_initialize(self):
+        logging.debug('portal_initialize')
+        portalId = None
+        portalSecret = None
+        self.TEV.initializePortal(portalId, portalSecret)
+
     def systemPoll(self, pollList):
         logging.debug('systemPoll')
         if self.TEV:
