@@ -51,10 +51,10 @@ class TeslaEVController(udi_interface.Node):
         #logging.debug('self.address : ' + str(self.address))
         #logging.debug('self.name :' + str(self.name))
         self.hb = 0
-
         self.connected = False
         self.nodeDefineDone = False
         self.statusNodeReady = False
+        self.customNsDone = False
 
         self.poly.updateProfile()
         self.poly.ready()
@@ -97,7 +97,7 @@ class TeslaEVController(udi_interface.Node):
             self.portalID = self.portalData['portalID']
         if 'portalSecret' in customData:
             self.portalID = self.portalData['portalSecret']
-
+        self.customNsDone = True
 
     def customParamsHandler(self, userParams):
         self.customParameters.load(userParams)
@@ -178,7 +178,7 @@ class TeslaEVController(udi_interface.Node):
         self.poly.updateProfile()
         #self.poly.setCustomParamsDoc()
 
-        while not self.customParam_done or not self.TEVcloud.customNsDone() and not self.config_done:
+        while not self.customParam_done or not self.customNsDone and not self.config_done:
             logging.info('Waiting for node to initialize')
             logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEVcloud.customNsDone(), self.config_done))
             time.sleep(1)
@@ -300,8 +300,8 @@ class TeslaEVController(udi_interface.Node):
 
     def portal_initialize(self, portalId, portalSecret):
         logging.debug('portal_initialize')
-        portalId = None
-        portalSecret = None
+        #portalId = None
+        #portalSecret = None
         self.TEVcloud.initializePortal(portalId, portalSecret)
 
     def systemPoll(self, pollList):
@@ -414,7 +414,6 @@ if __name__ == "__main__":
         logging.debug('before subscribe')
         polyglot.subscribe(polyglot.STOP, TEV.stop)
         polyglot.subscribe(polyglot.CUSTOMPARAMS, TEV.customParamsHandler)
-        polyglot.subscribe(polyglot.CUSTOMDATA, TEV.customDataHandler)
         polyglot.subscribe(polyglot.CONFIGDONE, TEV.configDoneHandler)
         #polyglot.subscribe(polyglot.ADDNODEDONE, TEV.node_queue)        
         polyglot.subscribe(polyglot.LOGLEVEL, TEV.handleLevelChange)
@@ -422,7 +421,7 @@ if __name__ == "__main__":
         polyglot.subscribe(polyglot.POLL, TEV.systemPoll)
         polyglot.subscribe(polyglot.START, TEV.start, 'controller')
         logging.debug('Calling start')
-        polyglot.subscribe(polyglot.CUSTOMNS, TEV_cloud.customNsHandler)
+        polyglot.subscribe(polyglot.CUSTOMNS, TEV.customDataHandler)
         polyglot.subscribe(polyglot.OAUTH, TEV_cloud.oauthHandler)
         logging.debug('after subscribe')
         polyglot.ready()

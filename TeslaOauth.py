@@ -59,7 +59,7 @@ class teslaAccess(udi_interface.OAuth):
         self.region = ''
         #self.handleCustomParamsDone = False
         #self.customerDataHandlerDone = False
-        self.customNsHandlerDone = False
+        self.customNsHandlerDone = True
         self.oauthHandlerCalled = False
         self.customDataHandlerDone = False
         self.authendication_done = False
@@ -214,6 +214,11 @@ class teslaAccess(udi_interface.OAuth):
             return
         #return('expiry' in self._oauthTokens)
  
+    def initializePortal(self, client_id, client_secret):
+        self.portalId = client_id
+        self.client_secret = client_secret
+
+
 
     def getPortalToken(self, client_id, client_secret):
         logging.debug('getPortalToken')
