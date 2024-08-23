@@ -25,10 +25,11 @@ class TeslaEVController(udi_interface.Node):
         super(TeslaEVController, self).__init__(polyglot, primary, address, name)
         logging.setLevel(10)
         self.poly = polyglot
-
+        self.portalID = None
+        self.portalSecret = None
         self.n_queue = []
         self.vehicleList = []
-        self.TEV = ev_cloud_access
+        self.TEVcloud = ev_cloud_access
         
         logging.info('_init_ Tesla EV Controller ')
         self.ISYforced = False
@@ -42,6 +43,7 @@ class TeslaEVController(udi_interface.Node):
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
         self.customParameters = Custom(self.poly, 'customparams')
+        self.portalData = Custom(self.poly, 'customdata')
         self.Notices = Custom(polyglot, 'notices')
 
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
@@ -86,7 +88,15 @@ class TeslaEVController(udi_interface.Node):
     def handleNotices(self, level):
         logging.info('handleNotices:')
     def oauthHandler(self, token):
-        self.TEV.oauthHandler(token)
+        self.TEVcloud.oauthHandler(token)
+
+    def customDataHandler(self, customData):
+        self.portalData.load(customData)
+        
+        if 'portalID' in customData:
+            self.portalID = self.portalData['portalID']
+        if 'portalSecret' in customData:
+            self.portalID = self.portalData['portalSecret']
 
 
     def customParamsHandler(self, userParams):
@@ -105,7 +115,7 @@ class TeslaEVController(udi_interface.Node):
                     logging.error('Unsupported region {}'.format(self.region))
                     self.poly.Notices['REGION'] = 'Unknown Region specified (NA = North America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
                 else:
-                    self.TEV.cloud_set_region(self.region)
+                    self.TEVcloud.cloud_set_region(self.region)
         else:
             logging.warning('No region found')
             self.customParameters['REGION'] = 'Input region NA, EU, CN'
@@ -121,9 +131,9 @@ class TeslaEVController(udi_interface.Node):
                     self.poly.Notices['dist'] = 'Unknown distance Unit specified'
                 else:
                     if self.dist_unit.upper() == 'KM':
-                        self.TEV.teslaEV_SetDistUnit(0)
+                        self.TEVcloud.teslaEV_SetDistUnit(0)
                     else:
-                        self.TEV.teslaEV_SetDistUnit(1)
+                        self.TEVcloud.teslaEV_SetDistUnit(1)
         else:
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'
@@ -136,9 +146,9 @@ class TeslaEVController(udi_interface.Node):
                     self.poly.Notices['temp'] = 'Unknown distance Unit specified'
                 else:
                     if self.temp_unit.upper() == 'C':
-                        self.TEV.teslaEV_SetTempUnit(0)
+                        self.TEVcloud.teslaEV_SetTempUnit(0)
                     else:
-                        self.TEV.teslaEV_SetTempUnit(1)
+                        self.TEVcloud.teslaEV_SetTempUnit(1)
         else:
             logging.warning('No TEMP_UNIT')
             self.customParameters['TEMP_UNIT'] = 'C or F'    
@@ -154,7 +164,7 @@ class TeslaEVController(udi_interface.Node):
                     logging.error('Unsupported Location Setting {}'.format(self.locationEn))
                     self.poly.Notices['location'] = 'Unknown distance Unit specified'
                 else:
-                    self.TEV.teslaEV_set_location_enabled(self.locationEn)
+                    self.TEVcloud.teslaEV_set_location_enabled(self.locationEn)
                     
         else:
             logging.warning('No LOCATION')
@@ -168,23 +178,23 @@ class TeslaEVController(udi_interface.Node):
         self.poly.updateProfile()
         #self.poly.setCustomParamsDoc()
 
-        while not self.customParam_done or not self.TEV.customNsDone() and not self.config_done:
+        while not self.customParam_done or not self.TEVcloud.customNsDone() and not self.config_done:
             logging.info('Waiting for node to initialize')
-            logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEV.customNsDone(), self.config_done))
+            logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEVcloud.customNsDone(), self.config_done))
             time.sleep(1)
         
-        while not self.TEV.authenticated():
+        while not self.TEVcloud.authenticated():
             logging.info('Waiting to authenticate to complete - press authenticate button')
             self.poly.Notices['auth'] = 'Please initiate authentication'
             time.sleep(5)
         self.tesla_initialize()
-        self.portal_initialize()
+        self.portal_initialize(self.portalID, self.portalSecret)
         
-        self.EVs = self.TEV.tesla_get_products()
+        self.EVs = self.TEVcloud.tesla_get_products()
         #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']
-        self.vehicleList = self.TEV.teslaEV_GetIdList()
+        self.vehicleList = self.TEVcloud.teslaEV_GetIdList()
 
         logging.debug('vehicleList: {}'.format(self.vehicleList))
         self.GV1 = len(self.vehicleList)
@@ -196,11 +206,11 @@ class TeslaEVController(udi_interface.Node):
             nodeName = None
             #vehicleId = self.vehicleList[vehicle]
             #logging.debug('vehicleId {}'.format(vehicleId))
-            self.TEV.teslaEV_UpdateCloudInfo(EvId)
-            #logging.debug('self.TEV.teslaEV_UpdateCloudInfo')
-            vehicleInfo = self.TEV.teslaEV_GetInfo(EvId)
+            self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
+            #logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo')
+            vehicleInfo = self.TEVcloud.teslaEV_GetInfo(EvId)
             logging.info('EV info: {} = {}'.format(EvId, vehicleInfo))
-            nodeName = self.TEV.teslaEV_GetName(EvId)
+            nodeName = self.TEVcloud.teslaEV_GetName(EvId)
 
             if nodeName == ''  or nodeName == None:
                 nodeName = 'ev'+str(EvId) 
@@ -211,8 +221,8 @@ class TeslaEVController(udi_interface.Node):
             if not self.poly.getNode(nodeAdr):
                 logging.debug('Node Address : {} {}'.format(self.poly.getNode(nodeAdr),nodeAdr ))
             logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
-            #self.TEV.teslaEV_UpdateCloudInfo(EvId)
-            ev_temp = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEV)        
+            #self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
+            ev_temp = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEVcloud)        
             assigned_addresses.append(nodeAdr)
             while not (ev_temp.subnodesReady() or ev_temp.statusNodeReady):
                 logging.debug('waiting for nodes to be created')
@@ -288,16 +298,16 @@ class TeslaEVController(udi_interface.Node):
 
         logging.debug ('Controller - initialization done')
 
-    def portal_initialize(self):
+    def portal_initialize(self, portalId, portalSecret):
         logging.debug('portal_initialize')
         portalId = None
         portalSecret = None
-        self.TEV.initializePortal(portalId, portalSecret)
+        self.TEVcloud.initializePortal(portalId, portalSecret)
 
     def systemPoll(self, pollList):
         logging.debug('systemPoll')
-        if self.TEV:
-            if self.TEV.authenticated(): 
+        if self.TEVcloud:
+            if self.TEVcloud.authenticated(): 
                 if 'longPoll' in pollList:
                     self.longPoll()
                 elif 'shortPoll' in pollList:
@@ -309,10 +319,10 @@ class TeslaEVController(udi_interface.Node):
     def shortPoll(self):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
         self.heartbeat()    
-        if self.TEV.authenticated():
+        if self.TEVcloud.authenticated():
             for indx, vehicle in self.vehicleList:                
                 try:
-                    self.TEV.teslaEV_UpdateCloudInfoAwake(self.vehicleList[vehicle])
+                    self.TEVcloud.teslaEV_UpdateCloudInfoAwake(self.vehicleList[vehicle])
                     nodes = self.poly.getNodes()
                     for node in nodes:
                         #if node != 'controller'    
@@ -321,16 +331,16 @@ class TeslaEVController(udi_interface.Node):
                 except Exception as E:
                     logging.info('Not all nodes ready: {}'.format(E))
 
-#            self.Rtoken  = self.TEV.getRtoken()
+#            self.Rtoken  = self.TEVcloud.getRtoken()
 #            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
 #                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
         
     def longPoll(self):
-        logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEV.authenticated()))
+        logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))
         
-        if self.TEV.authenticated():
+        if self.TEVcloud.authenticated():
             for indx, vehicle in self.vehicleList:
-                 self.TEV.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
+                 self.TEVcloud.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
             try:
                 nodes = self.poly.getNodes()
                 for node in nodes:
@@ -340,7 +350,7 @@ class TeslaEVController(udi_interface.Node):
             except Exception as E:
                 logging.info('Not all nodes ready: {}'.format(E))
 
-#            self.Rtoken  = self.TEV.getRtoken()
+#            self.Rtoken  = self.TEVcloud.getRtoken()
 #            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
 #                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
 
@@ -351,7 +361,7 @@ class TeslaEVController(udi_interface.Node):
 
     def updateISYdrivers(self):
         logging.debug('System updateISYdrivers - Controller')       
-        value = self.TEV.authenticated()
+        value = self.TEVcloud.authenticated()
         self.EV_setDriver('GV0', value)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV2', self.dUnit)
@@ -404,7 +414,7 @@ if __name__ == "__main__":
         logging.debug('before subscribe')
         polyglot.subscribe(polyglot.STOP, TEV.stop)
         polyglot.subscribe(polyglot.CUSTOMPARAMS, TEV.customParamsHandler)
-        polyglot.subscribe(polyglot.CUSTOMDATA, None) # ytService.customDataHandler)
+        polyglot.subscribe(polyglot.CUSTOMDATA, TEV.customDataHandler)
         polyglot.subscribe(polyglot.CONFIGDONE, TEV.configDoneHandler)
         #polyglot.subscribe(polyglot.ADDNODEDONE, TEV.node_queue)        
         polyglot.subscribe(polyglot.LOGLEVEL, TEV.handleLevelChange)
