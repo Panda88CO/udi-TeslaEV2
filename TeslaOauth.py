@@ -80,7 +80,7 @@ class teslaAccess(udi_interface.OAuth):
     
     # The OAuth class needs to be hooked to these 3 handlers
     
-    def customDataHandler(self, data):
+    def customDataHandler(self, key, data):
         logging.debug('customDataHandler called {}'.format(data))
         #while not self.handleCustomParamsDone:
         #    logging.debug('Waiting for customDataHandler to complete')

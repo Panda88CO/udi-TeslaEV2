@@ -90,12 +90,12 @@ class TeslaEVController(udi_interface.Node):
     def oauthHandler(self, token):
         self.TEVcloud.oauthHandler(token)
 
-    def customDataHandler(self, customData):
-        self.portalData.load(customData)
-        logging.debug('customDataHandler : {}'.format(customData))
-        if 'portalID' in customData:
+    def customDataHandler(self, key, data):
+        #self.portalData.load(customData)
+        logging.debug('customDataHandler : key:{}  data:{}'.format(key, data))
+        if 'portalID' in data:
             self.portalID = self.portalData['portalID']
-        if 'portalSecret' in customData:
+        if 'portalSecret' in data:
             self.portalID = self.portalData['portalSecret']
         self.customNsDone = True
 
