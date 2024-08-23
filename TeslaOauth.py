@@ -45,7 +45,7 @@ class teslaAccess(udi_interface.OAuth):
         self.yourPortalEndpoint = 'https://my.isy.io/api/tesla'
         self.poly = polyglot
         self.scope = scope
-        self.portalId = None
+        self.portalId = 'isyportal-o2-tesla'
         self.portalSecret = None 
         #self.customParameters = Custom(self.poly, 'customparams')
         #self.scope_str = None
