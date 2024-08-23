@@ -92,7 +92,7 @@ class TeslaEVController(udi_interface.Node):
 
     def customDataHandler(self, customData):
         self.portalData.load(customData)
-        
+        logging.debug('customDataHandler : {}'.format(customData))
         if 'portalID' in customData:
             self.portalID = self.portalData['portalID']
         if 'portalSecret' in customData:
