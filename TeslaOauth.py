@@ -46,7 +46,7 @@ class teslaAccess(udi_interface.OAuth):
         self.poly = polyglot
         self.scope = scope
         self.portalId = 'isyportal-o2-tesla'
-        self.portalSecret = None 
+        self.portalSecret = '0oQdAPq$ZfTt20pO' 
         #self.customParameters = Custom(self.poly, 'customparams')
         #self.scope_str = None
         self.EndpointNA= 'https://fleet-api.prd.na.vn.cloud.tesla.com'
