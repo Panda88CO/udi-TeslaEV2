@@ -53,7 +53,8 @@ class teslaAccess(udi_interface.OAuth):
         self.EndpointEU= 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
         self.EndpointCN= 'https://fleet-api.prd.cn.vn.cloud.tesla.cn'
         self.api  = '/api/1'
-        #self.local_access_enabled = False
+
+        self.portal_connected = False
         self.cloud_access_enabled = False
         #self.state = secrets.token_hex(16)
         self.region = ''
@@ -226,7 +227,7 @@ class teslaAccess(udi_interface.OAuth):
             'Content-Type' :'application/x-www-form-urlencoded',
             'Connection' : 'keep-alive'
         }
-        
+
         body = {
             'grant_type': 'client_credentials',
             'client_id': client_id ,
@@ -234,8 +235,11 @@ class teslaAccess(udi_interface.OAuth):
         }
         response = requests.post('https://my.isy.io/o2/token', headers=headers, body=body)
         logging.debug('isy response : {}'.format(response))
+        self.portal_connected = True
         return ( response)
         
+    def portal_ready(self):
+        return(self.portal_connected)
 
     # Call your external service API
     def _callApi(self, method='GET', url=None, body=''):

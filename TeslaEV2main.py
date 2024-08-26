@@ -189,10 +189,16 @@ class TeslaEVController(udi_interface.Node):
             logging.info('Waiting to authenticate to complete - press authenticate button')
             self.poly.Notices['auth'] = 'Please initiate authentication'
             time.sleep(5)
-        self.tesla_initialize()
+
+
+        
         logging.debug('Portal Credentials: {} {}'.format(self.portalID, self.portalSecret))
         self.portal_initialize(self.portalID, self.portalSecret)
-        
+        while not self.TEV.portal_ready():
+            time.sleep(5)
+            logging.debug('Waiting for portal connection')
+            
+        self.tesla_initialize()
         self.EVs = self.TEVcloud.tesla_get_products()
         #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
