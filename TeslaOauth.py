@@ -221,7 +221,7 @@ class teslaAccess(udi_interface.OAuth):
 
 
     def getPortalToken(self, client_id, client_secret):
-        logging.debug('getPortalToken {} {}'.format(client_id, client_secret)
+        logging.debug('getPortalToken {} {}'.format(client_id, client_secret))
 
         headers = {
             'grant_type': 'client_credentials',
