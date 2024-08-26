@@ -43,7 +43,7 @@ class TeslaEVController(udi_interface.Node):
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
         self.customParameters = Custom(self.poly, 'customparams')
-        self.portalData = Custom(self.poly, 'customdata')
+        self.portalData = Custom(self.poly, 'customNSdata')
         self.Notices = Custom(polyglot, 'notices')
 
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
@@ -90,10 +90,9 @@ class TeslaEVController(udi_interface.Node):
     def oauthHandler(self, token):
         self.TEVcloud.oauthHandler(token)
 
-    def customDataHandler(self, key, data):
-        #self.portalData.load(customData)
-        logging.debug('customDataHandler : key:{}  data:{}, portalD {}'.format(key, data, self.portalSecret))
-
+    def customNSHandler(self, key, data):
+        self.portalData.load(data)
+        logging.debug('customNSHandler : key:{}  data:{}, portalD {}'.format(key, data, self.portalSecret))
         if 'portalID' in data:
             self.portalID = self.portalSecret[key]['portalID']
         if 'portalSecret' in data:
@@ -425,7 +424,7 @@ if __name__ == "__main__":
         polyglot.subscribe(polyglot.POLL, TEV.systemPoll)
         polyglot.subscribe(polyglot.START, TEV.start, 'controller')
         logging.debug('Calling start')
-        polyglot.subscribe(polyglot.CUSTOMNS, TEV.customDataHandler)
+        polyglot.subscribe(polyglot.CUSTOMNS, TEV.customNSHandler)
         polyglot.subscribe(polyglot.OAUTH, TEV_cloud.oauthHandler)
         logging.debug('after subscribe')
         polyglot.ready()
