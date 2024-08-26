@@ -194,10 +194,10 @@ class TeslaEVController(udi_interface.Node):
         
         logging.debug('Portal Credentials: {} {}'.format(self.portalID, self.portalSecret))
         self.portal_initialize(self.portalID, self.portalSecret)
-        while not self.TEV.portal_ready():
+        while not self.TEVcloud.portal_ready():
             time.sleep(5)
             logging.debug('Waiting for portal connection')
-            
+
         self.tesla_initialize()
         self.EVs = self.TEVcloud.tesla_get_products()
         #self.EVs_installed = {}
