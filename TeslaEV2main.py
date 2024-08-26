@@ -92,11 +92,11 @@ class TeslaEVController(udi_interface.Node):
 
     def customNSHandler(self, key, data):
         self.portalData.load(data)
-        logging.debug('customNSHandler : key:{}  data:{}, portalD {}'.format(key, data, self.portalSecret))
+        logging.debug('customNSHandler : key:{}  data:{}, portalD {}'.format(key, data))
         if 'portalID' in data:
-            self.portalID = self.portalSecret[key]['portalID']
+            self.portalID = data['portalID']
         if 'portalSecret' in data:
-            self.portalSecret = self.portalData[key]['portalSecret']
+            self.portalSecret = data['portalSecret']
 
         logging.debug('Custom Data portal: {} {}'.format(self.portalID , self.portalSecret ))
         self.customNsDone = True
