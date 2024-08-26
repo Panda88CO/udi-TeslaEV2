@@ -221,14 +221,14 @@ class teslaAccess(udi_interface.OAuth):
 
 
     def getPortalToken(self, client_id, client_secret):
-        logging.debug('getPortalToken')
+        logging.debug('getPortalToken {} {}'.format(client_id, client_secret)
 
         headers = {
             'grant_type': 'client_credentials',
             'client_id': client_id ,
             'client_secret' : client_secret,            
         }
-        response = requests.post('https://my.isy.io/02/token', headers=headers)
+        response = requests.post('https://my.isy.io/o2/token', headers=headers)
         logging.debug('isy response : {}'.format(response))
         return ( response)
         
