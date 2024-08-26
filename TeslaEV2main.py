@@ -92,11 +92,14 @@ class TeslaEVController(udi_interface.Node):
 
     def customDataHandler(self, key, data):
         #self.portalData.load(customData)
-        logging.debug('customDataHandler : key:{}  data:{}'.format(key, data))
+        logging.debug('customDataHandler : key:{}  data:{}, portalD {}'.format(key, data, self.portalSecret))
+
         if 'portalID' in data:
-            self.portalID = self.portalData['portalID']
+            self.portalID = self.portalSecret[key]['portalID']
         if 'portalSecret' in data:
-            self.portalID = self.portalData['portalSecret']
+            self.portalSecret = self.portalData[key]['portalSecret']
+
+        logging.debug('Custom Data portal: {} {}'.format(self.portalID , self.portalSecret ))
         self.customNsDone = True
 
     def customParamsHandler(self, userParams):
@@ -188,6 +191,7 @@ class TeslaEVController(udi_interface.Node):
             self.poly.Notices['auth'] = 'Please initiate authentication'
             time.sleep(5)
         self.tesla_initialize()
+        logging.debug('Portal Credentials: {} {}'.format(self.portalID, self.portalSecret))
         self.portal_initialize(self.portalID, self.portalSecret)
         
         self.EVs = self.TEVcloud.tesla_get_products()
