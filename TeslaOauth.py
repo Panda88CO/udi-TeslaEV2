@@ -241,8 +241,7 @@ class teslaAccess(udi_interface.OAuth):
             }
             logging.debug('Before post header = {}, body = {}'.format(headers, body))
             response = requests.post('https://my.isy.io/o2/token', headers=headers, data=body)
-            temp = response.json()
-            logging.debug('Temp result {}'.format(temp))
+
             if response.status_code == 200:
                 self.token_info = response.json()
                 self.token_info['expiry'] =  int(time.time()) + self.token_info['expires_in']
@@ -308,7 +307,8 @@ class teslaAccess(udi_interface.OAuth):
             logging.debug('API response: {}'.format(response))
             response.raise_for_status()
             #self.apiLock.release()
-            
+            temp = response.json()
+            logging.debug('Temp result {}'.format(temp))
             try:
                 return response.json()
             except requests.exceptions.JSONDecodeError:
