@@ -218,7 +218,7 @@ class teslaAccess(udi_interface.OAuth):
     def initializePortal(self, client_id, client_secret):
         self.portalId = client_id
         self.client_secret = client_secret
-
+        self.getPortalToken(self.portalId , self.client_secret)
 
 
     def getPortalToken(self, client_id, client_secret):

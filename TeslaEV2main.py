@@ -193,7 +193,7 @@ class TeslaEVController(udi_interface.Node):
 
         
         logging.debug('Portal Credentials: {} {}'.format(self.portalID, self.portalSecret))
-        self.portal_initialize(self.portalID, self.portalSecret)
+        self.TEVcloud.initializePortal(self.portalID, self.portalSecret)
         while not self.TEVcloud.portal_ready():
             time.sleep(5)
             logging.debug('Waiting for portal connection')
