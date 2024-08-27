@@ -261,7 +261,7 @@ class teslaEVAccess(teslaAccess):
         print(f"Please open the following URL on your phone with the Tesla app installed:\n{url}")
 
        
-
+    '''
     def tesla_get_products(self) -> dict:
         self.products= {}
         EVs = {}
@@ -284,8 +284,31 @@ class teslaEVAccess(teslaAccess):
             return(EVs)
         except Exception as e:
             logging.error('tesla_get_products Exception : {}'.format(e))
-    
+    '''
 
+    def tesla_get_products(self) -> dict:
+        self.products= {}
+        EVs = {}
+        logging.debug('tesla_get_products ')
+        try:
+            temp = self._callApi('GET','/vehicles' )
+            #temp = self._callApi('GET','/vehicles' )
+            logging.debug('products: {} '.format(temp))
+            if 'response' in temp:
+                #for indx in range(0,len(temp['response'])):
+                #    site = temp['response'][indx]
+                for indx, site in enumerate(temp['response']):
+                    if 'vehicle_id' in site:
+                        EVs[str(site['id'])] = site
+                        #self.ev_list.append(site['id'])
+                        self.ev_list.append(site['vin']) # vin needed to send commands
+
+            self.evs = EVs
+            self.products = temp
+            return(EVs)
+        except Exception as e:
+            logging.error('tesla_get_products Exception : {}'.format(e))
+    
     '''
     def tesla_check_registration(self):
         logging.debug('tesla_check_registration ')
