@@ -305,10 +305,11 @@ class teslaAccess(udi_interface.OAuth):
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
             logging.debug('API response: {}'.format(response))
-            response.raise_for_status()
-            #self.apiLock.release()
             temp = response.json()
             logging.debug('Temp result {}'.format(temp))
+            
+            response.raise_for_status()
+            #self.apiLock.release()
             try:
                 return response.json()
             except requests.exceptions.JSONDecodeError:
