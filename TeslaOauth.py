@@ -42,7 +42,7 @@ class teslaAccess(udi_interface.OAuth):
     def __init__(self, polyglot, scope):
         super().__init__(polyglot)
         logging.info('OAuth initializing')
-        self.yourPortalEndpoint = 'https://my.isy.io/api/tesla'
+  
         self.poly = polyglot
         self.scope = scope
         self.portalId = 'isyportal-o2-tesla'
@@ -53,6 +53,7 @@ class teslaAccess(udi_interface.OAuth):
         self.EndpointEU= 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
         self.EndpointCN= 'https://fleet-api.prd.cn.vn.cloud.tesla.cn'
         self.api  = '/api/1'
+        self.yourPortalEndpoint = 'https://my.isy.io/api/tesla'+self.api
         self.token_info = {}
         self.portal_connected = False
         self.cloud_access_enabled = False
@@ -282,8 +283,8 @@ class teslaAccess(udi_interface.OAuth):
 
         headers = {
             'Content-Type': 'application/json',
-            #'Authorization': f'Bearer { portalToken }',
-            'Authorization': portalToken,
+            'Authorization': f'Bearer { portalToken }',
+            #'Authorization': portalToken,
             'X-tesla-auth' : accessToken
             
         }
