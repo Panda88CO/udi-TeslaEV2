@@ -283,7 +283,7 @@ class teslaAccess(udi_interface.OAuth):
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer { portalToken }',
-            'x-tesla-auth' : accessToken
+            'X-tesla-auth' : accessToken
             
         }
 
