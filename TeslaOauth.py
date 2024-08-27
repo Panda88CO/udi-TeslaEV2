@@ -53,7 +53,7 @@ class teslaAccess(udi_interface.OAuth):
         self.EndpointEU= 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
         self.EndpointCN= 'https://fleet-api.prd.cn.vn.cloud.tesla.cn'
         self.api  = '/api/1'
-
+        self.token_info = None
         self.portal_connected = False
         self.cloud_access_enabled = False
         #self.state = secrets.token_hex(16)
@@ -223,23 +223,32 @@ class teslaAccess(udi_interface.OAuth):
 
     def getPortalToken(self, client_id, client_secret):
         logging.debug('getPortalToken {} {}'.format(client_id, client_secret))
-        headers = {
-            'Content-Type' :'application/x-www-form-urlencoded',
-        }
+        token_refresh = True
+        now = int(time.time())
+        if 'expiry' in self.token_info:
+            if now <= self.token_info['expiry'] - 60:
+                token_refresh = False
+        if token_refresh:
+            headers = {
+                'Content-Type' :'application/x-www-form-urlencoded',
+            }
 
-        body = {
-            'grant_type': 'client_credentials',
-            'client_id': client_id ,
-            'client_secret' : client_secret,            
-        }
-        logging.debug('Before post header = {}, body = {}'.format(headers, body))
-        response = requests.post('https://my.isy.io/o2/token', headers=headers, data=body)
-        
-        if response.status_code == 200:
-            response = response.json()
-        logging.debug('isy response : {}'.format(response))
-        self.portal_connected = True
-        return ( response)
+            body = {
+                'grant_type': 'client_credentials',
+                'client_id': client_id ,
+                'client_secret' : client_secret,            
+            }
+            logging.debug('Before post header = {}, body = {}'.format(headers, body))
+            response = requests.post('https://my.isy.io/o2/token', headers=headers, data=body)
+            
+            if response.status_code == 200:
+                self.token_info = response.json()
+                self.token_info['expiry'] =  int(time.time()) + self.token_info['expires_in']
+                self.portal_connected = True
+        if 'access_token' in self.token_info:
+            return ( self.token_info['access_token'])
+        else:
+            return(None)
         
     def portal_ready(self):
         return(self.portal_connected)
@@ -251,7 +260,8 @@ class teslaAccess(udi_interface.OAuth):
         try:
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
-            portal_token = self.getPortalToken(self.portalId, self.portalSecret)
+            portalToken = self.getPortalToken(self.portalId, self.portalSecret)
+            logging.debug('Tokens: P={} T={}'.format(portalToken, accessToken))
             #refresh_token = self._oauthTokens.get('refresh_token')
             #logging.debug('call api tokens: {} {}'.format(refresh_token, accessToken))
             self.poly.Notices.clear()
@@ -272,7 +282,7 @@ class teslaAccess(udi_interface.OAuth):
 
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': f'Bearer { portal_token }',
+            'Authorization': f'Bearer { portalToken }',
             'x-tesla-auth' : accessToken
             
         }
