@@ -225,7 +225,6 @@ class teslaAccess(udi_interface.OAuth):
         logging.debug('getPortalToken {} {}'.format(client_id, client_secret))
         headers = {
             'Content-Type' :'application/x-www-form-urlencoded',
-            'Connection' : 'keep-alive'
         }
 
         body = {
@@ -233,6 +232,7 @@ class teslaAccess(udi_interface.OAuth):
             'client_id': client_id ,
             'client_secret' : client_secret,            
         }
+        logging.debug('Before post header = {}, body = {}'.format(headers, body))
         response = requests.post('https://my.isy.io/o2/token', headers=headers, json=body)
         logging.debug('isy response : {}'.format(response))
         self.portal_connected = True
