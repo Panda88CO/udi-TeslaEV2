@@ -415,7 +415,7 @@ if __name__ == "__main__":
 
         #TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds vehicle_device_data vehicle_cmds vehicle_charging_cmds open_id offline_access')
         #TEV_cloud = teslaEVAccess(polyglot, 'energy_device_data energy_cmds open_id offline_access')
-        TEV_cloud = teslaEVAccess(polyglot, 'vehicle_device_data vehicle_cmds user_data vehicle_device_data vehicle_charging_cmds open_id offline_access')
+        TEV_cloud = teslaEVAccess(polyglot, ' open_id user_data vehicle_device_data vehicle_cmds  vehicle_charging_cmds offline_access')
         logging.debug('TEV_Cloud {}'.format(TEV_cloud))
         TEV =TeslaEVController(polyglot, 'controller', 'controller', 'Tesla EVs', TEV_cloud)
 
