@@ -185,6 +185,7 @@ class teslaAccess(udi_interface.OAuth):
            
         self.yourApiEndpoint = endpoint+self.api 
         oauthSettingsUpdate['token_parameters']['audience'] = endpoint
+        
         self.updateOauthSettings(oauthSettingsUpdate)
         #time.sleep(0.1)
         logging.debug('getOauthSettings: {}'.format(self.getOauthSettings()))
