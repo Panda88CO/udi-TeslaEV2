@@ -358,15 +358,15 @@ class teslaEVAccess(teslaAccess):
             res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload )
             logging.debug('vehicel data: {}'.format(res))
             logging.debug('EV {} info : {} '.format(EVid, res))
-            if res is None:
-                    res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
-                    if 'response' in res:
-                        if res['response']: # None if asleep
-                            res = res['response']
-                else:
-                    return(None)
+            #if res is None:
+            #        res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
+            #        if 'response' in res:
+            #            if res['response']: # None if asleep
+            #                res = res['response']
+            #else:
+            #    return(None)
                 #res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
-            logging.debug('EV {} info : {} '.format(EVid, res))                                
+            #logging.debug('EV {} info : {} '.format(EVid, res))                                
             self.carInfo[EVid] = self.process_EV_data(res)
             return(True)
         except Exception as e:
