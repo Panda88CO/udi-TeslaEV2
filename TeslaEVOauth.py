@@ -353,15 +353,16 @@ class teslaEVAccess(teslaAccess):
                 logging.debug('Wake_up result : {}'.format(wu_res))
 
                 if 'state' in wu_res:
-                    logging.debug('Wak-up state: {}'.format( wu_res['state'] ))
+                    logging.debug('Wake-up state: {}'.format( wu_res['state'] ))
                     no_data = True
                     while no_data:
                         time.sleep(20)
                         #wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
                         res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
                         if 'response' in res:
-                            res = res['response']
-                            no_data = False
+                            if res['response']: # None if asleep
+                                res = res['response']
+                                no_data = False
                 else:
                     return(None)
                 #res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
