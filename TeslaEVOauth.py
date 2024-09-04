@@ -350,7 +350,9 @@ class teslaEVAccess(teslaAccess):
                 while  wu_res['state'] != 'online':
                     logging.debug('Waiting for car to wake up')
                     time.sleep(20)
-                    wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                    res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                    wu_res = res['response']
+
             if self.locationEn:
                 payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
             else:
