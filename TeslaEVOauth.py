@@ -339,18 +339,18 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
        
-            wu_res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
-            logging.debug('wakeup: {}'.format(wu_res))
-            if 'response' in wu_res:
-                wu_res = wu_res['response']
-            logging.debug('Wake_up result : {}'.format(wu_res))
+            res = self._callApiORG('POST','/vehicles/'+str(EVid) +'/wake_up')
+            logging.debug('wakeup: {}'.format(res))
+            if res:
+                wu_res = res['response']
+                logging.debug('Wake_up result : {}'.format(wu_res))
 
             if 'state' in wu_res:
                 logging.debug('Wake-up state: {}'.format( wu_res['state'] ))
                 while  wu_res['state'] != 'online':
                     logging.debug('Waiting for car to wake up')
                     time.sleep(20)
-                    res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                    res = self._callApiORG('POST','/vehicles/'+str(EVid) +'/wake_up' )
                     wu_res = res['response']
 
             if self.locationEn:
