@@ -45,8 +45,8 @@ class teslaAccess(udi_interface.OAuth):
   
         self.poly = polyglot
         self.scope = scope
-        self.portalId = 'isyportal-o2-tesla'
-        self.portalSecret = '0oQdAPq$ZfTt20pO' 
+        #self.portalId = 'isyportal-o2-tesla'
+        #self.portalSecret = '0oQdAPq$ZfTt20pO' 
         #self.customParameters = Custom(self.poly, 'customparams')
         #self.scope_str = None
         self.EndpointNA= 'https://fleet-api.prd.na.vn.cloud.tesla.com'
@@ -328,7 +328,7 @@ class teslaAccess(udi_interface.OAuth):
         try:
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
-            portal_token = self.getPortalToken(self.portalId, self.portalSecret)
+            #portal_token = self.getPortalToken(self.portalId, self.portalSecret)
             #refresh_token = self._oauthTokens.get('refresh_token')
             #logging.debug('call api tokens: {} {}'.format(refresh_token, accessToken))
             self.poly.Notices.clear()
