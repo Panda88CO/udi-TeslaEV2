@@ -1356,6 +1356,7 @@ class teslaEVAccess(teslaAccess):
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])            
             temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')          
+            logging.debug('temp {}'.format(temp))
             #temp = r.json()
             if 'response' in temp:
                 self.carInfo[EVid] = temp['response']
