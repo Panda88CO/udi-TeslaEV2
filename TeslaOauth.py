@@ -18,9 +18,10 @@ from datetime import timedelta, datetime
 from tzlocal import get_localzone
 
 try:
-    import udi_interface
-    logging = udi_interface.LOGGER
-#    Custom = udi_interface.Custom
+    #import udi_interface
+    from udi_interface import LOGGER, Custom, OAuth
+    logging = LOGGER
+
 #    ISY = udi_interface.ISY
 except ImportError:
     import logging
@@ -36,7 +37,7 @@ except ImportError:
 
 # Implements the API calls to your external service
 # It inherits the OAuth class
-class teslaAccess(udi_interface.OAuth):
+class teslaAccess(OAuth):
     #yourApiEndpoint = 'https://fleet-api.prd.na.vn.cloud.tesla.com'
     yourApiEndpoint = 'https://my.isy.io/api/tesla'
     def __init__(self, polyglot, scope):
@@ -70,7 +71,7 @@ class teslaAccess(udi_interface.OAuth):
         #self.poly.subscribe(self.poly.CUSTOMNS, self.customNsHandler)
         #self.poly.subscribe(self.poly.OAUTH, self.oauthHandler)
         self.poly = polyglot
-
+        self.customParams = Custom(polyglot, 'customparams')
         logging.info('External service connectivity initialized...')
 
         #time.sleep(1)
@@ -112,6 +113,7 @@ class teslaAccess(udi_interface.OAuth):
         #    logging.debug('Waiting for customNsHandler to complete')
         #    time.sleep(1)
         #self.updateOauthConfig()
+        super().customNsHandler(key, data)
         logging.debug('customerNSHandler results: {}'.format(super().customNsHandler(key, data)))
         if key == 'oauthTokens': # stored oauthToken values processed
             self.customNsHandlerDone = True
@@ -119,6 +121,7 @@ class teslaAccess(udi_interface.OAuth):
 
     def oauthHandler(self, token):
         logging.debug('oauthHandler called')
+        super().oauthHandler(token)
         #while not self.customNsDone():
         #    logging.debug('Waiting for initilization to complete before oAuth')
         #    time.sleep(5)

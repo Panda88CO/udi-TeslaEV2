@@ -81,14 +81,25 @@ class TeslaEVController(udi_interface.Node):
         self.poly.Notices.clear()
         self.nodes_in_db = self.poly.getNodesFromDb()
         self.config_done= True
+        try:
+            self.TEVcloud.getAccessToken()
+        except ValueError as err:
+            logging.warning('Access token is not yet available. Please authenticate.')
+            self.poly.Notices['auth'] = 'Please initiate authentication'
+        return
+
+    def oauthHandler(self, token):
+        # When user just authorized, pass this to your service, which will pass it to the OAuth handler
+        self.TEVcloud.oauthHandler(token)
+        # Then proceed with device discovery
+        self.configDoneHandler()
 
     def handleLevelChange(self, level):
         logging.info('New log level: {}'.format(level))
 
     def handleNotices(self, level):
         logging.info('handleNotices:')
-    def oauthHandler(self, token):
-        self.TEVcloud.oauthHandler(token)
+
 
     def customNSHandler(self, key, data):
         self.portalData.load(data)
@@ -431,7 +442,7 @@ if __name__ == "__main__":
         polyglot.subscribe(polyglot.START, TEV.start, 'controller')
         logging.debug('Calling start')
         polyglot.subscribe(polyglot.CUSTOMNS, TEV.customNSHandler)
-        polyglot.subscribe(polyglot.OAUTH, TEV_cloud.oauthHandler)
+        polyglot.subscribe(polyglot.OAUTH, TEV.oauthHandler)
         logging.debug('after subscribe')
         polyglot.ready()
         polyglot.runForever()
