@@ -325,7 +325,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
        
-            res = self._callApiORG('POST','/vehicles/'+str(EVid) +'/wake_up')
+            res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
             logging.debug('wakeup: {}'.format(res))
             if res:
                 wu_res = res['response']
@@ -337,7 +337,7 @@ class teslaEVAccess(teslaAccess):
                 while  wu_res['state'] == 'asleep':
                     logging.debug('Waiting for car to wake up')
                     time.sleep(20)
-                    res = self._callApiORG('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                    res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
                     wu_res = res['response']
                 
                 if wu_res['state'] == 'online':
@@ -1355,7 +1355,7 @@ class teslaEVAccess(teslaAccess):
         #with requests.Session() as s:
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])            
-            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/flash_lights')          
+            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')          
             #temp = r.json()
             self.carInfo[EVid] = temp['response']
             return(self.carInfo[EVid])
