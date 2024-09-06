@@ -248,18 +248,6 @@ class teslaEVAccess(teslaAccess):
     ###  Register car pem
 
 
-    def  tesla_register_customer_key(self):
-        """
-        (only displays a QR code or link to be opened on the phone with the Tesla app installed)
-        Register the public key of the partner to the car, so that the car can be controlled by the app.
-        This requires that the customer has already been registered by tesla_register_customer()
-        The QR/link is to be opened on the phone, where the Tesla app is installed.
-        Installs the key to the car to enable end-to-end encrypted commands.
-        :return:
-        """
-        url=f"https://www.tesla.com/_ak/my.isy.io"
-        print(f"Please open the following URL on your phone with the Tesla app installed:\n{url}")
-
        
     '''
     def tesla_get_products(self) -> dict:
