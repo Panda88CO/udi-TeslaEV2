@@ -210,7 +210,7 @@ class TeslaEVController(udi_interface.Node):
             logging.debug('Waiting for portal connection')
 
         self.tesla_initialize()
-        self.EVs = self.TEVcloud.tesla_get_products()
+        self.EVs = self.TEVcloud.tesla_get_vehicles()
         #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']

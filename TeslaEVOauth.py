@@ -274,23 +274,21 @@ class teslaEVAccess(teslaAccess):
             logging.error('tesla_get_products Exception : {}'.format(e))
     '''
 
-    def tesla_get_products(self) -> dict:
+    def tesla_get_vehicles(self) -> dict:
         self.products= {}
         EVs = {}
-        logging.debug('tesla_get_products ')
+        logging.debug('tesla_get_vehicles ')
         try:
             #temp = self._callApi('GET','/products' )
             temp = self._callApi('GET','/vehicles' )
             logging.debug('vehicles: {} '.format(temp))
             if 'response' in temp:
-                for indx in range(0,len(temp['response'])):
-                    site = temp['response'][indx]
-                for indx, site in enumerate(temp['response']):
+                   for indx, site in enumerate(temp['response']):
                     if 'vehicle_id' in site:
                         EVs[str(site['id'])] = site
                         #self.ev_list.append(site['id'])
                         self.ev_list.append(site['vin']) # vin needed to send commands
-                        self.carInfo[site['vin']]= {}
+                        self.carInfo[site['vin']] = site
             self.evs = EVs
             self.products = temp
             return(EVs)
@@ -361,7 +359,7 @@ class teslaEVAccess(teslaAccess):
                     #logging.debug('EV {} info : {} '.format(EVid, res))                                
                     self.carInfo[EVid] = self.process_EV_data(res)
                 
-            self.carInfo[EVid]['state'] = wu_res['state']
+            #self.carInfo[EVid]['state'] = wu_res['state']
             return(True)
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
