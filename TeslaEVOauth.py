@@ -1357,12 +1357,14 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])            
             temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')          
             #temp = r.json()
-            self.carInfo[EVid] = temp['response']
-            return(self.carInfo[EVid])
+            if 'response' in temp:
+                self.carInfo[EVid] = temp['response']
+                return(self.carInfo[EVid])
+            else:
+                return(None)
         except Exception as e:
-            logging.error('Exception teslaEV_FlashLightc for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Exception teslaEV_FlashLight for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
-            
             return(None)
 
 
