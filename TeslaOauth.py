@@ -310,10 +310,10 @@ class teslaAccess(OAuth):
                 response = requests.put(completeUrl, headers=headers)
             logging.debug('API response: {}'.format(response))
             logging.debug('API response1: {}'.format(response.status_code))
-            logging.debug('API response2: {}'.format(response.headers))
+            
          
-            temp = response.json()
-            logging.debug('Temp result {}'.format(temp))
+            #temp = response.json()
+            logging.debug('Temp result {}'.format(response.text))
             
             response.raise_for_status()
             #self.apiLock.release()
