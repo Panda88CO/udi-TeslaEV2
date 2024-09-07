@@ -308,19 +308,19 @@ class teslaAccess(OAuth):
                 response = requests.post(completeUrl, headers=headers, json=body)
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
-            logging.debug('API response: {}'.format(response))
+            #logging.debug('API response: {}'.format(response))
             logging.debug('API response1: {}'.format(response.status_code))
             
-         
-            #temp = response.json()
-            logging.debug('Temp result {}'.format(response.text))
             
             response.raise_for_status()
             #self.apiLock.release()
-            try:
-                return response.json()
-            except requests.exceptions.JSONDecodeError:
-                return response.text
+            if response.status_code == 200:
+                try:
+                    return response.json()
+                except requests.exceptions.JSONDecodeError:
+                    return response.text
+            else:
+                return (None)
 
         except requests.exceptions.HTTPError as error:
             logging.error(f"Call { method } { completeUrl } failed: { error }")

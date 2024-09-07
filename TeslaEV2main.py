@@ -340,12 +340,12 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
         self.heartbeat()    
         if self.TEVcloud.authenticated():
-            for indx, vehicle in self.vehicleList:                
+            for indx, vehicle in enumerate(self.vehicleList):
                 try:
                     self.TEVcloud.teslaEV_UpdateCloudInfoAwake(self.vehicleList[vehicle])
                     nodes = self.poly.getNodes()
                     for node in nodes:
-                        #if node != 'controller'    
+                        #if node != 'controller'
                         logging.debug('Controller poll  node {}'.format(node) )
                         nodes[node].poll()
                 except Exception as E:
@@ -359,8 +359,8 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))
         
         if self.TEVcloud.authenticated():
-            for indx, vehicle in self.vehicleList:
-                 self.TEVcloud.teslaEV_UpdateCloudInfo(self.vehicleList[vehicle])
+            for indx, vehicleID in enumerate (self.vehicleList):
+                 self.TEVcloud.teslaEV_UpdateCloudInfo(self.vehicleList[vehicleID])
             try:
                 nodes = self.poly.getNodes()
                 for node in nodes:
