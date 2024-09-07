@@ -228,9 +228,13 @@ class TeslaEVController(udi_interface.Node):
             #logging.debug('vehicleId {}'.format(vehicleId))
             self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
             #logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo')
-            vehicleInfo = self.TEVcloud.teslaEV_GetInfo(EvId)
-            logging.info('EV info: {} = {}'.format(EvId, vehicleInfo))
-            nodeName = self.TEVcloud.teslaEV_GetName(EvId)
+            if self.TEVcloud.teslaEV_GetCarState(EvId) == 'online':
+                vehicleInfo = self.TEVcloud.teslaEV_GetInfo(EvId)
+
+                logging.info('EV info: {} = {}'.format(EvId, vehicleInfo))
+                nodeName = self.TEVcloud.teslaEV_GetName(EvId)
+            else:
+                nodeName = self.EVs[EvId]['display_name']
 
             if nodeName == ''  or nodeName == None:
                 nodeName = 'ev'+str(EvId)

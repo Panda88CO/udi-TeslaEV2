@@ -284,8 +284,8 @@ class teslaEVAccess(teslaAccess):
             logging.debug('vehicles: {} '.format(temp))
             if 'response' in temp:
                    for indx, site in enumerate(temp['response']):
-                    if 'vehicle_id' in site:
-                        EVs[str(site['id'])] = site
+                    if 'vin' in site:
+                        EVs[str(site['vin'])] = site
                         #self.ev_list.append(site['id'])
                         self.ev_list.append(site['vin']) # vin needed to send commands
                         self.carInfo[site['vin']] = site
@@ -1358,9 +1358,12 @@ class teslaEVAccess(teslaAccess):
             temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')          
             logging.debug('temp {}'.format(temp))
             #temp = r.json()
-            if 'response' in temp:
-                self.carInfo[EVid] = temp['response']
-                return(self.carInfo[EVid])
+            if  temp is not None:
+                if 'response' in temp:
+                    self.carInfo[EVid] = temp['response']
+                    return(self.carInfo[EVid])
+                else:
+                    return(None)
             else:
                 return(None)
         except Exception as e:
