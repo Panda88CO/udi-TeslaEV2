@@ -347,7 +347,7 @@ class TeslaEVController(udi_interface.Node):
         if self.TEVcloud.authenticated():
             for indx, vehicle in enumerate(self.vehicleList):
                 try:
-                    self.TEVcloud.teslaEV_UpdateCloudInfoAwake(self.vehicleList[vehicle])
+                    self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicle)
                     nodes = self.poly.getNodes()
                     for node in nodes:
                         #if node != 'controller'
@@ -365,7 +365,7 @@ class TeslaEVController(udi_interface.Node):
         
         if self.TEVcloud.authenticated():
             for indx, vehicleID in enumerate (self.vehicleList):
-                 self.TEVcloud.teslaEV_UpdateCloudInfo(self.vehicleList[vehicleID])
+                 self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
             try:
                 nodes = self.poly.getNodes()
                 for node in nodes:
