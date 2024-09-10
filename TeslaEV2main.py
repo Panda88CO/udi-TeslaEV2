@@ -102,7 +102,7 @@ class TeslaEVController(udi_interface.Node):
 
 
     def customNSHandler(self, key, data):
-        self.TEVcloud.customNShandler(key, data)
+        self.TEVcloud.customNsHandler(key, data)
         self.portalData.load(data)
         logging.debug('customNSHandler : key:{}  data:{}, '.format(key, data))
         if 'portalID' in data:
