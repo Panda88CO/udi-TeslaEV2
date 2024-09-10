@@ -202,17 +202,16 @@ class teslaAccess(OAuth):
         #self.apiLock.acquire()
         logging.debug('authenticated : {} {}'.format(self._oauthTokens.get('expiry') != None, self._oauthTokens))
         try:
-            if self._oauthTokens:
-            #    time.sleep(1)
-            #    logging.debug('Waiting for system to initialize')
-            #    self.poly.Notices['auth'] = 'Please initiate authentication'
-                if 'expiry' not in self._oauthTokens:            
-                    self.getAccessToken()
+            if 'expiry' not in self._oauthTokens:            
+                self.getAccessToken()
                 #time.sleep(2)
             #self.apiLock.release()
-                return(self._oauthTokens.get('expiry') != None)
-            else:
-                return(False)
+            return(self._oauthTokens.get('expiry') != None)
+        except ValueError as err:
+            logging.warning('Access token is not yet available. Please authenticate.')
+            self.poly.Notices['auth'] = 'Please initiate authentication'
+            logging.debug('_callAPI oauth error: {}'.format(err))
+            return (False)
         except ValueError as err:
             logging.warning('Access token is not yet available. Please authenticate.')
             self.poly.Notices['auth'] = 'Please initiate authentication'
