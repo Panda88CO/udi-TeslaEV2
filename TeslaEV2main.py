@@ -107,11 +107,13 @@ class TeslaEVController(udi_interface.Node):
         logging.debug('customNSHandler : key:{}  data:{}, '.format(key, data))
         if 'portalID' in data:
             self.portalID = data['portalID']
+            self.customNsDone = True
         if 'PortalSecret' in data:
             self.portalSecret = data['PortalSecret']
+            self.customNsDone = True
 
         logging.debug('Custom Data portal: {} {}'.format(self.portalID , self.portalSecret ))
-        self.customNsDone = True
+        
 
     def customParamsHandler(self, userParams):
         self.customParameters.load(userParams)
@@ -196,7 +198,12 @@ class TeslaEVController(udi_interface.Node):
             logging.info('Waiting for node to initialize')
             logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEVcloud.customNsDone(), self.config_done))
             time.sleep(1)
-        
+
+        logging.debug('Portal Credentials: {} {}'.format(self.portalID, self.portalSecret))
+        self.TEVcloud.initializePortal(self.portalID, self.portalSecret)
+        while not self.TEVcloud.portal_ready():
+            time.sleep(5)
+            logging.debug('Waiting for portal connection')
         while not self.TEVcloud.authenticated():
             logging.info('Waiting to authenticate to complete - press authenticate button')
             self.poly.Notices['auth'] = 'Please initiate authentication'
@@ -204,11 +211,7 @@ class TeslaEVController(udi_interface.Node):
 
 
         
-        logging.debug('Portal Credentials: {} {}'.format(self.portalID, self.portalSecret))
-        self.TEVcloud.initializePortal(self.portalID, self.portalSecret)
-        while not self.TEVcloud.portal_ready():
-            time.sleep(5)
-            logging.debug('Waiting for portal connection')
+
 
         self.tesla_initialize()
         self.EVs = self.TEVcloud.tesla_get_vehicles()
