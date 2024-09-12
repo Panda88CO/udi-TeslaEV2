@@ -315,11 +315,11 @@ class teslaAccess(OAuth):
             #self.apiLock.release()
             if response.status_code == 200:
                 try:
-                    return response.json()
+                    return response.status_code, response.json()
                 except requests.exceptions.JSONDecodeError:
-                    return response.text
+                    return response.status_code, response.text
             else:
-                return (None)
+                return (response.status_code, None)
 
         except requests.exceptions.HTTPError as error:
             logging.error(f"Call { method } { completeUrl } failed: { error }")
