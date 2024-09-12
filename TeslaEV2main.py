@@ -324,7 +324,7 @@ class TeslaEVController(udi_interface.Node):
         logging.debug ('Controller - initialization done')
 
     def portal_initialize(self, portalId, portalSecret):
-        logging.debug('portal_initialize')
+        logging.debug('portal_initialize {} {}'.format(portalId, portalSecret))
         #portalId = None
         #portalSecret = None
         self.TEVcloud.initializePortal(portalId, portalSecret)
@@ -345,33 +345,36 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
         self.heartbeat()    
         if self.TEVcloud.authenticated():
-            for indx, vehicle in enumerate(self.vehicleList):
-                try:
-                    self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicle)
+            try:
+                for indx, vehicleID in enumerate(self.vehicleList):
+                
+                    if self.TEVcloud.teslaEV_GetConnectionStatus(vehicleID) in ['online']:
+                        self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
                     nodes = self.poly.getNodes()
                     for node in nodes:
                         #if node != 'controller'
                         logging.debug('Controller poll  node {}'.format(node) )
                         nodes[node].poll()
-                except Exception as E:
-                    logging.info('Not all nodes ready: {}'.format(E))
+            except Exception as E:
+                logging.info('Not all nodes ready: {}'.format(E))
 
 #            self.Rtoken  = self.TEVcloud.getRtoken()
 #            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
 #                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
         
     def longPoll(self):
-        logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))
-        
+        logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))        
         if self.TEVcloud.authenticated():
-            for indx, vehicleID in enumerate (self.vehicleList):
-                 self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
             try:
-                nodes = self.poly.getNodes()
-                for node in nodes:
-                    #if node != 'controller'    
-                    logging.debug('Controller poll  node {}'.format(node) )
-                    nodes[node].poll()
+                for indx, vehicleID in enumerate (self.vehicleList):
+                    if self.TEVcloud.teslaEV_GetConnectionStatus(vehicleID) in ['online', 'asleep']:
+                        self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
+
+                    nodes = self.poly.getNodes()
+                    for node in nodes:
+                        #if node != 'controller'    
+                        logging.debug('Controller poll  node {}'.format(node) )
+                        nodes[node].poll()
             except Exception as E:
                 logging.info('Not all nodes ready: {}'.format(E))
 

@@ -1287,8 +1287,8 @@ class teslaEVAccess(teslaAccess):
 
         return(temp)
 
-    def teslaEV_GetOnlineState(self, EVid):
-        #logging.debug('teslaEV_GetOnlineState: for {}'.format(EVid))
+    def teslaEV_GetConnectionStatus(self, EVid):
+        #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
         return(self.carInfo[EVid]['state'])
 
     def teslaEV_GetOdometer(self, EVid):
@@ -1354,16 +1354,20 @@ class teslaEVAccess(teslaAccess):
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])            
-            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')          
-            logging.debug('temp {}'.format(temp))
+            #s.auth = OAuth2BearerToken(S['access_token'])
+            state = self.teslaEV_GetConnectionStatus(EVid) 
+            if state in ['asleep']:             
+                state = self.teslaEV_Wake(EVid)
+            if state in ['online']:   
+                temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')                    
+                logging.debug('temp {}'.format(temp))
             #temp = r.json()
-            if  temp is not None:
-                if 'response' in temp:
-                    self.carInfo[EVid] = temp['response']
-                    return(self.carInfo[EVid])
-                else:
-                    return(None)
+                if  temp is not None:
+                    if 'response' in temp:
+                        self.carInfo[EVid] = temp['response']
+                        return(self.carInfo[EVid])
+                    else:
+                        return(None)
             else:
                 return(None)
         except Exception as e:
@@ -1380,17 +1384,11 @@ class teslaEVAccess(teslaAccess):
         MAX_ATTEMPTS = 6 # try for 1 minute max
         #with requests.Session() as s:
         try:
-
-            #s.auth = OAuth2BearerToken(S['access_token'])            
-            while not online and attempts < MAX_ATTEMPTS:
-                attempts = attempts + 1
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/wake_up') 
-                #temp = r.json()
-                self.online = temp['response']['state']
-                if self.online == 'online':
-                    online = True
-                else:
-                    time.sleep(10)
+            state = self.teslaEV_GetConnectionStatus(EVid)
+            if state in ['asleep']:  
+                state = self.teslaEV_Wake(EVid)
+                #s.auth = OAuth2BearerToken(S['access_token'])            
+            self.online == state       
             return(self.online)
         except Exception as e:
             logging.error('Exception teslaEV_Wake for vehicle id {}: {}'.format(EVid, e))
@@ -1404,20 +1402,23 @@ class teslaEVAccess(teslaAccess):
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {}        
-            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/honk_horn', payload ) 
-            logging.debug('teslaEV_HonkHorn {}'.format(temp))
-            #temp = r.json()
-
-            if temp['response']:
-                if temp['response']['result']:
-                    logging.debug(temp['response']['result'])
-                    return(temp['response']['result'])
+            state = self.teslaEV_GetConnectionStatus(EVid) 
+            if state in ['asleep']:             
+                state = self.teslaEV_Wake(EVid)
+            if state in ['online']:    
+                payload = {}        
+                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/honk_horn', payload ) 
+                logging.debug('teslaEV_HonkHorn {}'.format(temp))
+                #temp = r.json()
+                if temp:
+                    if temp['response']:
+                        if temp['response']['result']:
+                            logging.debug(temp['response']['result'])
+                            return(temp['response']['result'])
+                        else:
+                            return(False)
                 else:
                     return(False)
-            else:
-                return(False)
     
         except Exception as e:
             logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
@@ -1432,17 +1433,21 @@ class teslaEVAccess(teslaAccess):
         #with requests.Session() as s:
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {'sound' : sound}        
-            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_boombox', payload ) 
-            logging.debug('teslaEV_PlaySound {}'.format(temp))
-            #temp = r.json()
+            state = self.teslaEV_GetConnectionStatus(EVid) 
+            if state in ['asleep']:             
+                state = self.teslaEV_Wake(EVid)
+            if state in ['online']:    
+                payload = {'sound' : sound}        
+                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_boombox', payload ) 
+                logging.debug('teslaEV_PlaySound {}'.format(temp))
+                #temp = r.json()
 
-            if temp['response']:
-                if temp['response']['result']:
-                    logging.debug(temp['response']['result'])
-                    return(temp['response']['result'])
-                else:
-                    return(False)
+                if temp['response']:
+                    if temp['response']['result']:
+                        logging.debug(temp['response']['result'])
+                        return(temp['response']['result'])
+                    else:
+                        return(False)
             else:
                 return(False)
     
@@ -1451,6 +1456,8 @@ class teslaEVAccess(teslaAccess):
             logging.error('Trying to reconnect')
             
             return(False)
+
+# Needs to be updated 
 
     def teslaEV_Doors(self, EVid, ctrl):
         logging.debug('teslaEV_Doors {} for {}'.format(ctrl, EVid))
