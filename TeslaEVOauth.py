@@ -324,40 +324,42 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         try:
-       
-            res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
-            logging.debug('wakeup: {}'.format(res))
-            if res:
-                wu_res = res['response']
-                logging.debug('Wake_up result : {}'.format(wu_res))
+            state = self.teslaEV_GetConnectionStatus(EVid)
+            if state in ['asleep']:
+                res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
+                logging.debug('wakeup: {}'.format(res))
+                if res:
+                    wu_res = res['response']
+                    logging.debug('Wake_up result : {}'.format(wu_res))
 
-            if 'state' in wu_res:
-                logging.debug('Wake-up state: {}'.format( wu_res['state'] ))
+                if 'state' in wu_res:
+                    logging.debug('Wake-up state: {}'.format( wu_res['state'] ))
                 
                 while  wu_res['state'] == 'asleep':
                     logging.debug('Waiting for car to wake up')
                     time.sleep(20)
                     res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
                     wu_res = res['response']
-                
-                if wu_res['state'] == 'online':
-                    if self.locationEn:
-                        payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
-                    else:
-                        payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
-                    res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload )
-                    logging.debug('vehicel data: {}'.format(res))
-                    logging.debug('EV {} info : {} '.format(EVid, res))
-                    #if res is None:
-                    #        res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
-                    #        if 'response' in res:
-                    #            if res['response']: # None if asleep
-                    #                res = res['response']
-                    #else:
-                    #    return(None)
-                        #res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
-                    #logging.debug('EV {} info : {} '.format(EVid, res))                                
-                    self.carInfo[EVid] = self.process_EV_data(res)
+                state = wu_res['state']
+            if state in ['online']:
+
+                if self.locationEn:
+                    payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
+                else:
+                    payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
+                res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload )
+                logging.debug('vehicel data: {}'.format(res))
+                logging.debug('EV {} info : {} '.format(EVid, res))
+                #if res is None:
+                #        res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
+                #        if 'response' in res:
+                #            if res['response']: # None if asleep
+                #                res = res['response']
+                #else:
+                #    return(None)
+                    #res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
+                #logging.debug('EV {} info : {} '.format(EVid, res))                                
+                self.carInfo[EVid] = self.process_EV_data(res)
                 
             #self.carInfo[EVid]['state'] = wu_res['state']
             return(True)
@@ -366,15 +368,17 @@ class teslaEVAccess(teslaAccess):
             return(None)
 
     def teslaEV_UpdateCloudInfoAwake(self, EVid):
-            logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
+            logging.debug('teslaEV_UpdateCloudInfoAwake: {}'.format(EVid))
             try:
-                res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
-                logging.debug('EV {} info : {} '.format(EVid, res))
-                if res is None:                  
-                    return(None)
-                else: 
-                    logging.debug('EV {} awake info : {} '.format(EVid, res))                                
-                    self.carInfo[EVid] = self.process_EV_data(res)
+                state = self.teslaEV_GetConnectionStatus(EVid)
+                if state in ['online']:
+                    res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data' )
+                    logging.debug('EV {} info : {} '.format(EVid, res))
+                    if res is None:                  
+                        return(None)
+                    else: 
+                        logging.debug('EV {} awake info : {} '.format(EVid, res))                                
+                        self.carInfo[EVid] = self.process_EV_data(res)
 
             except Exception as e:
                 logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))

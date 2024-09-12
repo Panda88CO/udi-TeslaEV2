@@ -118,7 +118,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             else:
                 self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 83)
 
-            self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetOnlineState(self.EVid)))
+            self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)))
             temp = self.TEV.teslaEV_GetWindoStates(self.EVid)
             if  temp['FrontLeft'] == None:
                 temp['FrontLeft'] = 99
