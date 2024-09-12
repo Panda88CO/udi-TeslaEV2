@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-VERSION = '0.1.7'
+VERSION = '0.1.8'
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
@@ -101,18 +101,20 @@ class TeslaEVController(udi_interface.Node):
         logging.info('handleNotices:')
 
 
-    def customNSHandler(self, key, data):
-        self.TEVcloud.customNsHandler(key, data)
+    def customNSHandler(self, key, data):        
         self.portalData.load(data)
         logging.debug('customNSHandler : key:{}  data:{}, '.format(key, data))
-        if 'portalID' in data:
-            self.portalID = data['portalID']
-            self.customNsDone = True
-        if 'PortalSecret' in data:
-            self.portalSecret = data['PortalSecret']
-            self.customNsDone = True
-
-        logging.debug('Custom Data portal: {} {}'.format(self.portalID , self.portalSecret ))
+        if key == 'nsdata':
+            if 'portalID' in data:
+                self.portalID = data['portalID']
+                #self.customNsDone = True
+            if 'PortalSecret' in data:
+                self.portalSecret = data['PortalSecret']
+                #self.customNsDone = True
+            self.TEVcloud.initializePortal(self.portalID, self.portalSecret)
+            logging.debug('Custom Data portal: {} {}'.format(self.portalID , self.portalSecret ))
+        self.TEVcloud.customNsHandler(key, data)
+        
         
 
     def customParamsHandler(self, userParams):
@@ -194,13 +196,14 @@ class TeslaEVController(udi_interface.Node):
         self.poly.updateProfile()
         #self.poly.setCustomParamsDoc()
 
-        while not self.customParam_done or not self.customNsDone and not self.config_done:
+        #while not self.customParam_done or not self.customNsDone and not self.config_done:
+        while not self.config_done:
             logging.info('Waiting for node to initialize')
             logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done ,self.TEVcloud.customNsDone(), self.config_done))
             time.sleep(1)
 
         logging.debug('Portal Credentials: {} {}'.format(self.portalID, self.portalSecret))
-        self.TEVcloud.initializePortal(self.portalID, self.portalSecret)
+        #self.TEVcloud.initializePortal(self.portalID, self.portalSecret)
         while not self.TEVcloud.portal_ready():
             time.sleep(5)
             logging.debug('Waiting for portal connection')
