@@ -293,7 +293,7 @@ class teslaEVAccess(teslaAccess):
             self.products = temp
             return(EVs)
         except Exception as e:
-            logging.error('tesla_get_products Exception : {}'.format(e))
+            logging.error('tesla_get_vehicles Exception : {}'.format(e))
     
     '''
     def tesla_check_registration(self):

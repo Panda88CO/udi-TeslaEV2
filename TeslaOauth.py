@@ -219,14 +219,14 @@ class teslaAccess(OAuth):
             return
         #return('expiry' in self._oauthTokens)
  
-    def initializePortal(self, client_id, client_secret):
+    def initializePortal(self, client_id, portal_secret):
         self.portalId = client_id
-        self.client_secret = client_secret
-        self.getPortalToken(self.portalId , self.client_secret)
+        self.portal_secret = portal_secret
+        self.getPortalToken(self.portalId , self.portal_secret)
 
 
-    def getPortalToken(self, client_id, client_secret):
-        logging.debug('getPortalToken {} {}'.format(client_id, client_secret))
+    def getPortalToken(self, client_id, portal_secret):
+        logging.debug('getPortalToken {} {}'.format(client_id, portal_secret))
         token_refresh = True
         now = int(time.time())
         if 'expiry' in self.token_info:
@@ -240,7 +240,7 @@ class teslaAccess(OAuth):
             body = {
                 'grant_type': 'client_credentials',
                 'client_id': client_id ,
-                'client_secret' : client_secret,            
+                'client_secret' : portal_secret,            
             }
             logging.debug('Before post header = {}, body = {}'.format(headers, body))
             response = requests.post('https://my.isy.io/o2/token', headers=headers, data=body)
@@ -264,7 +264,7 @@ class teslaAccess(OAuth):
         try:
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
-            portalToken = self.getPortalToken(self.portalId, self.portalSecret)
+            portalToken = self.getPortalToken(self.portalId, self.portal_secret)
             logging.debug('Tokens: P={} T={}'.format(portalToken, accessToken))
             #refresh_token = self._oauthTokens.get('refresh_token')
             #logging.debug('call api tokens: {} {}'.format(refresh_token, accessToken))
