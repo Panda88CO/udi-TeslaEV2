@@ -383,6 +383,7 @@ class teslaEVAccess(teslaAccess):
             except Exception as e:
                 logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
    
+    
     def process_EV_data(self, carData):
         logging.debug('process_EV_data')
         if 'response' in carData:
@@ -409,7 +410,12 @@ class teslaEVAccess(teslaAccess):
         except Exception as e:
             logging.error('teslaEV_GetCarState Exception : {}'.format(e))
             return(None)
-        
+
+
+    def teslaEV_GetConnectionStatus(self, EVid):
+        #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
+        return(self.carInfo[EVid]['state'])
+
 
     def teslaEV_GetName(self, EVid):
         try:
@@ -1290,10 +1296,6 @@ class teslaEVAccess(teslaAccess):
             temp['RearRight'] = None
 
         return(temp)
-
-    def teslaEV_GetConnectionStatus(self, EVid):
-        #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
-        return(self.carInfo[EVid]['state'])
 
     def teslaEV_GetOdometer(self, EVid):
         try:
