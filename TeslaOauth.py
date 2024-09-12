@@ -66,6 +66,7 @@ class teslaAccess(OAuth):
         self.oauthHandlerCalled = False
         self.customDataHandlerDone = False
         self.authendication_done = False
+        self.return_states = ['ok', 'not online', 'overload', 'error', 'unknown']
         self.apiLock = Lock()
         self.temp_unit = 'C'
         #self.poly.subscribe(self.poly.CUSTOMNS, self.customNsHandler)
@@ -315,11 +316,15 @@ class teslaAccess(OAuth):
             #self.apiLock.release()
             if response.status_code == 200:
                 try:
-                    return response.status_code, response.json()
+                    return 'ok', response.json()
                 except requests.exceptions.JSONDecodeError:
-                    return response.status_code, response.text
+                    return 'error', response.text
+            elif response.status_code == 408:
+                    return 'not online', response.text
+            elif response.status_code == 429:
+                    return 'overload', response.text
             else:
-                return (response.status_code, None)
+                return ('unknown', response.text)
 
         except requests.exceptions.HTTPError as error:
             logging.error(f"Call { method } { completeUrl } failed: { error }")

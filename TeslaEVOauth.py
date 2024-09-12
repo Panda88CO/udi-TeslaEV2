@@ -255,8 +255,8 @@ class teslaEVAccess(teslaAccess):
         EVs = {}
         logging.debug('tesla_get_products ')
         try:
-            temp = self._callApi('GET','/products' )
-            #temp = self._callApi('GET','/vehicles' )
+            code, temp = self._callApi('GET','/products' )
+            #code, temp = self._callApi('GET','/vehicles' )
             logging.debug('products: {} '.format(temp))
             if 'response' in temp:
                 #for indx in range(0,len(temp['response'])):
@@ -279,10 +279,10 @@ class teslaEVAccess(teslaAccess):
         EVs = {}
         logging.debug('tesla_get_vehicles ')
         try:
-            #temp = self._callApi('GET','/products' )
-            temp = self._callApi('GET','/vehicles' )
+    
+            code, temp = self._callApi('GET','/vehicles' )
             logging.debug('vehicles: {} '.format(temp))
-            if 'response' in temp:
+            if code == 'ok':
                    for indx, site in enumerate(temp['response']):
                     if 'vin' in site:
                         EVs[str(site['vin'])] = site
@@ -299,13 +299,13 @@ class teslaEVAccess(teslaAccess):
     def tesla_check_registration(self):
         logging.debug('tesla_check_registration ')
         try:
-            temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
+            code, temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
 
             logging.debug('Public Keys: {} '.format(temp))
             if 'response' in temp:
                 logging.info('Public keys registered')
             else:
-                temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
+                code, temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
      
                 
             self.products = temp
@@ -339,7 +339,7 @@ class teslaEVAccess(teslaAccess):
                 while  wu_res['state'] == 'asleep':
                     logging.debug('Waiting for car to wake up')
                     time.sleep(20)
-                    res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+                    code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
                     wu_res = res['response']
                 state = wu_res['state']
             if state in ['online']:
@@ -359,12 +359,12 @@ class teslaEVAccess(teslaAccess):
                         payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
                     else:
                         payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
-                    res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
+                    code, res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
                     logging.debug('vehicel data: {}'.format(res))
                     logging.debug('EV {} info : {} '.format(EVid, res))
-                    if res is None:                  
-                        return(None)
-                    else: 
+                    if code != 'ok':
+                        return(False)
+                    else:
                         logging.debug('EV {} awake info : {} '.format(EVid, res))                                
                         self.carInfo[EVid] = self.process_EV_data(res)
                         return(True)
@@ -736,9 +736,9 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])    
             #payload = {}      
             if ctrl == 'open':  
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_port_door_open') 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_port_door_open') 
             elif ctrl == 'close':
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_port_door_close') 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_port_door_close') 
             else:
                 logging.debug('Unknown teslaEV_ChargePort command passed for vehicle id (open, close) {}: {}'.format(EVid, ctrl))
                 return(False)
@@ -759,9 +759,9 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])    
             #payload = {}      
             if ctrl == 'start':  
-                temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/charge_start' ) 
+                code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/charge_start' ) 
             elif ctrl == 'stop':
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_stop' ) 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_stop' ) 
             else:
                 logging.debug('Unknown teslaEV_Charging command passed for vehicle id (start, stop) {}: {}'.format(EVid, ctrl))
                 return(False)
@@ -787,7 +787,7 @@ class teslaEVAccess(teslaAccess):
             payload = { 'percent':int(limit)}    
             #s.auth = OAuth2BearerToken(S['access_token'])
             #logging.debug('POST: {} {}'.format(self.TESLA_URL + self.API+ '/vehicles/'+str(EVid) +'/command/set_charge_limit', payload ))
-            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_charge_limit',  payload ) 
+            code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_charge_limit',  payload ) 
             #logging.debug('teslaEV_SetChargeLimit r :'.format(r))
             #temp = r.json()
             logging.debug('teslaEV_SetChargeLimit temp :'.format(temp))
@@ -809,7 +809,7 @@ class teslaEVAccess(teslaAccess):
         try:
             payload = { 'charging_amps': int(limit)}    
             #s.auth = OAuth2BearerToken(S['access_token'])
-            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_charging_amps', payload ) 
+            code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_charging_amps', payload ) 
             #temp = r.json()
             return(temp['response']['result'])
         except Exception as e:
@@ -1000,7 +1000,7 @@ class teslaEVAccess(teslaAccess):
             payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
                         'lon':self.carInfo[EVid]['drive_state']['longitude'],
                         'command': cmd}        
-            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/window_control', payload ) 
+            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/window_control', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
@@ -1021,7 +1021,7 @@ class teslaEVAccess(teslaAccess):
                 return(False)
             #s.auth = OAuth2BearerToken(S['access_token'])    
             payload = { 'state': cmd}        
-            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/sun_roof_control', payload ) 
+            code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/sun_roof_control', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
@@ -1041,9 +1041,9 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])    
             payload = {}      
             if ctrl == 'start':  
-                temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/auto_conditioning_start',  payload ) 
+                code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/auto_conditioning_start',  payload ) 
             elif ctrl == 'stop':
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/auto_conditioning_stop',  payload ) 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/auto_conditioning_stop',  payload ) 
             else:
                 logging.debug('Unknown AutoCondition command passed for vehicle id {}: {}'.format(EVid, ctrl))
                 return(False)
@@ -1065,7 +1065,7 @@ class teslaEVAccess(teslaAccess):
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])    
             payload = {'driver_temp' : int(driverTempC), 'passenger_temp':int(passergerTempC) }      
-            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/set_temps', payload ) 
+            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/set_temps', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
@@ -1091,7 +1091,7 @@ class teslaEVAccess(teslaAccess):
                 logging.error('Wrong parameter for teslaEV_DefrostMax (on/off) for vehicle id {}: {}'.format(EVid, ctrl))
                 return(False)
             #s.auth = OAuth2BearerToken(S['access_token'])
-            temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_preconditioning_max', payload ) 
+            code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_preconditioning_max', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
@@ -1121,7 +1121,7 @@ class teslaEVAccess(teslaAccess):
         try:
             payload = { 'heater': seat, 'level':int(levelHeat)}    
             #s.auth = OAuth2BearerToken(S['access_token'])
-            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_seat_heater_request', payload ) 
+            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_seat_heater_request', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
@@ -1147,7 +1147,7 @@ class teslaEVAccess(teslaAccess):
                     logging.error('Wrong paralf.carInfo[id]meter for teslaEV_SteeringWheelHeat (on/off) for vehicle id {}: {}'.format(EVid, ctrl))
                     return(False)
                 #s.auth = OAuth2BearerToken(S['access_token'])
-                temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/remote_steering_wheel_heater_request', payload ) 
+                code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/remote_steering_wheel_heater_request', payload ) 
                 #temp = r.json()
                 logging.debug(temp['response']['result'])
                 return(temp['response']['result'])
@@ -1354,7 +1354,7 @@ class teslaEVAccess(teslaAccess):
             if state in ['asleep']:             
                 state = self.teslaEV_Wake(EVid)
             if state in ['online']:   
-                temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')                    
+                code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')                    
                 logging.debug('temp {}'.format(temp))
             #temp = r.json()
                 if  temp is not None:
@@ -1402,7 +1402,7 @@ class teslaEVAccess(teslaAccess):
                 state = self.teslaEV_Wake(EVid)
             if state in ['online']:    
                 payload = {}        
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/honk_horn', payload ) 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/honk_horn', payload ) 
                 logging.debug('teslaEV_HonkHorn {}'.format(temp))
                 #temp = r.json()
                 if temp:
@@ -1433,7 +1433,7 @@ class teslaEVAccess(teslaAccess):
                 state = self.teslaEV_Wake(EVid)
             if state in ['online']:    
                 payload = {'sound' : sound}        
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_boombox', payload ) 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_boombox', payload ) 
                 logging.debug('teslaEV_PlaySound {}'.format(temp))
                 #temp = r.json()
 
@@ -1463,9 +1463,9 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])    
             payload = {}      
             if ctrl == 'unlock':  
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/door_unlock', payload ) 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/door_unlock', payload ) 
             elif ctrl == 'lock':
-                temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/door_lock',  payload ) 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/door_lock',  payload ) 
             else:
                 logging.debug('Unknown door control passed: {}'.format(ctrl))
                 return(False)
@@ -1495,7 +1495,7 @@ class teslaEVAccess(teslaAccess):
                 logging.debug('Unknown trunk command passed: {}'.format(cmd))
                 return(False)
             payload = {'which_trunk':cmd}      
-            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/actuate_trunk', payload ) 
+            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/actuate_trunk', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
@@ -1515,7 +1515,7 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])    
             payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
                         'lon':self.carInfo[EVid]['drive_state']['longitude']}        
-            temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/trigger_homelink', payload ) 
+            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/trigger_homelink', payload ) 
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
