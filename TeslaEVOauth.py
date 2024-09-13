@@ -340,7 +340,10 @@ class teslaEVAccess(teslaAccess):
                     logging.debug('Waiting for car to wake up')
                     time.sleep(20)
                     code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
-                    wu_res = res['response']
+                    if code == 'ok':
+                        wu_res = res['response']
+                    else:
+                        return(False)
                 state = wu_res['state']
             if state in ['online']:
                 return(self.teslaEV_UpdateCloudInfoAwake(EVid, True))
