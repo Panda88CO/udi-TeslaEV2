@@ -344,6 +344,8 @@ class teslaEVAccess(teslaAccess):
                 state = wu_res['state']
             if state in ['online']:
                 return(self.teslaEV_UpdateCloudInfoAwake(EVid, True))
+            else:
+                return(False)
 
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
@@ -1002,12 +1004,14 @@ class teslaEVAccess(teslaAccess):
                         'command': cmd}        
             code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/window_control', payload ) 
             #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+            if code == 'ok':
+                logging.debug(temp['response']['result'])
+                return(temp['response']['result'])
+            else:
+                return(None)
         except Exception as e:
             logging.error('Exception teslaEV_Windows for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
+            logging.error('Trying to reconnect')            
             return(False)
 
 
