@@ -62,7 +62,7 @@ class teslaEVAccess(teslaAccess):
         self.dist_unit = 1
 
         self.carInfo = {}
-        self.carStateList = ['online', 'offline', 'aleep', 'unknown']
+        self.carStateList = ['online', 'Offline', 'aleep', 'unknown', 'error']
         self.carState = 'Unknown'
 
         self.locationEn = False
@@ -323,6 +323,7 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
+        code = 'unknown'
         try:
             state = self.teslaEV_GetConnectionStatus(EVid)
             if state in ['asleep']:
@@ -352,10 +353,11 @@ class teslaEVAccess(teslaAccess):
 
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
-            return(None)
+            return('error')
 
     def teslaEV_UpdateCloudInfoAwake(self, EVid, online_know = False):
             logging.debug('teslaEV_UpdateCloudInfoAwake: {}'.format(EVid))
+            code = 'unknown'
             try:
                 if not online_know:
                     state = self.teslaEV_GetConnectionStatus(EVid)
@@ -376,6 +378,7 @@ class teslaEVAccess(teslaAccess):
 
             except Exception as e:
                 logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
+                return('error')
    
     
     def process_EV_data(self, carData):
