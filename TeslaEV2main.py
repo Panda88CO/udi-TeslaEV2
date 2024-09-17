@@ -234,11 +234,11 @@ class TeslaEVController(udi_interface.Node):
             nodeName = None
             #vehicleId = self.vehicleList[vehicle]
             #logging.debug('vehicleId {}'.format(vehicleId))
-            self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
+            code = self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
             #logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo')
-            if self.TEVcloud.teslaEV_GetCarState(EvId) == 'online':
+            if code == 'ok':
+                #if self.TEVcloud.teslaEV_GetCarState(EvId) == 'online':
                 vehicleInfo = self.TEVcloud.teslaEV_GetInfo(EvId)
-
                 logging.info('EV info: {} = {}'.format(EvId, vehicleInfo))
                 nodeName = self.TEVcloud.teslaEV_GetName(EvId)
             else:
@@ -347,21 +347,20 @@ class TeslaEVController(udi_interface.Node):
             else:
                 logging.info('Waiting for system/nodes to initialize')
 
-
+# Something is not correct here - too many times through
     def shortPoll(self):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
         self.heartbeat()    
         if self.TEVcloud.authenticated():
             try:
                 for indx, vehicleID in enumerate(self.vehicleList):
-                
-                    if self.TEVcloud.teslaEV_GetConnectionStatus(vehicleID) in ['online']:
-                        self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
+                    code = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
+                    #if code == 'ok':
                     nodes = self.poly.getNodes()
                     for node in nodes:
                         #if node != 'controller'
                         logging.debug('Controller poll  node {}'.format(node) )
-                        nodes[node].poll()
+                        nodes[node].poll(code)
             except Exception as E:
                 logging.info('Not all nodes ready: {}'.format(E))
 
@@ -381,7 +380,7 @@ class TeslaEVController(udi_interface.Node):
                     for node in nodes:
                         #if node != 'controller'    
                         logging.debug('Controller poll  node {}'.format(node) )
-                        nodes[node].poll()
+                        nodes[node].poll(code)
             except Exception as E:
                 logging.info('Not all nodes ready: {}'.format(E))
 
@@ -390,9 +389,12 @@ class TeslaEVController(udi_interface.Node):
 #                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
 
 
-    def poll(self): # dummey poll function 
-        self.updateISYdrivers()
-        pass
+    def poll(self, status_code): # dummey poll function 
+        if status_code == 'ok':
+            self.updateISYdrivers()
+        else:
+
+            pass
 
     def updateISYdrivers(self):
         logging.debug('System updateISYdrivers - Controller')       
