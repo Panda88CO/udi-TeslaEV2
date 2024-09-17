@@ -53,7 +53,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     def poll(self):
         
-        logging.deug('Climate node {}'.format(self.EVid) )
+        logging.debug('Climate node {}'.format(self.EVid) )
         if self.nodeReady:
             if self.TEV.carState != 'Offline':
                 self.updateISYdrivers()

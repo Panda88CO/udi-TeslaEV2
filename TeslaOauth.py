@@ -66,7 +66,7 @@ class teslaAccess(OAuth):
         self.oauthHandlerCalled = False
         self.customDataHandlerDone = False
         self.authendication_done = False
-        self.return_states = ['ok', 'not online', 'overload', 'error', 'unknown']
+        self.return_codes = ['ok', 'offline', 'overload', 'error', 'unknown']
         self.apiLock = Lock()
         self.temp_unit = 'C'
         #self.poly.subscribe(self.poly.CUSTOMNS, self.customNsHandler)
@@ -320,7 +320,7 @@ class teslaAccess(OAuth):
                 except requests.exceptions.JSONDecodeError:
                     return 'error', response.text
             elif response.status_code == 408:
-                    return 'not online', response.text
+                    return 'offline', response.text
             elif response.status_code == 429:
                     return 'overload', response.text
             else:

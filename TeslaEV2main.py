@@ -356,7 +356,7 @@ class TeslaEVController(udi_interface.Node):
                 for indx, vehicleID in enumerate(self.vehicleList):
                 
                     if self.TEVcloud.teslaEV_GetConnectionStatus(vehicleID) in ['online']:
-                        self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
+                        code = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
                     nodes = self.poly.getNodes()
                     for node in nodes:
                         #if node != 'controller'
