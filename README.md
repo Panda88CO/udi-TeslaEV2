@@ -23,8 +23,10 @@ Restart node server and press autheticate (should only be needed first time)
 
 Note, there are limitations emposed by the API:
 1 API request / car / 5 min
-Commands limits	50 API requests / car / day
-Wake limits	5 API requests / car / hour.
+Data (update/Poll) limit:   200 API requests / car / day
+Commands limit:	            50 API requests / car / day
+Wake-up limit:        	    15 API requests / car / day
+Charging commands limit:    5 API requests / car / day
 
 ShortPoll = default 10 min
     Polls data from car if it is awake - does nothing if car is asleep
