@@ -79,8 +79,8 @@ class teslaEV_StatusNode(udi_interface.Node):
     def ready(self):
         return(self.chargeNodeReady and self.climateNodeReady)
 
-    def poll (self, code):    
-        logging.info('Status Node Poll for {}'.format(self.EVid))        
+    def poll (self, code = 'ok'):    
+        logging.info('Status Node Poll for {} - code: {}'.format(self.EVid, code ))        
         #self.TEV.teslaEV_GetInfo(self.EVid)
         if self.statusNodeReady:
             if code == 'ok':

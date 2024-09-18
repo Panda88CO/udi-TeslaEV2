@@ -355,12 +355,11 @@ class teslaEVAccess(teslaAccess):
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
             return('error')
 
-    def teslaEV_UpdateCloudInfoAwake(self, EVid, online_know = False):
+    def teslaEV_UpdateCloudInfoAwake(self, EVid, online_known = False):
             logging.debug('teslaEV_UpdateCloudInfoAwake: {}'.format(EVid))
-            code = 'unknown'
             try:
-                if not online_know:
-                    state = self.teslaEV_GetConnectionStatus(EVid)
+                
+                state = self.teslaEV_GetConnectionStatus(EVid)
                 if state in ['online']:
                     if self.locationEn:
                         payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
@@ -375,7 +374,8 @@ class teslaEVAccess(teslaAccess):
                         logging.debug('EV {} awake info : {} '.format(EVid, res))                                
                         self.carInfo[EVid] = self.process_EV_data(res)
                         return(code)
-
+                else:
+                    return(state)
             except Exception as e:
                 logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
                 return('error')

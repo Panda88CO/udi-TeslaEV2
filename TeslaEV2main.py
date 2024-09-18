@@ -341,8 +341,10 @@ class TeslaEVController(udi_interface.Node):
         if self.TEVcloud:
             if self.TEVcloud.authenticated():
                 self.TEVcloud.teslaEV_UpdateConnectionStatus()
-                if 'longPoll' in pollList:
+                if 'longPoll' in pollList: 
                     self.longPoll()
+                    if 'shortPoll' in pollList: #send short polls heart beat as shortpoll is not executed
+                        self.heartbeat()
                 elif 'shortPoll' in pollList:
                     self.shortPoll()
             else:
@@ -355,7 +357,8 @@ class TeslaEVController(udi_interface.Node):
         if self.TEVcloud.authenticated():
             try:
                 for indx, vehicleID in enumerate(self.vehicleList):
-                    code = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
+                    if self.TEVcloud.teslaEV_GetCarState(vehicleID) == 'online':
+                        code = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
                     self.status_nodes[vehicleID].poll(code)
                     #if code == 'ok':
                     #nodes = self.poly.getNodes()

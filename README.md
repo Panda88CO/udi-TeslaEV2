@@ -28,7 +28,7 @@ Commands limit:	            50 API requests / car / day
 Wake-up limit:        	    15 API requests / car / day
 Charging commands limit:    5 API requests / car / day
 
-ShortPoll = default 10 min
+ShortPoll = default 10 min (144 call/day)
     Polls data from car if it is awake - does nothing if car is asleep
     sends heartbeat to ISY
 
