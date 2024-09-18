@@ -186,12 +186,15 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def ISYupdate (self, command):
         logging.info('ISY-update called')
+        self.TEV.teslaEV_teslaEV_UpdateConnectionStatus()
+        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
         self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
 
     def evWakeUp (self, command):
         logging.info('EVwakeUp called')
-        if self.TEV.teslaEV_Wake(self.EVid):
+        self.TEV.teslaEV_teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_Wake(self.EVid):            
             self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)             
             self.updateISYdrivers()
 
