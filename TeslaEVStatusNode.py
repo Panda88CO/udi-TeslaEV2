@@ -108,7 +108,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             #if self.TEV.isConnectedToEV():
             #self.TEV.teslaEV_GetInfo(self.EVid)
             temp = {}
-            logging.debug('StatusNode updateISYdrivers {}'.format(self.TEV.teslaEV_GetStatusInfo(self.EVid)))
+            #logging.debug('StatusNode updateISYdrivers {}'.format(self.TEV.teslaEV_GetStatusInfo(self.EVid)))
 
             self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid))
             #if self.TEV.location_enabled():
