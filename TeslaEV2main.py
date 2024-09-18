@@ -339,7 +339,7 @@ class TeslaEVController(udi_interface.Node):
     def systemPoll(self, pollList):
         logging.debug('systemPoll')
         if self.TEVcloud:
-            if self.TEVcloud.authenticated(): 
+            if self.TEVcloud.authenticated():
                 self.TEVcloud.teslaEV_UpdateConnectionStatus()
                 if 'longPoll' in pollList:
                     self.longPoll()
