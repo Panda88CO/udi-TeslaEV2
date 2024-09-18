@@ -60,7 +60,7 @@ class TeslaEVController(udi_interface.Node):
         self.poly.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
-        
+        self.status_nodes = {}
         self.node = self.poly.getNode(self.address)
         self.tempUnit = 0 # C
         self.distUnit = 0 # KM
@@ -254,9 +254,9 @@ class TeslaEVController(udi_interface.Node):
                 logging.debug('Node Address : {} {}'.format(self.poly.getNode(nodeAdr),nodeAdr ))
             logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
             #self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
-            ev_temp = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEVcloud)        
+            self.status_nodes[EvId] = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEVcloud)        
             assigned_addresses.append(nodeAdr)
-            while not (ev_temp.subnodesReady() or ev_temp.statusNodeReady):
+            while not (self.status_nodes[EvId].subnodesReady() or self.status_nodes[EvId].statusNodeReady):
                 logging.debug('waiting for nodes to be created')
                 time.sleep(5)
             
@@ -340,6 +340,7 @@ class TeslaEVController(udi_interface.Node):
         logging.debug('systemPoll')
         if self.TEVcloud:
             if self.TEVcloud.authenticated(): 
+                self.TEVcloud.teslaEV_UpdateConnectionStatus()
                 if 'longPoll' in pollList:
                     self.longPoll()
                 elif 'shortPoll' in pollList:
@@ -355,12 +356,13 @@ class TeslaEVController(udi_interface.Node):
             try:
                 for indx, vehicleID in enumerate(self.vehicleList):
                     code = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
+                    self.status_nodes[vehicleID].poll(code)
                     #if code == 'ok':
-                    nodes = self.poly.getNodes()
-                    for node in nodes:
+                    #nodes = self.poly.getNodes()
+                    #for node in nodes:
                         #if node != 'controller'
-                        logging.debug('Controller poll  node {}'.format(node) )
-                        nodes[node].poll(code)
+                    #    logging.debug('Controller poll  node {}'.format(node) )
+                    #    nodes[node].poll(code)
             except Exception as E:
                 logging.info('Not all nodes ready: {}'.format(E))
 
@@ -373,14 +375,13 @@ class TeslaEVController(udi_interface.Node):
         if self.TEVcloud.authenticated():
             try:
                 for indx, vehicleID in enumerate (self.vehicleList):
-                    if self.TEVcloud.teslaEV_GetConnectionStatus(vehicleID) in ['online', 'asleep']:
-                        self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
-
-                    nodes = self.poly.getNodes()
-                    for node in nodes:
+                    code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
+                    self.status_nodes[vehicleID].poll(code)
+                    #nodes = self.poly.getNodes()
+                    #for node in nodes:
                         #if node != 'controller'    
-                        logging.debug('Controller poll  node {}'.format(node) )
-                        nodes[node].poll(code)
+                    #    logging.debug('Controller poll  node {}'.format(node) )
+                    #    nodes[node].poll(code)
             except Exception as E:
                 logging.info('Not all nodes ready: {}'.format(E))
 

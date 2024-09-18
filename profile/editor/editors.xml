@@ -184,7 +184,7 @@
   
    <editor id = "CARSTATE" > 
      
-     <range  uom="25" subset="0-2,99" nls="CARSTATE"  />  
+     <range  uom="25" subset="0-5,99" nls="CARSTATE"  />  
   </editor>
 
    <editor id = "LONGITUDE" > 

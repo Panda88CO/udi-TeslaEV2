@@ -129,7 +129,18 @@ def state2ISY(self, state):
         logging.error('Unknown state passed {}'.format(state))
         return(99)
 
-
+def code2ISY(self, state):
+    if state.lower() == 'offline':
+        return(0)
+    elif state.lower() == 'online':
+        return(1)
+    elif state.lower() == 'overload':
+        return(4) 
+    elif state.lower() == 'error':
+        return(5)
+    else:          
+        logging.error('Unknown state passed {}'.format(state))
+        return(99)
 
 def online2ISY(self, state):
     if state.lower() == 'online':

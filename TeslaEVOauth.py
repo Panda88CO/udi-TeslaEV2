@@ -414,6 +414,11 @@ class teslaEVAccess(teslaAccess):
         return(self.carInfo[EVid]['state'])
 
 
+
+    def teslaEV_UpdateConnectionStatus(self):
+        #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
+        self.tesla_get_vehicles()
+
     def teslaEV_GetName(self, EVid):
         try:
             return(self.carInfo[EVid]['vehicle_state']['vehicle_name'])

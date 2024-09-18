@@ -58,7 +58,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         nodeAdr = self.poly.getValidAddress(nodeAdr)
         #if not self.poly.getNode(nodeAdr):
         logging.info('Creating ClimateNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr, nodeName,  self.EVid ))
-        teslaEV_ClimateNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
+        self.climateNode = teslaEV_ClimateNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
 
 
         nodeAdr = 'cg'+str(self.EVid)[-14:]
@@ -66,7 +66,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         nodeAdr = self.poly.getValidAddress(nodeAdr)
         #if not self.poly.getNode(nodeAdr):
         logging.info('Creating ChargingNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr,nodeName,  self.EVid ))
-        teslaEV_ChargeNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
+        self.chargeNode = teslaEV_ChargeNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
 
 
     def subnodesReady(self):
@@ -79,14 +79,18 @@ class teslaEV_StatusNode(udi_interface.Node):
     def ready(self):
         return(self.chargeNodeReady and self.climateNodeReady)
 
-    def poll (self):    
+    def poll (self, code):    
         logging.info('Status Node Poll for {}'.format(self.EVid))        
         #self.TEV.teslaEV_GetInfo(self.EVid)
         if self.statusNodeReady:
-            if self.TEV.carState != 'Offline':
+            if code == 'ok':
                 self.updateISYdrivers()
+            elif code in['offline', 'overload', 'error', 'unknown']:
+                self.EV_setDriver('GV13', self.code2ISY(code))
+
+                logging.info('Car appears off-line/sleeping or overload  - not updating data')
             else:
-                logging.info('Car appears off-line/sleeping - not updating data')
+                self.EV_setDriver('GV13', 99)
 
     #def forceUpdateISYdrivers(self):
     #    logging.debug('forceUpdateISYdrivers: {}'.format(self.EVid))
