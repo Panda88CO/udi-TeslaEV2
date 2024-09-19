@@ -28,11 +28,11 @@ Commands limit:	            50 API requests / car / day
 Wake-up limit:        	    15 API requests / car / day
 Charging commands limit:    5 API requests / car / day
 
-ShortPoll = default 10 min (144 call/day)
+ShortPoll = default 10 min (120 call/day)
     Polls data from car if it is awake - does nothing if car is asleep
     sends heartbeat to ISY
 
-LongPoll = default 60min
+LongPoll = default 60min (24)
     Polls data from car. If it is asleep it will wake the csara and retrieve data
 
 ## Notes 
