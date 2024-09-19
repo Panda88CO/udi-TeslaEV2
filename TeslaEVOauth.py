@@ -1478,18 +1478,20 @@ class teslaEVAccess(teslaAccess):
                 code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_boombox', payload ) 
                 logging.debug('teslaEV_PlaySound {}'.format(temp))
                 #temp = r.json()
-
-                if temp['response']:
-                    if temp['response']['result']:
-                        logging.debug(temp['response']['result'])
-                        return(temp['response']['result'])
-                    else:
-                        return(False)
+                if code == 'ok':
+                    if temp['response']:
+                        if temp['response']['result']:
+                            logging.debug(temp['response']['result'])
+                            return(temp['response']['result'])
+                        else:
+                            return(False)
+                else:
+                    logging.debug('teslaEV_PlaySound - failed - {} - {} '.format(code, temp))
             else:
                 return(False)
     
         except Exception as e:
-            logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Exception teslaEV_PlaySound for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             
             return(False)
@@ -1541,6 +1543,7 @@ class teslaEVAccess(teslaAccess):
             #temp = r.json()
             logging.debug(temp['response']['result'])
             return(temp['response']['result'])
+        
         except Exception as e:
             logging.error('Exception teslaEV_TrunkFrunk for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')

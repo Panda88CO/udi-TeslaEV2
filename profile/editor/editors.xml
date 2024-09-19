@@ -108,8 +108,8 @@
   </editor>
   
   <editor id = "CABINTEMP" > 
-      <range  uom="17" min="59" max="83" prec="1"  /> 
-      <range  uom="4" min="15" max="28" prec="1"  />  
+      <range  uom="17" min="59" max="83" step="1" prec="1"  /> 
+      <range  uom="4" min="15" max="28" step="0.5" prec="1"  />  
       <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />      
   </editor>
   
