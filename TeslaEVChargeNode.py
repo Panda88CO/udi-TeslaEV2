@@ -79,39 +79,60 @@ class teslaEV_ChargeNode(udi_interface.Node):
             #logging.debug('GV3: {}'.format(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
             self.EV_setDriver('GV3', self.latch2ISY(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
             #logging.debug('GV3: {}'.format(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
-            self.EV_setDriver('GV3', self.cond2ISY(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
+            #self.EV_setDriver('GV3', self.cond2ISY(self.TEV.teslaEV_ChargePortLatched(self.EVid)))
             #logging.debug('GV4: {} - {}'.format(self.TEV.teslaEV_GetBatteryRange(self.EVid), self.TEV.teslaEV_GetDistUnit()))
-            if self.TEV.teslaEV_GetDistUnit() == 1:
-                self.EV_setDriver('GV4', round(float(self.TEV.teslaEV_GetBatteryRange(self.EVid)),1), 116)
-            else:
-                self.EV_setDriver('GV4', round(float(self.TEV.teslaEV_GetBatteryRange(self.EVid)*1.6),1), 83)
 
-            if self.TEV.teslaEV_GetBatteryLevel(self.EVid) != None:
-                logging.debug('BATLVL: {}'.format(self.TEV.teslaEV_GetBatteryLevel(self.EVid)))
-                self.EV_setDriver('BATLVL', self.TEV.teslaEV_GetBatteryLevel(self.EVid), 51)
+            temp_range = self.TEV.teslaEV_GetBatteryRange(self.EVid)
+            #logging.debug('GV4: {}'.format(temp_range))
+            if temp_range is None:
+                self.EV_setDriver('GV4', temp_range, 25)
             else:
-                self.EV_setDriver('BATLVL', 99, 25)
-            if self.TEV.teslaEV_MaxChargeCurrent(self.EVid) != None:
-                logging.debug('GV5: {}'.format(self.TEV.teslaEV_MaxChargeCurrent(self.EVid)))
-                self.EV_setDriver('GV5', self.TEV.teslaEV_MaxChargeCurrent(self.EVid), 1)
+                if self.TEV.teslaEV_GetDistUnit() == 1:
+                    self.EV_setDriver('GV4', round(float(temp_range),1), 116)
+                else:
+                    self.EV_setDriver('GV4', round(float(temp_range*1.6),1), 83)
+
+            temp_level = self.TEV.teslaEV_GetBatteryLevel(self.EVid) 
+            #logging.debug('BATLVL: {}'.format(temp_level))
+            if temp_level != None:
+
+                self.EV_setDriver('BATLVL', temp_level, 51)
             else:
-                self.EV_setDriver('GV5', 99, 25)
+                self.EV_setDriver('BATLVL', temp_level, 25)
+
+            temp_current = self.TEV.teslaEV_MaxChargeCurrent(self.EVid) 
+            #logging.debug('GV5: {}'.format(temp_current))
+            if temp_current is None:
+                self.EV_setDriver('GV5', temp_current, 25)
+            else:
+                if self.TEV.teslaEV_MaxChargeCurrent(self.EVid) != None:
+   
+                    self.EV_setDriver('GV5', temp_current, 1)
+                else:
+                    self.EV_setDriver('GV5', 99, 25)
             
             #logging.debug('GV6: {}'.format(self.TEV.teslaEV_ChargeState(self.EVid)))   
             self.EV_setDriver('GV6',self.chargeState2ISY(self.TEV.teslaEV_ChargeState(self.EVid)), 25)
  
             #logging.debug('GV7: {}'.format(self.TEV.teslaEV_ChargingRequested(self.EVid)))
+            
             self.EV_setDriver('GV7', self.bool2ISY(self.TEV.teslaEV_ChargingRequested(self.EVid)))
-            if self.TEV.teslaEV_GetChargingPower(self.EVid) != None:
-                logging.debug('GV8: {}'.format(self.TEV.teslaEV_GetChargingPower(self.EVid)))
+            temp_CH_pwr = self.TEV.teslaEV_ChargingRequested(self.EVid)
+            #logging.debug('GV8: {}'.format(temp_CH_pwr))
+            if temp_CH_pwr is None:
+                self.EV_setDriver('GV8', temp_CH_pwr, 25)
+            else:
+
                 self.EV_setDriver('GV8', self.TEV.teslaEV_GetChargingPower(self.EVid), 30)
+
+            temp_CH_max = self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid)
+            #logging.debug('GV9: {}'.format(temp_CH_max))
+            if temp_CH_max is None:
+                self.EV_setDriver('GV9', temp_CH_max, 25)
             else:
-                self.EV_setDriver('GV8', 99, 25)
-            if self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid) != None:
-                logging.debug('GV9: {}'.format(self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid)))
                 self.EV_setDriver('GV9', self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid), 51)
-            else:
-                self.EV_setDriver('GV9', 99, 25)
+
+                
             #logging.debug('GV10: {}'.format(self.TEV.teslaEV_charger_voltage(self.EVid)))
             self.EV_setDriver('GV10',self.TEV.teslaEV_charger_voltage(self.EVid))
             #logging.debug('GV11: {}'.format(self.TEV.teslaEV_charge_current_request(self.EVid)))

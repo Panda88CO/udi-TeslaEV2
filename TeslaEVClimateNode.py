@@ -88,6 +88,12 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
             #logging.debug('GV5-9: {}'.format(self.TEV.teslaEV_GetSeatHeating(self.EVid)))
             temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
+            if temp is None:
+                temp['FrontLeft'] = None
+                temp['FrontRight'] = None
+                temp['RearLeft'] = None
+                temp['RearMiddle'] = None
+                temp['RearRight'] = None
             if 'FrontLeft' in temp:
                 self.EV_setDriver('GV5', self.cond2ISY(temp['FrontLeft']))
             if 'FrontRight' in temp: 
@@ -120,7 +126,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             self.EV_setDriver('GV20', round(float(self.TEV.teslaEV_GetTimeSinceLastClimateUpdate(self.EVid)/60/60), 2),20)
    
         except Exception as e:
-            logging.error('updateISYdrivupdateISYdriversrsclimate node  failed: {}'.format(e))
+            logging.error('updateISYdrivers climate node  failed: {}'.format(e))
 
 
     def ISYupdate (self, command):

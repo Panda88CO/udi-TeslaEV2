@@ -126,14 +126,20 @@ class teslaEV_StatusNode(udi_interface.Node):
 
             self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)))
             temp = self.TEV.teslaEV_GetWindoStates(self.EVid)
-            if  temp['FrontLeft'] == None:
+            if temp is None:
                 temp['FrontLeft'] = 99
-            if temp['FrontRight'] == None:    
                 temp['FrontRight'] = 99
-            if temp['RearLeft'] == None:    
                 temp['RearLeft'] = 99
-            if temp['RearRight'] == None:    
                 temp['RearRight'] = 99
+            else:
+                if  temp['FrontLeft'] == None:
+                    temp['FrontLeft'] = 99
+                if temp['FrontRight'] == None:    
+                    temp['FrontRight'] = 99
+                if temp['RearLeft'] == None:    
+                    temp['RearLeft'] = 99
+                if temp['RearRight'] == None:    
+                    temp['RearRight'] = 99
             self.EV_setDriver('GV6', temp['FrontLeft'])
             self.EV_setDriver('GV7', temp['FrontRight'])
             self.EV_setDriver('GV8', temp['RearLeft'])
