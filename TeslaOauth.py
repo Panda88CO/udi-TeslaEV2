@@ -325,7 +325,10 @@ class teslaAccess(OAuth):
         except requests.exceptions.HTTPError as error:
             logging.error(f"Call { method } { completeUrl } failed: { error }")
             #self.apiLock.release()
-            return None
+            if response.status_code == 400:
+                return('error', response.text)
+            else:
+                return ('unknown', response.text)
         
     # Call your external service API
     def _callApiORG(self, method='GET', url=None, body=''):
