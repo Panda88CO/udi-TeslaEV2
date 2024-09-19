@@ -963,7 +963,7 @@ class teslaEVAccess(teslaAccess):
             return(temp)
         except Exception as e:
             logging.debug(' Exception teslaEV_GetSeatHeating - {}'.format(e))
-            return(None)            
+            return(temp)            
  
 
     def teslaEV_AutoConditioningRunning(self, EVid):
@@ -1325,7 +1325,7 @@ class teslaEVAccess(teslaAccess):
             return(temp)
         except Exception as e:
             logging.debug(' Exception teslaEV_GetWindoStates - {}'.format(e))
-            return(None)
+            return(temp)
         
 
     def teslaEV_GetOdometer(self, EVid):

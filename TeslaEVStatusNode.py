@@ -125,25 +125,21 @@ class teslaEV_StatusNode(udi_interface.Node):
                 self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 83)
 
             self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)))
+            
             temp = self.TEV.teslaEV_GetWindoStates(self.EVid)
-            if temp is None:
-                temp['FrontLeft'] = 99
-                temp['FrontRight'] = 99
-                temp['RearLeft'] = 99
-                temp['RearRight'] = 99
-            else:
-                if  temp['FrontLeft'] == None:
-                    temp['FrontLeft'] = 99
-                if temp['FrontRight'] == None:    
-                    temp['FrontRight'] = 99
-                if temp['RearLeft'] == None:    
-                    temp['RearLeft'] = 99
-                if temp['RearRight'] == None:    
-                    temp['RearRight'] = 99
+            if 'FrontLeft' not in temp:
+                temp['FrontLeft'] = None
+            if 'FrontRight' not in temp:
+                temp['FrontRight'] = None
+            if 'RearLeft' not in temp:
+                temp['RearLeft'] = None
+            if 'RearLeft' not in temp:
+                temp['RearLeft'] = None
             self.EV_setDriver('GV6', temp['FrontLeft'])
             self.EV_setDriver('GV7', temp['FrontRight'])
             self.EV_setDriver('GV8', temp['RearLeft'])
             self.EV_setDriver('GV9', temp['RearRight'])
+            
             #self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
             if self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
                 logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofState(self.EVid)))

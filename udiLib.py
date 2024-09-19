@@ -107,46 +107,57 @@ def daylist2bin(self, daylist):
 
 def season2ISY(self, season):
     logging.debug('season2ISY {}'.format(season))
-    if season.upper() == 'WINTER':
-        return(0)
-    elif season.upper() == 'SUMMER':
-        return(1)
-    elif season != None:
-        return(2)
+    if season is not None:
+        if season.upper() == 'WINTER':
+            return(0)
+        elif season.upper() == 'SUMMER':
+            return(1)
+        elif season != None:
+            return(2)
+        else:
+            return (99)
     else:
-        return (99)
-    
+        return(None)        
 def state2ISY(self, state):
-    if state.lower() == 'offline':
-        return(0)
-    elif state.lower() == 'online':
-        return(1)
-    elif state.lower() == 'asleep':
-        return(2) 
-    elif state.lower() == 'unknown':
-        return(99)
-    else:          
-        logging.error('Unknown state passed {}'.format(state))
-        return(99)
-
+    if state is not None:
+        if state.lower() == 'offline':
+            return(0)
+        elif state.lower() == 'online':
+            return(1)
+        elif state.lower() == 'asleep':
+            return(2) 
+        elif state.lower() == 'unknown':
+            return(99)
+        else:          
+            logging.error('Unknown state passed {}'.format(state))
+            return(99)
+    else:
+        return(None)
+    
 def code2ISY(self, state):
-    if state.lower() == 'offline':
-        return(0)
-    elif state.lower() == 'online':
-        return(1)
-    elif state.lower() == 'overload':
-        return(4) 
-    elif state.lower() == 'error':
-        return(5)
-    else:          
-        logging.error('Unknown state passed {}'.format(state))
-        return(99)
+    if state is not None:
+        if state.lower() == 'offline':
+            return(0)
+        elif state.lower() == 'online':
+            return(1)
+        elif state.lower() == 'overload':
+            return(4) 
+        elif state.lower() == 'error':
+            return(5)
+        else:          
+            logging.error('Unknown state passed {}'.format(state))
+            return(99)
+    else:
+        return(None)
 
 def online2ISY(self, state):
-    if state.lower() == 'online':
-        return(1)
+    if state is not None:
+        if state.lower() == 'online':
+            return(1)
+        else:
+            return(0)
     else:
-        return(0)
+        return(None)
 
 def openClose2ISY(self, state):
     if state == None:
@@ -157,52 +168,62 @@ def openClose2ISY(self, state):
         return(1)
 
 def cond2ISY(self, condition):
-    if condition == None:
+    if condition is None:
         return(99)
     else:
         return(condition)
     
 def latch2ISY(self, state):
-    if state.lower() == 'engaged':
-        return(1)
-    elif state.lower() == 'blocking':
-        return(2)
-    elif state.lower() == 'disengaged':
-        return(0)
+    if state is not None:
+        if state.lower() == 'engaged':
+            return(1)
+        elif state.lower() == 'blocking':
+            return(2)
+        elif state.lower() == 'disengaged':
+            return(0)
+        else:
+            return(99)
     else:
-        return(99)
+        return(None)
+
 
 def chargeState2ISY(self, state):
-    stateL = state.lower()
-    if stateL == 'disconnected':
-        return(0)
-    elif stateL == 'nopower':
-        return(1)          
-    elif stateL == 'starting':
-        return(2)
-    elif stateL == 'charging':
-        return(3)
-    elif stateL == 'stopped':
-        return(4)
-    elif stateL == 'complete':
-        return(5)
+    if state is not None:
+        stateL = state.lower()
+        if stateL == 'disconnected':
+            return(0)
+        elif stateL == 'nopower':
+            return(1)          
+        elif stateL == 'starting':
+            return(2)
+        elif stateL == 'charging':
+            return(3)
+        elif stateL == 'stopped':
+            return(4)
+        elif stateL == 'complete':
+            return(5)
+        else:
+            return(99) 
     else:
-        return(99)  
+        return(None)
 
 def period2ISY(self, period):
     logging.debug('period2ISY {}'.format(period))
-    if period.upper() == 'OFF_PEAK':
-        return(0)
-    elif period.upper() == 'PARTIAL_PEAK':
-        return(1)
-    elif period.upper() == 'PEAK':
-        return(2)
+    if period is not None:
+        if period.upper() == 'OFF_PEAK':
+            return(0)
+        elif period.upper() == 'PARTIAL_PEAK':
+            return(1)
+        elif period.upper() == 'PEAK':
+            return(2)
+        else:
+            return (99) 
     else:
-        return (99) 
+        return(None)
 
 def EV_setDriver(self, key, value, Unit=None):
     logging.debug('EV_setDriver : {} {} {}'.format(key, value, Unit))
-    if value == None:
+    if value is None:
         logging.debug('None value passed = seting 99, UOM 25')
         self.node.setDriver(key, 99, True, True, 25)
     else:
@@ -219,7 +240,7 @@ def tempUnitAdjust(self, tempC):
     
 def setDriverTemp(self, Key, value):
     logging.debug('setDriverTemp : TempUnit: {}, value: {}'.format(self.TEV.teslaEV_GetTempUnit(), value))
-    if value == None:
+    if value is None:
         self.EV_setDriver(Key, 99,25)  
     elif self.TEV.teslaEV_GetTempUnit()  == 0:
         self.EV_setDriver(Key, round(round(2*value,0)/2,1),4)
