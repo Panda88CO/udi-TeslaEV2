@@ -211,7 +211,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
                 self.TEV.teslaEV_HonkHorn(self.EVid)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
             
         #self.EV_setDriver()
         #self.forceUpdateISYdrivers()
@@ -226,7 +226,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
             self.TEV.teslaEV_HonkHorn(self.EVid)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
         #self.forceUpdateISYdrivers()
 
@@ -248,7 +248,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             else:
                 logging.error('Unknown command for evControlDoors {}'.format(command))
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
 
     def evPlaySound (self, command):
@@ -264,7 +264,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                 self.TEV.teslaEV_PlaySound(self.EVid, sound)
             #self.EV_setDriver()
             else:
-                logging.info('Not able to send command - can is not online')            
+                logging.info('Not able to send command - EV is not online')            
         else:
             logging.error('Wrong command for evPlaySound: {}'.format(sound))
 
@@ -289,7 +289,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             else:
                 logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl))
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
         #if self.TEV.teslaEV_GetSunRoofPercent(self.EVid) != None:
             #logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofPercent(self.EVid)))
@@ -311,7 +311,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             if self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Frunk'):
                 self.EV_setDriver('GV12', 1)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), True, True)
@@ -328,7 +328,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             if self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Trunk'):
                 self.EV_setDriver('GV11', 1)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), True, True)
 
@@ -340,10 +340,10 @@ class teslaEV_StatusNode(udi_interface.Node):
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
-        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':        
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
             self.TEV.teslaEV_HomeLink(self.EVid)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
     '''
     def setDistUnit(self,command):
         logging.debug('setDistUnit')

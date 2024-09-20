@@ -189,7 +189,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
                 logging.debug('Wrong parameter passed to evChargePort : {}'.format(chargePort))
             self.EV_setDriver('GV2', chargePort)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV2', self.cond2ISY(self.TEV.teslaEV_ChargePortOpen(self.EVid)))
 
@@ -216,7 +216,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
             #self.EV_setDriver('GV6',self.state2ISY(self.TEV.teslaEV_ChargeState(self.EVid)))
             #self.EV_setDriver('GV7', self.cond2ISY(self.TEV.teslaEV_ChargingRequested(self.EVid)))
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
 
     def evSetBatteryChargeLimit (self, command):
@@ -238,7 +238,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
             #else:
             #    self.EV_setDriver('GV9', 99, 25)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
 
     def evSetCurrentChargeLimit (self, command):
@@ -261,7 +261,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
             #else:
             #    self.EV_setDriver('GV5', 99, 25)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
     id = 'evcharge'
 

@@ -152,7 +152,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             else:
                 logging.error('Wrong command for evWndows: {}'.format(windowCtrl))
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
         #self.forceUpdateISYdrivers()
 
 
@@ -174,7 +174,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             else:
                 logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl)) 
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
         #self.forceUpdateISYdrivers()
 
     def evAutoCondition (self, command):
@@ -196,7 +196,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             else:
                 logging.error('Wrong command for evAutoCondition: {}'.format(autoCond)) 
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV10', self.bool2ISY(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)))
 
@@ -220,7 +220,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             else:
                 logging.error('Wrong command for evDefrostMax: {}'.format(defrost)) 
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
         #self.forceUpdateISYdrivers()
 
     def evSetCabinTemp (self, command):
@@ -244,7 +244,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
                 self.setDriverTemp( 'GV3', driverTempC )
                 self.setDriverTemp( 'GV4', passengerTempC )
         else:
-            logging.info('Not able to send command - can is not online')    
+            logging.info('Not able to send command - EV is not online')    
         #temp = self.TEV.tesleEV_GetCabinTemp(self.EVid)
 
         #self.forceUpdateISYdrivers()
@@ -282,7 +282,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if self.TEV.teslaEV_SetSeatHeating(self.EVid, 0, seatTemp):
                 self.EV_setDriver('GV5', seatTemp)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
     def evSetSeat1Heat (self, command):
         logging.info('evSetSeat1Heat called')
@@ -296,7 +296,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if self.TEV.teslaEV_SetSeatHeating(self.EVid, 1, seatTemp):
                 self.EV_setDriver('GV6', seatTemp)
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
     def evSetSeat2Heat (self, command):
         logging.info('evSetSea2tHeat called')
@@ -310,7 +310,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if self.TEV.teslaEV_SetSeatHeating(self.EVid, 2, seatTemp):
                 self.EV_setDriver('GV7', seatTemp)        
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
 
     def evSetSeat4Heat (self, command):
@@ -325,7 +325,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if self.TEV.teslaEV_SetSeatHeating(self.EVid, 4, seatTemp):
                 self.EV_setDriver('GV8', seatTemp)  
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
     def evSetSeat5Heat (self, command):
         logging.info('evSetSeat5Heat called') 
@@ -338,7 +338,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if self.TEV.teslaEV_SetSeatHeating(self.EVid, 5, seatTemp):
                 self.EV_setDriver('GV9', seatTemp)   
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
     def evSteeringWheelHeat (self, command):
         logging.info('evSteeringWheelHeat called')  
@@ -358,7 +358,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             #self.EV_setDriver('GV14', self.cond2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)))
             #self.forceUpdateISYdrivers()
         else:
-            logging.info('Not able to send command - can is not online')
+            logging.info('Not able to send command - EV is not online')
 
     '''
     def setTempUnit(self, command):
