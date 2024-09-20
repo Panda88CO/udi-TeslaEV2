@@ -137,17 +137,22 @@ class teslaEV_ClimateNode(udi_interface.Node):
  
     def evWindows (self, command):
         logging.info('evWindows- called')
-
-        windowCtrl = int(float(command.get('value')))
-        #self.TEV.teslaEV_Wake(self.EVid)
-        if windowCtrl == 1:
-            self.TEV.teslaEV_Windows(self.EVid, 'vent')
-            #    self.EV_setDriver()
-        elif windowCtrl == 0:
-            self.TEV.teslaEV_Windows(self.EVid, 'close')            
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            windowCtrl = int(float(command.get('value')))
+            #self.TEV.teslaEV_Wake(self.EVid)
+            if windowCtrl == 1:
+                self.TEV.teslaEV_Windows(self.EVid, 'vent')
+                #    self.EV_setDriver()
+            elif windowCtrl == 0:
+                self.TEV.teslaEV_Windows(self.EVid, 'close')            
+            else:
+                logging.error('Wrong command for evWndows: {}'.format(windowCtrl))
         else:
-            logging.error('Wrong command for evWndows: {}'.format(windowCtrl))
- 
+            logging.info('Not able to send command - can is not online')
         #self.forceUpdateISYdrivers()
 
 
@@ -155,14 +160,21 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSunroof called')
 
         sunroofCtrl = int(float(command.get('value')))
-        #self.TEV.teslaEV_Wake(self.EVid)
-        if sunroofCtrl == 1:
-            self.TEV.teslaEV_SunRoof(self.EVid, 'vent')
-        elif sunroofCtrl == 0:
-            self.TEV.teslaEV_SunRoof(self.EVid, 'close')            
-        else:
-            logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl)) 
 
+        #self.TEV.teslaEV_Wake(self.EVid)
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':        
+            if sunroofCtrl == 1:
+                self.TEV.teslaEV_SunRoof(self.EVid, 'vent')
+            elif sunroofCtrl == 0:
+                self.TEV.teslaEV_SunRoof(self.EVid, 'close')            
+            else:
+                logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl)) 
+        else:
+            logging.info('Not able to send command - can is not online')
         #self.forceUpdateISYdrivers()
 
     def evAutoCondition (self, command):
@@ -170,15 +182,21 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
         autoCond = int(float(command.get('value')))  
         #self.TEV.teslaEV_Wake(self.EVid)
-        if autoCond == 1:
-            if self.TEV.teslaEV_AutoCondition(self.EVid, 'start'):
-                self.EV_setDriver('GV10',autoCond )
-        elif autoCond == 0:
-            self.TEV.teslaEV_AutoCondition(self.EVid, 'stop')  
-            self.EV_setDriver('GV10',autoCond )          
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':        
+            if autoCond == 1:
+                if self.TEV.teslaEV_AutoCondition(self.EVid, 'start'):
+                    self.EV_setDriver('GV10',autoCond )
+            elif autoCond == 0:
+                self.TEV.teslaEV_AutoCondition(self.EVid, 'stop')  
+                self.EV_setDriver('GV10',autoCond )          
+            else:
+                logging.error('Wrong command for evAutoCondition: {}'.format(autoCond)) 
         else:
-            logging.error('Wrong command for evAutoCondition: {}'.format(autoCond)) 
-
+            logging.info('Not able to send command - can is not online')
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV10', self.bool2ISY(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)))
 
@@ -188,15 +206,21 @@ class teslaEV_ClimateNode(udi_interface.Node):
         
         defrost = int(float(command.get('value')))  
         #self.TEV.teslaEV_Wake(self.EVid)
-        if defrost == 1:
-            if self.TEV.teslaEV_DefrostMax(self.EVid, 'on'):
-                self.EV_setDriver('GV11', 2)
-        elif defrost == 0:
-            if self.TEV.teslaEV_DefrostMax(self.EVid, 'off'):
-                self.EV_setDriver('GV11', self.TEVteslaEV_PreConditioningEnabled(self.EVid))
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':        
+            if defrost == 1:
+                if self.TEV.teslaEV_DefrostMax(self.EVid, 'on'):
+                    self.EV_setDriver('GV11', 2)
+            elif defrost == 0:
+                if self.TEV.teslaEV_DefrostMax(self.EVid, 'off'):
+                    self.EV_setDriver('GV11', self.TEVteslaEV_PreConditioningEnabled(self.EVid))
+            else:
+                logging.error('Wrong command for evDefrostMax: {}'.format(defrost)) 
         else:
-            logging.error('Wrong command for evDefrostMax: {}'.format(defrost)) 
-
+            logging.info('Not able to send command - can is not online')
         #self.forceUpdateISYdrivers()
 
     def evSetCabinTemp (self, command):
@@ -211,11 +235,16 @@ class teslaEV_ClimateNode(udi_interface.Node):
             passengerTempC = int(query.get('passenger.uom4'))  
         elif 'passenger.uom17' in query:
             passengerTempC    = int((int(query.get('passenger.uom17'))-32)*5/9)
-
-        if self.TEV.teslaEV_SetCabinTemps(self.EVid, driverTempC, passengerTempC):
-            self.setDriverTemp( 'GV3', driverTempC )
-            self.setDriverTemp( 'GV4', passengerTempC )
-    
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if self.TEV.teslaEV_SetCabinTemps(self.EVid, driverTempC, passengerTempC):
+                self.setDriverTemp( 'GV3', driverTempC )
+                self.setDriverTemp( 'GV4', passengerTempC )
+        else:
+            logging.info('Not able to send command - can is not online')    
         #temp = self.TEV.tesleEV_GetCabinTemp(self.EVid)
 
         #self.forceUpdateISYdrivers()
@@ -245,59 +274,91 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSetSeat0Heat called')
 
         seatTemp = int(command.get('value'))  
-        self.TEV.teslaEV_Wake(self.EVid)
-        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 0, seatTemp):
-            self.EV_setDriver('GV5', seatTemp)
-
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if self.TEV.teslaEV_SetSeatHeating(self.EVid, 0, seatTemp):
+                self.EV_setDriver('GV5', seatTemp)
+        else:
+            logging.info('Not able to send command - can is not online')
 
     def evSetSeat1Heat (self, command):
         logging.info('evSetSeat1Heat called')
   
         seatTemp = int(float(command.get('value')))  
-        self.TEV.teslaEV_Wake(self.EVid)
-        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 1, seatTemp):
-            self.EV_setDriver('GV6', seatTemp)
-
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if self.TEV.teslaEV_SetSeatHeating(self.EVid, 1, seatTemp):
+                self.EV_setDriver('GV6', seatTemp)
+        else:
+            logging.info('Not able to send command - can is not online')
 
     def evSetSeat2Heat (self, command):
         logging.info('evSetSea2tHeat called')
 
         seatTemp = int(float(command.get('value')))
-        self.TEV.teslaEV_Wake(self.EVid)  
-        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 2, seatTemp):
-            self.EV_setDriver('GV7', seatTemp)        
-
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if self.TEV.teslaEV_SetSeatHeating(self.EVid, 2, seatTemp):
+                self.EV_setDriver('GV7', seatTemp)        
+        else:
+            logging.info('Not able to send command - can is not online')
 
 
     def evSetSeat4Heat (self, command):
         logging.info('evSetSeat4Heat called')
 
         seatTemp = int(float(command.get('value')))  
-        self.TEV.teslaEV_Wake(self.EVid)
-        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 4, seatTemp):
-            self.EV_setDriver('GV8', seatTemp)  
- 
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if self.TEV.teslaEV_SetSeatHeating(self.EVid, 4, seatTemp):
+                self.EV_setDriver('GV8', seatTemp)  
+        else:
+            logging.info('Not able to send command - can is not online')
 
     def evSetSeat5Heat (self, command):
         logging.info('evSetSeat5Heat called') 
         seatTemp = int(float(command.get('value'))) 
-        self.TEV.teslaEV_Wake(self.EVid) 
-        if self.TEV.teslaEV_SetSeatHeating(self.EVid, 5, seatTemp):
-            self.EV_setDriver('GV9', seatTemp)   
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if self.TEV.teslaEV_SetSeatHeating(self.EVid, 5, seatTemp):
+                self.EV_setDriver('GV9', seatTemp)   
+        else:
+            logging.info('Not able to send command - can is not online')
 
     def evSteeringWheelHeat (self, command):
         logging.info('evSteeringWheelHeat called')  
         wheel = int(float(command.get('value')))  
         #self.TEV.teslaEV_Wake(self.EVid)
-        if wheel == 1:
-            self.TEV.teslaEV_SteeringWheelHeat(self.EVid, 'on')
-        elif wheel == 0:
-            self.TEV.teslaEV_SteeringWheelHeat(self.EVid, 'off')            
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':        
+            if wheel == 1:
+                self.TEV.teslaEV_SteeringWheelHeat(self.EVid, 'on')
+            elif wheel == 0:
+                self.TEV.teslaEV_SteeringWheelHeat(self.EVid, 'off')            
+            else:
+                logging.error('Wrong command for evDefrostMax: {}'.format(wheel)) 
+            #self.EV_setDriver('GV14', self.cond2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)))
+            #self.forceUpdateISYdrivers()
         else:
-            logging.error('Wrong command for evDefrostMax: {}'.format(wheel)) 
-        #self.EV_setDriver('GV14', self.cond2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)))
-        #self.forceUpdateISYdrivers()
-
+            logging.info('Not able to send command - can is not online')
 
     '''
     def setTempUnit(self, command):

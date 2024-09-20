@@ -197,61 +197,99 @@ class teslaEV_StatusNode(udi_interface.Node):
         logging.info('EVwakeUp called')
         self.TEV.teslaEV_UpdateConnectionStatus()
         if self.TEV.teslaEV_Wake(self.EVid):            
-            self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)             
+            self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
             self.updateISYdrivers()
 
 
     def evHonkHorn (self, command):
         logging.info('EVhonkHorn called')
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_HonkHorn(self.EVid)
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+                self.TEV.teslaEV_HonkHorn(self.EVid)
+        else:
+            logging.info('Not able to send command - can is not online')
+            
         #self.EV_setDriver()
         #self.forceUpdateISYdrivers()
 
     def evFlashLights (self, command):
         logging.info('EVflashLights called')
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_FlashLights(self.EVid)
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            self.TEV.teslaEV_HonkHorn(self.EVid)
+        else:
+            logging.info('Not able to send command - can is not online')
 
         #self.forceUpdateISYdrivers()
 
     def evControlDoors (self, command):
         logging.info('EVctrlDoors called')
         #self.TEV.teslaEV_Wake(self.EVid)
-        doorCtrl = int(float(command.get('value')))
-        if doorCtrl == 1:
-            if self.TEV.teslaEV_Doors(self.EVid, 'unlock'):
-                self.EV_setDriver('GV3', doorCtrl )
-        elif doorCtrl == 0:
-            if  self.TEV.teslaEV_Doors(self.EVid, 'lock'):
-                self.EV_setDriver('GV3', doorCtrl )            
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            doorCtrl = int(float(command.get('value')))
+            if doorCtrl == 1:
+                if self.TEV.teslaEV_Doors(self.EVid, 'unlock'):
+                    self.EV_setDriver('GV3', doorCtrl )
+            elif doorCtrl == 0:
+                if  self.TEV.teslaEV_Doors(self.EVid, 'lock'):
+                    self.EV_setDriver('GV3', doorCtrl )            
+            else:
+                logging.error('Unknown command for evControlDoors {}'.format(command))
         else:
-            logging.error('Unknown command for evControlDoors {}'.format(command))
+            logging.info('Not able to send command - can is not online')
+
 
     def evPlaySound (self, command):
         logging.info('evPlaySound called')
         #self.TEV.teslaEV_Wake(self.EVid)
         sound = int(float(command.get('value')))
         if sound == 0 or sound == 2000:
-           self.TEV.teslaEV_PlaySound(self.EVid, sound)
-           #self.EV_setDriver()
+            self.TEV.teslaEV_UpdateConnectionStatus()
+            if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+                if self.TEV.teslaEV_Wake(self.EVid):            
+                    self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+            if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':            
+                self.TEV.teslaEV_PlaySound(self.EVid, sound)
+            #self.EV_setDriver()
+            else:
+                logging.info('Not able to send command - can is not online')            
         else:
             logging.error('Wrong command for evPlaySound: {}'.format(sound))
+
 
 
     def evControlSunroof (self, command):
         logging.info('evControlSunroof called')
         #self.TEV.teslaEV_Wake(self.EVid)
         sunroofCtrl = int(float(command.get('value')))
-        if sunroofCtrl == 1:
-           self.TEV.teslaEV_SunRoof(self.EVid, 'vent')
-           #self.EV_setDriver()
-        elif sunroofCtrl == 0:
-            self.TEV.teslaEV_SunRoof(self.EVid, 'close')    
-        elif sunroofCtrl == 2:
-            self.TEV.teslaEV_SunRoof(self.EVid, 'stop')                  
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if sunroofCtrl == 1:
+                self.TEV.teslaEV_SunRoof(self.EVid, 'vent')
+                #self.EV_setDriver()
+            elif sunroofCtrl == 0:
+                self.TEV.teslaEV_SunRoof(self.EVid, 'close')    
+            elif sunroofCtrl == 2:
+                self.TEV.teslaEV_SunRoof(self.EVid, 'stop')                  
+            else:
+                logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl))
         else:
-            logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl))
+            logging.info('Not able to send command - can is not online')
 
         #if self.TEV.teslaEV_GetSunRoofPercent(self.EVid) != None:
             #logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofPercent(self.EVid)))
@@ -264,19 +302,33 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def evOpenFrunk (self, command):
         logging.info('evOpenFrunk called')
-        #self.TEV.teslaEV_Wake(self.EVid)                
-        if self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Frunk'):
-            self.EV_setDriver('GV12', 1)
+        #self.TEV.teslaEV_Wake(self.EVid)     
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+            if self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Frunk'):
+                self.EV_setDriver('GV12', 1)
+        else:
+            logging.info('Not able to send command - can is not online')
 
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), True, True)
 
     def evOpenTrunk (self, command):
         logging.info('evOpenTrunk called')   
-        #self.TEV.teslaEV_Wake(self.EVid)             
-        if self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Trunk'):
-            self.EV_setDriver('GV11', 1)
-
+        #self.TEV.teslaEV_Wake(self.EVid)        
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':                  
+     
+            if self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Trunk'):
+                self.EV_setDriver('GV11', 1)
+        else:
+            logging.info('Not able to send command - can is not online')
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), True, True)
 
@@ -284,8 +336,14 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evHomelink (self, command):
         logging.info('evHomelink called')
         #self.TEV.teslaEV_Wake(self.EVid)   
-        self.TEV.teslaEV_HomeLink(self.EVid)
-
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':        
+            self.TEV.teslaEV_HomeLink(self.EVid)
+        else:
+            logging.info('Not able to send command - can is not online')
     '''
     def setDistUnit(self,command):
         logging.debug('setDistUnit')

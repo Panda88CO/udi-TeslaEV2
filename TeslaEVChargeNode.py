@@ -172,17 +172,24 @@ class teslaEV_ChargeNode(udi_interface.Node):
         logging.info('evChargePort called')
         chargePort = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        if chargePort == 1:
-            if self.TEV.teslaEV_ChargePort(self.EVid, 'open'):
-                self.EV_setDriver('GV2', chargePort)
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
 
-        elif chargePort == 0:
-            if self.TEV.teslaEV_ChargePort(self.EVid, 'close'):
-                self.EV_setDriver('GV2', chargePort)
+            if chargePort == 1:
+                if self.TEV.teslaEV_ChargePort(self.EVid, 'open'):
+                    self.EV_setDriver('GV2', chargePort)
+
+            elif chargePort == 0:
+                if self.TEV.teslaEV_ChargePort(self.EVid, 'close'):
+                    self.EV_setDriver('GV2', chargePort)
+            else:
+                logging.debug('Wrong parameter passed to evChargePort : {}'.format(chargePort))
+            self.EV_setDriver('GV2', chargePort)
         else:
-            logging.debug('Wrong parameter passed to evChargePort : {}'.format(chargePort))
-        self.EV_setDriver('GV2', chargePort)
-   
+            logging.info('Not able to send command - can is not online')
         #self.forceUpdateISYdrivers()
         #self.EV_setDriver('GV2', self.cond2ISY(self.TEV.teslaEV_ChargePortOpen(self.EVid)))
 
@@ -190,46 +197,71 @@ class teslaEV_ChargeNode(udi_interface.Node):
         logging.info('evChargeControl called')
         chargeCtrl = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        if chargeCtrl == 1:
-            if self.TEV.teslaEV_Charging(self.EVid, 'start'):
-                self.EV_setDriver('GV6', 3)
-        elif chargeCtrl == 0:
-            if self.TEV.teslaEV_Charging(self.EVid, 'stop'):
-                self.EV_setDriver('GV6', 4)
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+
+            if chargeCtrl == 1:
+                if self.TEV.teslaEV_Charging(self.EVid, 'start'):
+                    self.EV_setDriver('GV6', 3)
+            elif chargeCtrl == 0:
+                if self.TEV.teslaEV_Charging(self.EVid, 'stop'):
+                    self.EV_setDriver('GV6', 4)
+            else:
+                logging.debug('Wrong parameter passed to evChargeControl : {}'.format(chargeCtrl))
+            self.EV_setDriver('GV6', chargeCtrl)
+            #self.forceUpdateISYdrivers()
+            #self.EV_setDriver('GV6',self.state2ISY(self.TEV.teslaEV_ChargeState(self.EVid)))
+            #self.EV_setDriver('GV7', self.cond2ISY(self.TEV.teslaEV_ChargingRequested(self.EVid)))
         else:
-            logging.debug('Wrong parameter passed to evChargeControl : {}'.format(chargeCtrl))
-        self.EV_setDriver('GV6', chargeCtrl)
-        #self.forceUpdateISYdrivers()
-        #self.EV_setDriver('GV6',self.state2ISY(self.TEV.teslaEV_ChargeState(self.EVid)))
-        #self.EV_setDriver('GV7', self.cond2ISY(self.TEV.teslaEV_ChargingRequested(self.EVid)))
+            logging.info('Not able to send command - can is not online')
+
 
     def evSetBatteryChargeLimit (self, command):
         logging.info('evSetBatteryChargeLimit called')
         batLimitPercent = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        if self.TEV.teslaEV_SetChargeLimit(self.EVid, batLimitPercent):
-            self.EV_setDriver('GV9', batLimitPercent)
-        #self.forceUpdateISYdrivers()
-        #if self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid) != None:
-        #    logging.debug('GV9: {}'.format(self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid)))
-        #    self.EV_setDriver('GV9', self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid), 51)
-        #else:
-        #    self.EV_setDriver('GV9', 99, 25)
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+
+            if self.TEV.teslaEV_SetChargeLimit(self.EVid, batLimitPercent):
+                self.EV_setDriver('GV9', batLimitPercent)
+            #self.forceUpdateISYdrivers()
+            #if self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid) != None:
+            #    logging.debug('GV9: {}'.format(self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid)))
+            #    self.EV_setDriver('GV9', self.TEV.teslaEV_GetBatteryMaxCharge(self.EVid), 51)
+            #else:
+            #    self.EV_setDriver('GV9', 99, 25)
+        else:
+            logging.info('Not able to send command - can is not online')
+
 
     def evSetCurrentChargeLimit (self, command):
         logging.info('evSetCurrentChargeLimit called')
         
         ampLimit = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        if self.TEV.teslaEV_SetChargeLimitAmps(self.EVid, ampLimit):
-            self.EV_setDriver('CHARGEAMPS', ampLimit)
-        #self.forceUpdateISYdrivers()
-        #if self.TEV.teslaEV_MaxChargeCurrent(self.EVid) != None:
-        #    logging.debug('GV5: {}'.format(self.TEV.teslaEV_MaxChargeCurrent(self.EVid)))
-        #    self.EV_setDriver('GV5', self.TEV.teslaEV_MaxChargeCurrent(self.EVid), 1)
-        #else:
-        #    self.EV_setDriver('GV5', 99, 25)
+        self.TEV.teslaEV_UpdateConnectionStatus()
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
+            if self.TEV.teslaEV_Wake(self.EVid):            
+                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
 
+            if self.TEV.teslaEV_SetChargeLimitAmps(self.EVid, ampLimit):
+                self.EV_setDriver('CHARGEAMPS', ampLimit)
+            #self.forceUpdateISYdrivers()
+            #if self.TEV.teslaEV_MaxChargeCurrent(self.EVid) != None:
+            #    logging.debug('GV5: {}'.format(self.TEV.teslaEV_MaxChargeCurrent(self.EVid)))
+            #    self.EV_setDriver('GV5', self.TEV.teslaEV_MaxChargeCurrent(self.EVid), 1)
+            #else:
+            #    self.EV_setDriver('GV5', 99, 25)
+        else:
+            logging.info('Not able to send command - can is not online')
 
     id = 'evcharge'
 
