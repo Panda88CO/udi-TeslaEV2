@@ -13,6 +13,7 @@ MIT License
 '''
 import requests
 import time
+import json
 from threading import Lock
 from datetime import timedelta, datetime
 from tzlocal import get_localzone
@@ -291,6 +292,8 @@ class teslaAccess(OAuth):
 
         if method in [ 'PATCH', 'POST'] and body is None:
             logging.error(f"body is required when using { method } { completeUrl }")
+        else:
+            body = json.dumps(body)
         logging.debug(' call info url={}, header {}, body ={}'.format(completeUrl, headers, body))
 
         try:
