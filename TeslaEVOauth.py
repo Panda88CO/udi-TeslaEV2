@@ -480,7 +480,10 @@ class teslaEVAccess(teslaAccess):
         try:
             logging.debug('teslaEV_GetTimeSinceLastCarUpdate')
             timeNow = int(time.time())
-            timeMinimum = min( self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid) )
+            lst = [self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid)]
+
+            timeMinimum =  min(filter(lambda x: x is not None, lst)) if any(lst) else None
+            #timeMinimum = min( self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid) )
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow, timeMinimum ))
             return(float(timeMinimum))
         except Exception as e:
