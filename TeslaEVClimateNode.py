@@ -201,7 +201,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     def evSetCabinTemp (self, command):
         logging.info('evSetCabinTemp called') 
-        cabinTemp = float(command.get('value'))
+        #cabinTemp = float(command.get('value'))
         query = command.get("query")
         if 'driver.uom4' in query:
             driverTempC    = int(query.get('driver.uom4'))
