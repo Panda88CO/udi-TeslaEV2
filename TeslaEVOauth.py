@@ -374,7 +374,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         code = 'unknown'
         try:
-            code, state  = self.teslaEV_wakeh_ev(EVid)                
+            code, state  = self.teslaEV_wake_ev(EVid)                
             if code == 'ok':
                 logging.debug('Wake_up result : {}'.format(state))
                 if state in ['online']:
