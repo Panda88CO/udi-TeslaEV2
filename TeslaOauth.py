@@ -255,6 +255,8 @@ class teslaAccess(OAuth):
     def portal_ready(self):
         return(self.portal_connected)
 
+
+
     # Call your external service API
     def _callApi(self, method='GET', url=None, body=''):
         # When calling an API, get the access token (it will be refreshed if necessary)
@@ -318,10 +320,12 @@ class teslaAccess(OAuth):
                     return 'ok', response.json()
                 except requests.exceptions.JSONDecodeError:
                     return 'error', response.text
+            elif response.status_code == 400:
+                return 'error', response.text                
             elif response.status_code == 408:
-                    return 'offline', response.text
+                return 'offline', response.text
             elif response.status_code == 429:
-                    return 'overload', response.text
+                return 'overload', response.text
             else:
                 return ('unknown', response.text)
 

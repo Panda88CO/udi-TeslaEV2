@@ -74,6 +74,12 @@ class teslaEVAccess(teslaAccess):
         self.evs = {}
         self.ev_list = []
         self.poly = polyglot
+        temp = time.time() - 1 # Assume calls can be made
+        self.next_wake_call = temp
+        self.next_command_call = temp
+        self.next_chaging_call = temp
+        self.next_device_data_call = temp
+
 
         time.sleep(1)
 
@@ -274,16 +280,25 @@ class teslaEVAccess(teslaAccess):
             logging.error('tesla_get_products Exception : {}'.format(e))
     '''
 
-    def tesla_get_vehicles(self) -> dict:
+
+    def extract_needed_delay(self, input_string):
+        temp =  [int(word) for word in input_string.split() if word.isdigit()]
+        if temp != []:
+            return(temp[0])
+        else:
+            return(0)
+        
+
+    def teslaEV_get_vehicles(self) -> dict:
         self.products= {}
         EVs = {}
-        logging.debug('tesla_get_vehicles ')
+        logging.debug('teslaEV_get_vehicles ')
         try:
     
             code, temp = self._callApi('GET','/vehicles' )
             logging.debug('vehicles: {} '.format(temp))
             if code == 'ok':
-                   for indx, site in enumerate(temp['response']):
+                for indx, site in enumerate(temp['response']):
                     if 'vin' in site:
                         EVs[str(site['vin'])] = site
                         #self.ev_list.append(site['id'])
@@ -291,65 +306,81 @@ class teslaEVAccess(teslaAccess):
                         self.carInfo[site['vin']] = site
             self.evs = EVs
             self.products = temp
-            return(EVs)
+            return(code, EVs)
         except Exception as e:
-            logging.error('tesla_get_vehicles Exception : {}'.format(e))
+            logging.error('teslaEV_get_vehicles Exception : {}'.format(e))
     
-    '''
-    def tesla_check_registration(self):
-        logging.debug('tesla_check_registration ')
+   
+    def teslaEV_wake_ev(self, EVid):
+        logging.debug('wake_ev - {}'.format(EVid))
+        trys = 1
+        timeNow = time.time()
         try:
-            code, temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
-
-            logging.debug('Public Keys: {} '.format(temp))
-            if 'response' in temp:
-                logging.info('Public keys registered')
-            else:
-                code, temp = self._callApi('GET','/partner_accounts/public_key', {"domain": "my.isy.io"} )
-     
-                
-            self.products = temp
-            return(temp)
+            code, state = self.teslaEV_GetConnectionStatus(EVid)
+            if code == 'ok':
+                if timeNow >= self.next_wake_call:
+                    if state in ['asleep']:     
+                        code, res  = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
+                        logging.debug('wakeup: {} - {}'.format(code, res))
+                        if code == 'ok':
+                            time.sleep(5)
+                            code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                            while code == 'ok' and state != 'online' and trys < 5:
+                                trys += 1
+                                time.sleep(5)
+                                code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                        if code == 'overload':
+                            delay = self.extract_needed_delay(res)
+                            self.next_wake_call = timeNow + int(delay)
+                    return(code, state)
+                else:          
+                    logging.warning('Too many calls to wake API - need to wait {} secods'.format(delay))
+                    return(code, state)
         except Exception as e:
-            logging.error('tesla_get_products Exception : {}'.format(e))
-    '''
-    
+            logging.error('teslaEV_get_vehicles Exception : {}'.format(e))
+
+
+    def teslaEV_get_ev_data(self, EVid):
+        logging.debug('get_ev_data - state {}:'.format(EVid))
+        if self.locationEn:
+            payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
+        else:
+            payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
+        code, res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
+        logging.debug('vehicel data: {} {}'.format(code, res))
+        return(code, res)
+
+    def teslaEV_send_ev_command(self, command, params, EVid ):
+        logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
+
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
         return(self.ev_list)
 
 
-
+    def get_delay(self, string):
+        numbers = [int(word) for word in string.split() if word.isdigit()]
+        if numbers != []:
+            return(numbers[0]) 
 
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         code = 'unknown'
         try:
-            state = self.teslaEV_GetConnectionStatus(EVid)
-            if state in ['asleep']:
-                code, res  = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
-                
-                logging.debug('wakeup: {}'.format(res))
-                if res:
-                    wu_res = res['response']
-                    logging.debug('Wake_up result : {}'.format(wu_res))
-
-                if 'state' in wu_res:
-                    logging.debug('Wake-up state: {}'.format( wu_res['state'] ))
-                
-                while  wu_res['state'] == 'asleep':
-                    logging.debug('Waiting for car to wake up')
-                    time.sleep(20)
-                    code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up' )
+            code, state  = self.teslaEV_wake_ev(EVid)                
+            if code == 'ok':
+                logging.debug('Wake_up result : {}'.format(state))
+                if state in ['online']:
+                    code, res = self.teslaEV_get_ev_data(EVid)
                     if code == 'ok':
-                        wu_res = res['response']
-                    else:
-                        return(code)
-                state = wu_res['state']
-            if state in ['online']:
-                return(self.teslaEV_UpdateCloudInfoAwake(EVid, True))
+                        self.carInfo[EVid] = self.process_EV_data(res)
+                return(code, res)
+            elif code == 'overload':
+                delay = self.next_wake_call - time.time()
+                return(code, delay)
             else:
-                return(code)
+                return(code, state)
+            
 
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
@@ -358,24 +389,17 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfoAwake(self, EVid, online_known = False):
             logging.debug('teslaEV_UpdateCloudInfoAwake: {}'.format(EVid))
             try:
-                
-                state = self.teslaEV_GetConnectionStatus(EVid)
-                if state in ['online']:
-                    if self.locationEn:
-                        payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
-                    else:
-                        payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
-                    code, res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
-                    logging.debug('vehicel data: {}'.format(res))
-                    logging.debug('EV {} info : {} '.format(EVid, res))
-                    if code != 'ok':
-                        return(code)
-                    else:
-                        logging.debug('EV {} awake info : {} '.format(EVid, res))                                
+                code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                if code == 'ok' and state in ['online']:
+                    code, res = self.teslaEV_get_ev_data(EVid)
+                    if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
-                        return(code)
+                    return(code, res)
+                elif code == 'overload':
+                    delay = self.next_wake_call - time.time()
+                    return(code, delay)
                 else:
-                    return(state)
+                    return(code, state)
             except Exception as e:
                 logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
                 return('error')
@@ -415,16 +439,21 @@ class teslaEVAccess(teslaAccess):
 
 
 
-    def teslaEV_UpdateConnectionStatus(self):
+    def teslaEV_UpdateConnectionStatus(self, EVid):
         #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
-        self.tesla_get_vehicles()
+        try:
+            self.teslaEV_get_vehicles()
+            return(self.carInfo[EVid]['state'])
+        except Exception as e:
+            logging.error('teslaEV_UpdateConnectionStatus - {}'.format(e))
+            return('error')
 
     def teslaEV_GetName(self, EVid):
         try:
             return(self.carInfo[EVid]['vehicle_state']['vehicle_name'])
 
-        except:
-            logging.debug('teslaEV_GetName - No EV name found')
+        except Exception as e:
+            logging.debug('teslaEV_GetName - No EV name found - {}'.format(e))
             return(None)
 
 
@@ -1102,7 +1131,7 @@ class teslaEVAccess(teslaAccess):
             payload = {'driver_temp' : int(driverTempC), 'passenger_temp':int(passergerTempC) }      
             code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/set_temps', payload ) 
             #temp = r.json()
-            logging.debug(temp['response']['result'])
+            logging.debug('call-API {}'.format( temp['response']['result']))
             return(temp['response']['result'])
         except Exception as e:
             logging.error('Exception teslaEV_AutoCondition for vehicle id {}: {}'.format(EVid, e))
