@@ -234,9 +234,9 @@ class TeslaEVController(udi_interface.Node):
             nodeName = None
             #vehicleId = self.vehicleList[vehicle]
             #logging.debug('vehicleId {}'.format(vehicleId))
-            code = self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
-            #logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo')
-            if code == 'ok':
+            code, info = self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
+            logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo {} {}'.format(code, info))
+            if code in ['ok']:
                 #if self.TEVcloud.teslaEV_GetCarState(EvId) == 'online':
                 vehicleInfo = self.TEVcloud.teslaEV_GetInfo(EvId)
                 logging.info('EV info: {} = {}'.format(EvId, vehicleInfo))
