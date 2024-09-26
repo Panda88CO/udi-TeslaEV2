@@ -449,8 +449,8 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateConnectionStatus(self, EVid):
         #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
         try:
-            self.teslaEV_get_vehicles()
-            return(self.carInfo[EVid]['state'])
+            code, ev_list = self.teslaEV_get_vehicles()
+            return(code, self.carInfo[EVid]['state'])
         except Exception as e:
             logging.error('teslaEV_UpdateConnectionStatus - {}'.format(e))
             return('error')
