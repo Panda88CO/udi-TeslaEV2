@@ -353,7 +353,7 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_send_ev_command(self, command, params, EVid ):
         logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
         payload = params
-        code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_charge_limit',  payload ) 
+        code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command/'+str(command),  payload )
         #logging.debug('teslaEV_SetChargeLimit r :'.format(r))
         if code in ['overload']:
             return(code, self.get_delay(res))
