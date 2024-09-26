@@ -65,7 +65,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         nodeName = self.poly.getValidName('Charging Info')
         nodeAdr = self.poly.getValidAddress(nodeAdr)
         #if not self.poly.getNode(nodeAdr):
-        logging.info('Creating ChargingNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr,nodeName,  self.EVid ))
+        logging.info('Creating ChargingNode: {} - {} {} {} {}'.format(nodeAdr, self.address, nodeAdr, nodeName,  self.EVid ))
         self.chargeNode = teslaEV_ChargeNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
 
 

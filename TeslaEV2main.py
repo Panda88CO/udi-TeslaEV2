@@ -257,6 +257,7 @@ class TeslaEVController(udi_interface.Node):
             self.status_nodes[EvId] = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEVcloud)        
             assigned_addresses.append(nodeAdr)
             while not (self.status_nodes[EvId].subnodesReady() or self.status_nodes[EvId].statusNodeReady):
+                logging.debug('Subnodes {}  Status {}'.format(self.status_nodes[EvId].subnodesReady(), self.status_nodes[EvId].statusNodeReady ))
                 logging.debug('waiting for nodes to be created')
                 time.sleep(5)
             
