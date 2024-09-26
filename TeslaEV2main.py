@@ -218,7 +218,7 @@ class TeslaEVController(udi_interface.Node):
 
 
         self.tesla_initialize()
-        self.EVs = self.TEVcloud.teslaEV_get_vehicles()
+        code, self.EVs = self.TEVcloud.teslaEV_get_vehicles()
         #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']
@@ -228,7 +228,9 @@ class TeslaEVController(udi_interface.Node):
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV0', 1)
-        for indx, EvId in enumerate(self.vehicleList):
+        #for indx, EvId in enumerate(self.vehicleList):
+        for indx in range(0,len(self.vehicleList)):
+            EvId = self.vehicleList[indx]
             #vehicleId = vehicle['vehicle_id']
             logging.debug('loop: {} {}'.format(indx, EvId ))
             nodeName = None
