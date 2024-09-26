@@ -297,7 +297,7 @@ class teslaEVAccess(teslaAccess):
     
             code, temp = self._callApi('GET','/vehicles' )
             logging.debug('vehicles: {} '.format(temp))
-            if code == 'ok':
+            if code in ['ok']:
                 for indx, site in enumerate(temp['response']):
                     if 'vin' in site:
                         EVs[str(site['vin'])] = site
@@ -322,14 +322,14 @@ class teslaEVAccess(teslaAccess):
                     if state in ['asleep']:     
                         code, res  = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
                         logging.debug('wakeup: {} - {}'.format(code, res))
-                        if code == 'ok':
+                        if code in  ['ok']:
                             time.sleep(5)
                             code, state = self.teslaEV_UpdateConnectionStatus(EVid)
-                            while code == 'ok' and state != 'online' and trys < 5:
+                            while code in ['ok'] and state not in ['online'] and trys < 5:
                                 trys += 1
                                 time.sleep(5)
                                 code, state = self.teslaEV_UpdateConnectionStatus(EVid)
-                        if code == 'overload':
+                        if code in ['overload']:
                             delay = self.extract_needed_delay(res)
                             self.next_wake_call = timeNow + int(delay)
                     return(code, state)
@@ -352,6 +352,13 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_send_ev_command(self, command, params, EVid ):
         logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
+        payload = params
+        code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command/set_charge_limit',  payload ) 
+        #logging.debug('teslaEV_SetChargeLimit r :'.format(r))
+        if code in ['overload']:
+            return(code, self.get_delay(res))
+        else:
+           return(code, res) 
 
     def teslaEV_GetIdList(self ):
         logging.debug('teslaEV_GetVehicleIdList:')
@@ -1428,15 +1435,15 @@ class teslaEVAccess(teslaAccess):
             if state in ['asleep']:             
                 state = self.teslaEV_Wake(EVid)
             if state in ['online']:   
-                code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/flash_lights')                    
+                code, temp = self.teslaEV_send_ev_command(EVid, None, 'flash_lights')  
                 logging.debug('temp {}'.format(temp))
             #temp = r.json()
-                if  temp is not None:
+                if  code in ['ok']:
                     if 'response' in temp:
                         self.carInfo[EVid] = temp['response']
-                        return(self.carInfo[EVid])
+                        return(code, self.carInfo[EVid])
                     else:
-                        return(None)
+                        return(code, temp)
             else:
                 return(None)
         except Exception as e:
