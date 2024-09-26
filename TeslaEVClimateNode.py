@@ -274,7 +274,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSetSeat0Heat called')
 
         seatTemp = int(command.get('value'))  
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -288,7 +288,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSetSeat1Heat called')
   
         seatTemp = int(float(command.get('value')))  
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -302,7 +302,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSetSea2tHeat called')
 
         seatTemp = int(float(command.get('value')))
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -317,7 +317,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSetSeat4Heat called')
 
         seatTemp = int(float(command.get('value')))  
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -330,7 +330,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
     def evSetSeat5Heat (self, command):
         logging.info('evSetSeat5Heat called') 
         seatTemp = int(float(command.get('value'))) 
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -344,7 +344,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSteeringWheelHeat called')  
         wheel = int(float(command.get('value')))  
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
