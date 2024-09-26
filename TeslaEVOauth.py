@@ -316,10 +316,10 @@ class teslaEVAccess(teslaAccess):
         trys = 1
         timeNow = time.time()
         try:
-            code, state = self.teslaEV_GetConnectionStatus(EVid)
+            code, state = self.teslaEV_UpdateConnectionStatus(EVid)
             if code == 'ok':
                 if timeNow >= self.next_wake_call:
-                    if state in ['asleep']:     
+                    if state in ['asleep']:
                         code, res  = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
                         logging.debug('wakeup: {} - {}'.format(code, res))
                         if code in  ['ok']:
@@ -337,7 +337,7 @@ class teslaEVAccess(teslaAccess):
                     logging.warning('Too many calls to wake API - need to wait {} secods'.format(delay))
                     return(code, state)
         except Exception as e:
-            logging.error('teslaEV_get_vehicles Exception : {}'.format(e))
+            logging.error('teslaEV_wake_ev Exception : {}'.format(e))
 
 
     def teslaEV_get_ev_data(self, EVid):
@@ -374,7 +374,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         code = 'unknown'
         try:
-            code, state  = self.teslaEV_wake_ev(EVid)                
+            code, state  = self.teslaEV_wakeh_ev(EVid)                
             if code == 'ok':
                 logging.debug('Wake_up result : {}'.format(state))
                 if state in ['online']:
