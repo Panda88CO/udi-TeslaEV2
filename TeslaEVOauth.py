@@ -311,7 +311,7 @@ class teslaEVAccess(teslaAccess):
             logging.error('teslaEV_get_vehicles Exception : {}'.format(e))
     
    
-    def teslaEV_wake_ev(self, EVid):
+    def _teslaEV_wake_ev(self, EVid):
         logging.debug('wake_ev - {}'.format(EVid))
         trys = 1
         timeNow = time.time()
@@ -337,10 +337,10 @@ class teslaEVAccess(teslaAccess):
                     logging.warning('Too many calls to wake API - need to wait {} secods'.format(delay))
                     return(code, state)
         except Exception as e:
-            logging.error('teslaEV_wake_ev Exception : {}'.format(e))
+            logging.error('_teslaEV_wake_ev Exception : {}'.format(e))
 
 
-    def teslaEV_get_ev_data(self, EVid):
+    def _teslaEV_get_ev_data(self, EVid):
         logging.debug('get_ev_data - state {}:'.format(EVid))
         if self.locationEn:
             payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
@@ -350,7 +350,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug('vehicel data: {} {}'.format(code, res))
         return(code, res)
 
-    def teslaEV_send_ev_command(self, command, params, EVid ):
+    def _teslaEV_send_ev_command(self, command, params, EVid ):
         logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
         payload = params
         code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command/'+str(command),  payload )
@@ -374,11 +374,11 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         code = 'unknown'
         try:
-            code, state  = self.teslaEV_wake_ev(EVid)                
+            code, state  = self._teslaEV_wake_ev(EVid)                
             if code == 'ok':
                 logging.debug('Wake_up result : {}'.format(state))
                 if state in ['online']:
-                    code, res = self.teslaEV_get_ev_data(EVid)
+                    code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
                 return(code, res)
@@ -398,7 +398,7 @@ class teslaEVAccess(teslaAccess):
             try:
                 code, state = self.teslaEV_UpdateConnectionStatus(EVid)
                 if code == 'ok' and state in ['online']:
-                    code, res = self.teslaEV_get_ev_data(EVid)
+                    code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
                     return(code, res)
@@ -1433,9 +1433,9 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])
             state = self.teslaEV_GetConnectionStatus(EVid) 
             if state in ['asleep']:             
-                state = self.teslaEV_Wake(EVid)
+                state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
-                code, temp = self.teslaEV_send_ev_command(EVid, None, 'flash_lights')  
+                code, temp = self._teslaEV_send_ev_command(EVid, None, 'flash_lights')  
                 logging.debug('temp {}'.format(temp))
             #temp = r.json()
                 if  code in ['ok']:
@@ -1452,6 +1452,7 @@ class teslaEVAccess(teslaAccess):
             return(None)
 
 
+    '''
     def teslaEV_Wake(self, EVid):
         logging.debug('teslaEV_Wake: for {}'.format(EVid))
         #S = self.teslaApi.teslaConnect()
@@ -1471,7 +1472,7 @@ class teslaEVAccess(teslaAccess):
             logging.error('Trying to reconnect')
             
             return(None)
-
+    '''
 
     def teslaEV_HonkHorn(self, EVid):
         logging.debug('teslaEV_HonkHorn for {}'.format(EVid))
