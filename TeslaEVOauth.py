@@ -373,6 +373,7 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfo(self, EVid):
         logging.debug('teslaEV_UpdateCloudInfo: {}'.format(EVid))
         code = 'unknown'
+        res = None
         try:
             code, state  = self._teslaEV_wake_ev(EVid)                
             if code == 'ok':
@@ -381,7 +382,9 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
-                return(code, res)
+                    return(code, res)
+                else:
+                    return(code, state)
             elif code == 'overload':
                 delay = self.next_wake_call - time.time()
                 return(code, delay)
@@ -401,7 +404,9 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
-                    return(code, res)
+                        return(code, res)
+                    else:
+                        return(code, state)
                 elif code == 'overload':
                     delay = self.next_wake_call - time.time()
                     return(code, delay)
