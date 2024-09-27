@@ -214,9 +214,6 @@ class TeslaEVController(udi_interface.Node):
             time.sleep(5)
 
 
-        
-
-
         self.tesla_initialize()
         code, self.EVs = self.TEVcloud.teslaEV_get_vehicles()
         #self.EVs_installed = {}
