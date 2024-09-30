@@ -340,7 +340,7 @@ class TeslaEVController(udi_interface.Node):
         logging.debug('systemPoll')
         if self.TEVcloud:
             if self.TEVcloud.authenticated():
-                self.TEVcloud.teslaEV_UpdateConnectionStatus()
+                self.TEVcloud.teslaEV_get_vehicles()
                 if 'longPoll' in pollList: 
                     self.longPoll()
                     if 'shortPoll' in pollList: #send short polls heart beat as shortpoll is not executed
