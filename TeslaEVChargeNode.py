@@ -163,7 +163,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
 
     def ISYupdate (self, command):
         logging.info('ISY-update called')
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
         self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
      

@@ -131,13 +131,13 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     def ISYupdate (self, command):
         logging.info('ISY-update called')
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
         self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
  
     def evWindows (self, command):
         logging.info('evWindows- called')
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -162,7 +162,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         sunroofCtrl = int(float(command.get('value')))
 
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -182,7 +182,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
         autoCond = int(float(command.get('value')))  
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -206,7 +206,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         
         defrost = int(float(command.get('value')))  
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -235,7 +235,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             passengerTempC = int(query.get('passenger.uom4'))  
         elif 'passenger.uom17' in query:
             passengerTempC    = int((int(query.get('passenger.uom17'))-32)*5/9)
-        self.TEV.teslaEV_UpdateConnectionStatus()
+        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
