@@ -224,7 +224,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
-            self.TEV.teslaEV_HonkHorn(self.EVid)
+            self.TEV.teslaEV_FlashLights(self.EVid)
         else:
             logging.info('Not able to send command - EV is not online')
 

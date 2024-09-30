@@ -1488,7 +1488,7 @@ class teslaEVAccess(teslaAccess):
             if state in ['asleep']:             
                 state = self.teslaEV_Wake(EVid)
             if state in ['online']:    
-                payload = {}        
+                payload = ""        
                 code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/honk_horn', payload ) 
                 logging.debug('teslaEV_HonkHorn {}'.format(temp))
                 #temp = r.json()
