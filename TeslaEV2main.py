@@ -219,7 +219,7 @@ class TeslaEVController(udi_interface.Node):
         #self.EVs_installed = {}
         logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']
-        self.vehicleList = self.TEVcloud.teslaEV_GetIdList()
+        self.vehicleList = self.TEVcloud.teslaEV_get_vehicle_list()
 
         logging.debug('vehicleList: {}'.format(self.vehicleList))
         self.GV1 = len(self.vehicleList)
@@ -356,7 +356,7 @@ class TeslaEVController(udi_interface.Node):
         self.heartbeat()    
 
         try:
-            for indx, vehicleID in enumerate(self.vehicleList):
+            for indx, vehicleID in enumerate(self.TEVcloud.teslaEV_get_vehicle_list()):
                 logging.debug('long pool loop {} {}'.format(indx, vehicleID))
                 code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
                 if self.TEVcloud.teslaEV_GetCarState(vehicleID) == 'online':
@@ -379,9 +379,9 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))        
 
         try:
-            logging.debug('self.vehicleList {}'.format(self.vehicleList))
-            for indx, vehicleID in enumerate (self.vehicleList):
-                logging.debug('long poll loop {} {} {}'.format(indx, vehicleID, self.vehicleList))
+            logging.debug('self.vehicleList {}'.format(self.TEVcloud.teslaEV_get_vehicle_list()))
+            for indx, vehicleID in enumerate (self.TEVcloud.teslaEV_get_vehicle_list()):
+                logging.debug('long poll loop {} {} {}'.format(indx, vehicleID, self.TEVcloud.teslaEV_get_vehicle_list()))
                 code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
                 self.status_nodes[vehicleID].poll(code)
                 #nodes = self.poly.getNodes()

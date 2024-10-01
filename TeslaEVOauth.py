@@ -288,13 +288,16 @@ class teslaEVAccess(teslaAccess):
         else:
             return(0)
         
-
+    def teslaEV_get_vehicle_list(self) -> list:
+        return(self.ev_list)
+    
     def teslaEV_get_vehicles(self) -> dict:
         self.products= {}
         EVs = {}
         logging.debug('teslaEV_get_vehicles ')
         try:
-    
+            self.ev_list =[]
+
             code, temp = self._callApi('GET','/vehicles' )
             logging.debug('vehicles: {} '.format(temp))
             if code in ['ok']:
@@ -361,10 +364,6 @@ class teslaEVAccess(teslaAccess):
             return(code, self.get_delay(res))
         else:
            return(code, res) 
-
-    def teslaEV_GetIdList(self ):
-        logging.debug('teslaEV_GetVehicleIdList:')
-        return(self.ev_list)
 
 
     def get_delay(self, string):
