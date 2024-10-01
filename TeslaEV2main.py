@@ -379,8 +379,9 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))        
 
         try:
+            logging.debug('self.vehicleList {}'.format(self.vehicleList))
             for indx, vehicleID in enumerate (self.vehicleList):
-                logging.debug('long poll loop {} {}'.format(indx, vehicleID))
+                logging.debug('long poll loop {} {} {}'.format(indx, vehicleID, self.vehicleList))
                 code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
                 self.status_nodes[vehicleID].poll(code)
                 #nodes = self.poly.getNodes()
