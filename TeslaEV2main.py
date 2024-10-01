@@ -225,9 +225,9 @@ class TeslaEVController(udi_interface.Node):
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV0', 1)
-        #for indx, EvId in enumerate(self.vehicleList):
-        for indx in range(0,len(self.vehicleList)):
-            EvId = self.vehicleList[indx]
+        for indx, EvId in enumerate(self.TEVcloud.teslaEV_get_vehicle_list()):
+        #for indx in range(0,len(self.vehicleList)):
+            #EvId = self.vehicleList[indx]
             #vehicleId = vehicle['vehicle_id']
             logging.debug('loop: {} {}'.format(indx, EvId ))
             nodeName = None
@@ -362,12 +362,7 @@ class TeslaEVController(udi_interface.Node):
                 if self.TEVcloud.teslaEV_GetCarState(vehicleID) == 'online':
                     code = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
                 self.status_nodes[vehicleID].poll(code)
-                #if code == 'ok':
-                #nodes = self.poly.getNodes()
-                #for node in nodes:
-                    #if node != 'controller'
-                #    logging.debug('Controller poll  node {}'.format(node) )
-                #    nodes[node].poll(code)
+
         except Exception as E:
             logging.info('Not all nodes ready: {}'.format(E))
 
@@ -379,16 +374,12 @@ class TeslaEVController(udi_interface.Node):
         logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))        
 
         try:
-            logging.debug('self.vehicleList {}'.format(self.TEVcloud.teslaEV_get_vehicle_list()))
+            #logging.debug('self.vehicleList {}'.format(self.TEVcloud.teslaEV_get_vehicle_list()))
             for indx, vehicleID in enumerate (self.TEVcloud.teslaEV_get_vehicle_list()):
                 logging.debug('long poll loop {} {} {}'.format(indx, vehicleID, self.TEVcloud.teslaEV_get_vehicle_list()))
                 code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
                 self.status_nodes[vehicleID].poll(code)
-                #nodes = self.poly.getNodes()
-                #for node in nodes:
-                    #if node != 'controller'    
-                #    logging.debug('Controller poll  node {}'.format(node) )
-                #    nodes[node].poll(code)
+
         except Exception as E:
             logging.info('Not all nodes ready: {}'.format(E))
 
