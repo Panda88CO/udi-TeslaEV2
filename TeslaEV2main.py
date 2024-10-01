@@ -414,7 +414,7 @@ class TeslaEVController(udi_interface.Node):
 
 
     def ISYupdate (self, command):
-        logging.debug('ISY-update called')
+        logging.debug('ISY-update main node called')
         if self.TEVcloud.authenticated():
             self.longPoll()
 

@@ -187,7 +187,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             logging.error('updateISYdriver Status node failed: {}'.format(e))
 
     def ISYupdate (self, command):
-        logging.info('ISY-update called')
+        logging.info('ISY-update status node  called')
         self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
         self.TEV.teslaEV_UpdateCloudInfo(self.EVid)

@@ -325,10 +325,12 @@ class teslaEVAccess(teslaAccess):
                         if code in  ['ok']:
                             time.sleep(5)
                             code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                            logging.debug('wake_ev while loop {} {}'.format(code, state))
                             while code in ['ok'] and state not in ['online'] and trys < 5:
                                 trys += 1
                                 time.sleep(5)
                                 code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                                logging.debug('wake_ev while loop {} {} {}'.format(trys, code, state))
                         if code in ['overload']:
                             delay = self.extract_needed_delay(res)
                             self.next_wake_call = timeNow + int(delay)
