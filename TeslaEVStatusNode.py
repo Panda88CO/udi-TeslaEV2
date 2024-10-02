@@ -188,14 +188,14 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def ISYupdate (self, command):
         logging.info('ISY-update status node  called')
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
         self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
 
     def evWakeUp (self, command):
         logging.info('EVwakeUp called')
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_Wake(self.EVid):            
             self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
             self.updateISYdrivers()
@@ -204,7 +204,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evHonkHorn (self, command):
         logging.info('EVhonkHorn called')
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -219,7 +219,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evFlashLights (self, command):
         logging.info('EVflashLights called')
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -233,7 +233,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evControlDoors (self, command):
         logging.info('EVctrlDoors called')
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -256,7 +256,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.TEV.teslaEV_Wake(self.EVid)
         sound = int(float(command.get('value')))
         if sound == 0 or sound == 2000:
-            self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+            self.TEV.teslaEV_update_connection_status(self.EVid)
             if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
                 if self.TEV.teslaEV_Wake(self.EVid):            
                     self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -274,7 +274,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         logging.info('evControlSunroof called')
         #self.TEV.teslaEV_Wake(self.EVid)
         sunroofCtrl = int(float(command.get('value')))
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -303,7 +303,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evOpenFrunk (self, command):
         logging.info('evOpenFrunk called')
         #self.TEV.teslaEV_Wake(self.EVid)     
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -319,7 +319,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evOpenTrunk (self, command):
         logging.info('evOpenTrunk called')   
         #self.TEV.teslaEV_Wake(self.EVid)        
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -336,7 +336,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evHomelink (self, command):
         logging.info('evHomelink called')
         #self.TEV.teslaEV_Wake(self.EVid)   
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)

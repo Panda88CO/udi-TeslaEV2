@@ -163,7 +163,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
 
     def ISYupdate (self, command):
         logging.info('ISY-update called')
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid) 
+        self.TEV.teslaEV_update_connection_status(self.EVid) 
         self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
      
@@ -172,7 +172,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
         logging.info('evChargePort called')
         chargePort = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -197,7 +197,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
         logging.info('evChargeControl called')
         chargeCtrl = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -223,7 +223,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
         logging.info('evSetBatteryChargeLimit called')
         batLimitPercent = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -246,7 +246,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
         
         ampLimit = int(float(command.get('value')))
         #self.TEV.teslaEV_Wake(self.EVid)
-        self.TEV.teslaEV_UpdateConnectionStatus(self.EVid)
+        self.TEV.teslaEV_update_connection_status(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)

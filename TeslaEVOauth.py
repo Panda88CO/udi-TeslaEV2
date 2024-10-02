@@ -319,7 +319,7 @@ class teslaEVAccess(teslaAccess):
         trys = 1
         timeNow = time.time()
         try:
-            code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+            code, state = self.teslaEV_update_connection_status(EVid)
             if code == 'ok':
                 if timeNow >= self.next_wake_call:
                     if state in ['asleep']:
@@ -327,12 +327,12 @@ class teslaEVAccess(teslaAccess):
                         logging.debug('wakeup: {} - {}'.format(code, res))
                         if code in  ['ok']:
                             time.sleep(5)
-                            code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                            code, state = self.teslaEV_update_connection_status(EVid)
                             logging.debug('wake_ev while loop {} {}'.format(code, state))
                             while code in ['ok'] and state not in ['online'] and trys < 5:
                                 trys += 1
                                 time.sleep(5)
-                                code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                                code, state = self.teslaEV_update_connection_status(EVid)
                                 logging.debug('wake_ev while loop {} {} {}'.format(trys, code, state))
                         if code in ['overload']:
                             delay = self.extract_needed_delay(res)
@@ -400,7 +400,7 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_UpdateCloudInfoAwake(self, EVid, online_known = False):
             logging.debug('teslaEV_UpdateCloudInfoAwake: {}'.format(EVid))
             try:
-                code, state = self.teslaEV_UpdateConnectionStatus(EVid)
+                code, state = self.teslaEV_update_connection_status(EVid)
                 if code == 'ok' and state in ['online']:
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
@@ -460,18 +460,19 @@ class teslaEVAccess(teslaAccess):
             logging.debug('vehicle {} info : {} {} '.format(EVid, code, temp))
             if code in ['ok']:
                 self.carInfo[temp['response']['vin']] = temp['response']
-            return(code, temp['response'])
+            return(code)
         except Exception as e:
             logging.error('teslaEV_update_vehicle_status Exception : {}'.format(e))
     
 
-    def teslaEV_UpdateConnectionStatus(self, EVid):
+    def teslaEV_update_connection_status(self, EVid):
         #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
         try:
-            code, ev_list = self.teslaEV_update_vehicle_status(EVid)
+            code = self.teslaEV_update_vehicle_status(EVid)
+            logging.debug('teslaEV_update_connection_status {} {}'.format(code, self.carInfo[EVid]['state']))
             return(code, self.carInfo[EVid]['state'])
         except Exception as e:
-            logging.error('teslaEV_UpdateConnectionStatus - {}'.format(e))
+            logging.error('teslaEV_update_connection_status - {}'.format(e))
             return('error')
 
     def teslaEV_GetName(self, EVid):
