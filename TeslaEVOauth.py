@@ -709,7 +709,10 @@ class teslaEVAccess(teslaAccess):
         try:
             timeNow = int(time.time())
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['charge_state']['timestamp']/1000 ))
-            return(int(timeNow - float(self.carInfo[EVid]['charge_state']['timestamp']/1000)))
+            if 'timestamp' in self.carInfo[EVid]['charge_state']:
+                return(int(timeNow - float(self.carInfo[EVid]['charge_state']['timestamp']/1000)))
+            else:
+                return(0)
         except Exception as e:
             logging.debug('Exception teslaEV_GetTimeSinceLastChargeUpdate - {}'.format(e))
             return(None)  
@@ -978,8 +981,10 @@ class teslaEVAccess(teslaAccess):
         try:
             timeNow = int(time.time())
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['climate_state']['timestamp']/1000 ))
-
-            return(int(timeNow - float(self.carInfo[EVid]['climate_state']['timestamp']/1000)))
+            if 'timestamp' in self.carInfo[EVid]['climate_state']:
+                return(int(timeNow - float(self.carInfo[EVid]['climate_state']['timestamp']/1000)))
+            else:
+                return(0)
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastClimateUpdate - {}'.format(e))
             return(None)
@@ -1356,7 +1361,10 @@ class teslaEVAccess(teslaAccess):
         try:
             timeNow = int(time.time())
             logging.debug('Time Now {} Last Update {}'.format(timeNow,self.carInfo[EVid]['vehicle_state']['timestamp']/1000 ))
-            return(int(timeNow - float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)))
+            if 'timestamp' in self.carInfo[EVid]['vehicle_state']:
+                return(int(timeNow - float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)))
+            else:
+                return(0)
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastStatusUpdate - {}'.format(e))
             return(None)
