@@ -353,10 +353,11 @@ class TeslaEVController(udi_interface.Node):
 # Something is not correct here - too many times through
     def shortPoll(self):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
-        self.heartbeat()    
-
+        self.heartbeat()
         try:
-            for indx, vehicleID in enumerate(self.TEVcloud.teslaEV_get_vehicle_list()):
+            temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
+            logging.debug('long poll list {}'.format(temp_list))
+            for indx, vehicleID in enumerate(temp_list):
                 logging.debug('long pool loop {} {}'.format(indx, vehicleID))
                 code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
                 if self.TEVcloud.teslaEV_GetCarState(vehicleID) == 'online':
@@ -375,7 +376,9 @@ class TeslaEVController(udi_interface.Node):
 
         try:
             #logging.debug('self.vehicleList {}'.format(self.TEVcloud.teslaEV_get_vehicle_list()))
-            for indx, vehicleID in enumerate (self.TEVcloud.teslaEV_get_vehicle_list()):
+            temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
+            logging.debug('long poll list {}'.format(temp_list))
+            for indx, vehicleID in enumerate (temp_list):
                 logging.debug('long poll loop {} {} {}'.format(indx, vehicleID, self.TEVcloud.teslaEV_get_vehicle_list()))
                 code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
                 self.status_nodes[vehicleID].poll(code)

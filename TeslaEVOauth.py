@@ -355,7 +355,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug('vehicel data: {} {}'.format(code, res))
         return(code, res)
 
-    def _teslaEV_send_ev_command(self, command, params, EVid ):
+    def _teslaEV_send_ev_command(self, EVid , command, params=''):
         logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
         payload = params
         code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command/'+str(command),  payload )
@@ -865,16 +865,19 @@ class teslaEVAccess(teslaAccess):
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])    
             #payload = {}      
+
             if ctrl == 'start':  
-                code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/charge_start' ) 
+                code, temp = self._teslaEV_send_ev_command(EVid, '/charge_start' )
+                #code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/charge_start' ) 
             elif ctrl == 'stop':
-                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_stop' ) 
+                code, temp = self._teslaEV_send_ev_command(EVid, '/charge_stop' )
+                #code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_stop' ) 
             else:
                 logging.debug('Unknown teslaEV_Charging command passed for vehicle id (start, stop) {}: {}'.format(EVid, ctrl))
-                return(False)
+                return('error', {})
             #temp = r.json()
             logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+            return(code, temp['response']['result'])
         except Exception as e:
             logging.error('Exception teslaEV_AteslaEV_ChargingutoCondition for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
@@ -1486,7 +1489,7 @@ class teslaEVAccess(teslaAccess):
             if state in ['asleep']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
-                code, temp = self._teslaEV_send_ev_command(EVid, None, 'flash_lights')  
+                code, temp = self._teslaEV_send_ev_command(EVid, 'flash_lights')  
                 logging.debug('temp {}'.format(temp))
             #temp = r.json()
                 if  code in ['ok']:

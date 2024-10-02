@@ -204,7 +204,8 @@ class teslaEV_ChargeNode(udi_interface.Node):
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
 
             if chargeCtrl == 1:
-                if self.TEV.teslaEV_Charging(self.EVid, 'start'):
+                code, res =  self.TEV.teslaEV_Charging(self.EVid, 'start')
+                if code == 'ok':
                     self.EV_setDriver('GV6', 3)
             elif chargeCtrl == 0:
                 if self.TEV.teslaEV_Charging(self.EVid, 'stop'):
