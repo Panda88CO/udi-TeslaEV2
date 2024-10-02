@@ -450,12 +450,25 @@ class teslaEVAccess(teslaAccess):
         #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
         return(self.carInfo[EVid]['state'])
 
-
+    def teslaEV_update_vehicle_status(self, EVid) -> dict:
+        self.products= {}
+        EVs = {}
+        logging.debug('teslaEV_get_vehicle_info ')
+        try:
+            self.ev_list =[]
+            code, temp = self._callApi('GET','/vehicles/'+str(EVid) )
+            logging.debug('vehicle {} info : {} {} '.format(EVid, code, temp))
+            if code in ['ok']:
+                self.carInfo[temp['response']['vin']] = temp['response']
+            return(code, temp['response'])
+        except Exception as e:
+            logging.error('teslaEV_update_vehicle_status Exception : {}'.format(e))
+    
 
     def teslaEV_UpdateConnectionStatus(self, EVid):
         #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
         try:
-            code, ev_list = self.teslaEV_get_vehicles()
+            code, ev_list = self.teslaEV_update_vehicle_status(EVid)
             return(code, self.carInfo[EVid]['state'])
         except Exception as e:
             logging.error('teslaEV_UpdateConnectionStatus - {}'.format(e))
@@ -792,8 +805,31 @@ class teslaEVAccess(teslaAccess):
             logging.debug('Exception teslaEV_GetBatteryMaxCharge - {}'.format(e))
             return(None)              
            
+    def teslaEV_ChargePort(self, EVid, ctrl):
+        logging.debug('teslaEV_ChargePort{} for {}'.format(ctrl, EVid))
+ 
+        #S = self.teslaApi.teslaConnect()
+        #with requests.Session() as s:
+        try:
+            #s.auth = OAuth2BearerToken(S['access_token'])    
+            #payload = {}      
+            if ctrl == 'open':  
 
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_port_door_open') 
+            elif ctrl == 'close':
+                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/charge_port_door_close') 
+            else:
+                logging.debug('Unknown teslaEV_ChargePort command passed for vehicle id (open, close) {}: {}'.format(EVid, ctrl))
+                return(False)
+            logging.debug(temp['response']['result'])
+            return(temp['response']['result'])
+        except Exception as e:
+            logging.error('Exception teslaEV_ChargePort for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Trying to reconnect')
+            return(False)
 
+    
+    '''
     def teslaEV_ChargePort(self, EVid, ctrl):
         logging.debug('teslaEV_ChargePort{} for {}'.format(ctrl, EVid))
  
@@ -815,7 +851,7 @@ class teslaEVAccess(teslaAccess):
             logging.error('Exception teslaEV_ChargePort for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             return(False)
-
+    '''
 
     def teslaEV_Charging(self, EVid, ctrl):
         logging.debug('teslaEV_Charging {} for {}'.format(ctrl, EVid))
