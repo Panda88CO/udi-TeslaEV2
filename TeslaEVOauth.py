@@ -455,7 +455,6 @@ class teslaEVAccess(teslaAccess):
         EVs = {}
         logging.debug('teslaEV_get_vehicle_info ')
         try:
-            self.ev_list =[]
             code, temp = self._callApi('GET','/vehicles/'+str(EVid) )
             logging.debug('vehicle {} info : {} {} '.format(EVid, code, temp))
             if code in ['ok']:
