@@ -197,7 +197,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def evWakeUp (self, command):
         logging.info('EVwakeUp called')
-        code, res = self.TEV.teslaEV_Wake(self.EVid)
+        code, res = self.TEV._teslaEV_Wake(self.EVid)
         logging.debug('Wake result {} - {}'.format(code, res))
         if code in ['ok']:               
             code, res = self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
@@ -206,12 +206,8 @@ class teslaEV_StatusNode(udi_interface.Node):
 
 
     def evHonkHorn (self, command):
-        logging.info('EVhonkHorn called')
-        #self.TEV.teslaEV_Wake(self.EVid)
-        code, res = self.TEV.teslaEV_Wake(self.EVid)
-        logging.debug('Wake result {} - {}'.format(code, res))
-        if code in ['ok']:                  
-                code, res = self.TEV.teslaEV_HonkHorn(self.EVid)
+        logging.info('EVhonkHorn called')         
+        code, res = self.TEV.teslaEV_HonkHorn(self.EVid)
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         return(code, res)
             
@@ -220,12 +216,8 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def evFlashLights (self, command):
         logging.info('EVflashLights called')
-        #self.TEV.teslaEV_Wake(self.EVid)
-        code, res = self.TEV.teslaEV_Wake(self.EVid)
-        logging.debug('Wake result {} - {}'.format(code, res))
-        if code in ['ok']:                    
-            code, res = self.TEV.teslaEV_FlashLights(self.EVid)
-            #self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+        code, res = self.TEV.teslaEV_FlashLights(self.EVid)
+
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         return(code, res)
 

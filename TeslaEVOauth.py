@@ -1529,7 +1529,7 @@ class teslaEVAccess(teslaAccess):
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
         try:
-            state = self.teslaEV_GetConnectionStatus(EVid) 
+            code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
@@ -1542,12 +1542,14 @@ class teslaEVAccess(teslaAccess):
                     return(code, temp['response']['result'])
                 else:
                     return(code, temp)
+            else:
+                return('error', state)
     
         except Exception as e:
             logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             
-            return(False)
+            return('error', e)
 
 
     def teslaEV_PlaySound(self, EVid, sound):
@@ -1556,81 +1558,93 @@ class teslaEVAccess(teslaAccess):
         #with requests.Session() as s:
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])    
-            state = self.teslaEV_GetConnectionStatus(EVid) 
+            code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:             
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 payload = {'sound' : sound}        
-                code, temp = self._teslaEV_send_ev_command(EVid, '/remote_boombox', payload ) 
-                logging.debug('teslaEV_PlaySound {}'.format(temp))
+                code, res = self._teslaEV_send_ev_command(EVid, '/remote_boombox', payload ) 
+                logging.debug('teslaEV_PlaySound {}'.format(res))
                 #temp = r.json()
                 if code in  ['ok']:
-                    logging.debug(temp['response']['result'])
-                    return(code, temp['response']['result'])
+                    logging.debug(res['response']['result'])
+                    return(code, res['response']['result'])
                 else:
-                    return(code, temp)
+                    return(code, res)
             else:
-                return(False)
+                return('error', 'error')
     
         except Exception as e:
             logging.error('Exception teslaEV_PlaySound for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             
-            return(False)
+            return('error', e)
 
 # Needs to be updated 
 
     def teslaEV_Doors(self, EVid, ctrl):
         logging.debug('teslaEV_Doors {} for {}'.format(ctrl, EVid))
-        
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {}      
-            if ctrl == 'unlock':  
-                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/door_unlock', payload ) 
-            elif ctrl == 'lock':
-                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/door_lock',  payload ) 
+
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:             
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:    
+                if ctrl == 'unlock':  
+                    code, res = self._teslaEV_send_ev_command(EVid, '/door_unlock')
+                elif ctrl == 'lock':
+                    code, res = self._teslaEV_send_ev_command(EVid, '/door_lock' )
+                else:
+                    logging.debug('Unknown door control passed: {}'.format(ctrl))
+                    return('error', 'error')
+                if code in ['ok']:
+                    logging.debug(res['response']['result'])
+                    return(code, res['response']['result'])
+                else:
+                    return(code, state)
             else:
-                logging.debug('Unknown door control passed: {}'.format(ctrl))
-                return(False)
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+                return('error', state)
+
         except Exception as e:
             logging.error('Exception teslaEV_Doors for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(False)
+            logging.error('Trying to reconnect')            
+            return('error', e)
 
 
     def teslaEV_TrunkFrunk(self, EVid, frunkTrunk):
         logging.debug('teslaEV_Doors {} for {}'.format(frunkTrunk, EVid))
         
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])
-            payload = {} 
-            if frunkTrunk.upper() == 'FRUNK' or frunkTrunk.upper() == 'FRONT':
-                cmd = 'front' 
-            elif frunkTrunk.upper()  == 'TRUNK' or frunkTrunk.upper() == 'REAR':
-                    cmd = 'rear' 
+
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:             
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:   
+                if frunkTrunk.upper() == 'FRUNK' or frunkTrunk.upper() == 'FRONT':
+                    cmd = 'front' 
+                elif frunkTrunk.upper()  == 'TRUNK' or frunkTrunk.upper() == 'REAR':
+                        cmd = 'rear' 
+                else:
+                    logging.debug('Unknown trunk command passed: {}'.format(cmd))
+                    return(False)
+                payload = {'which_trunk':cmd}      
+                code, res = self._teslaEV_send_ev_command(EVid, '/actuate_trunk', payload ) 
+
+                logging.debug(code, res)
+                if code in ['ok']:
+                    logging.debug(res['response']['result'])
+                    return(code, res['response']['result'])
+                else:
+                    return(code, state)
             else:
-                logging.debug('Unknown trunk command passed: {}'.format(cmd))
-                return(False)
-            payload = {'which_trunk':cmd}      
-            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/actuate_trunk', payload ) 
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+                return('error', state)
+            
         
         except Exception as e:
             logging.error('Exception teslaEV_TrunkFrunk for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(None)
+            logging.error('Trying to reconnect')            
+            return('error', e)
 
 
     def teslaEV_HomeLink(self, EVid):
@@ -1640,15 +1654,27 @@ class teslaEVAccess(teslaAccess):
         #with requests.Session() as s:
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
-                        'lon':self.carInfo[EVid]['drive_state']['longitude']}        
-            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/trigger_homelink', payload ) 
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:             
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:   
+            
+                payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
+                        'lon':self.carInfo[EVid]['drive_state']['longitude']}   
+                
+                code, res = self._teslaEV_send_ev_command(EVid, '/er_homelink', payload ) 
+
+                logging.debug(code, res)
+                if code in ['ok']:
+                    logging.debug(res['response']['result'])
+                    return(code, res['response']['result'])
+                else:
+                    return(code, state)
+            else:
+                return('error', state)
+
         except Exception as e:
             logging.error('Exception teslaEV_HomeLink for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(False)
+            logging.error('Trying to reconnect')            
+            return('error', e)
 
