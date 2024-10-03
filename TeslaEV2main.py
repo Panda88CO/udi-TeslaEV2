@@ -358,10 +358,11 @@ class TeslaEVController(udi_interface.Node):
             temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
             logging.debug('long poll list {}'.format(temp_list))
             for indx, vehicleID in enumerate(temp_list):
-                logging.debug('long pool loop {} {}'.format(indx, vehicleID))
-                code =  self.TEVcloud.teslaEV_update_connection_status(vehicleID)
+                logging.debug('short pool loop {} {}'.format(indx, vehicleID))
+                code, data =  self.TEVcloud.teslaEV_update_connection_status(vehicleID)
                 if self.TEVcloud.teslaEV_GetCarState(vehicleID) == 'online':
-                    code = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
+                    code, data  = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
+                logging.debug('Main Long Poll status {} - {}'.format(code, data))
                 self.status_nodes[vehicleID].poll(code)
 
         except Exception as E:
@@ -380,7 +381,8 @@ class TeslaEVController(udi_interface.Node):
             logging.debug('long poll list {}'.format(temp_list))
             for indx, vehicleID in enumerate (temp_list):
                 logging.debug('long poll loop {} {} {}'.format(indx, vehicleID, temp_list))
-                code =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
+                code, data =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
+                logging.debug('Main Long Poll status {} - {}'.format(code, data))
                 self.status_nodes[vehicleID].poll(code)
 
         except Exception as E:
