@@ -214,13 +214,14 @@ class TeslaEVController(udi_interface.Node):
             time.sleep(5)
 
         assigned_addresses =['controller']
-        self.vehicleList = self.TEVcloud.teslaEV_get_vehicle_list()
-        logging.debug('vehicleList: {}'.format(self.vehicleList))
+        code, res = self.TEVcloud.teslaEV_get_vehicles()
+        code, self.vehicleList = self.TEVcloud.teslaEV_get_vehicle_list()
+        logging.debug('vehicleList: {} - {}'.format(code, self.vehicleList))
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV0', 1)
-        temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
-        for indx, EVid in enumerate(temp_list):
+        
+        for indx, EVid in enumerate( self.vehicleList):
         #for indx in range(0,len(self.vehicleList)):
             #EVid = self.vehicleList[indx]
             #vehicleId = vehicle['vehicle_id']

@@ -71,7 +71,6 @@ class teslaEVAccess(teslaAccess):
         self.readSeatHeat = False
         self.steeringWheeelHeat = False
         self.steeringWheelHeatDetected = False
-        self.evs = {}
         self.ev_list = []
         self.poly = polyglot
         temp = time.time() - 1 # Assume calls can be made
@@ -273,7 +272,7 @@ class teslaEVAccess(teslaAccess):
                         #self.ev_list.append(site['id'])
                         self.ev_list.append(site['vin']) # vin needed to send commands
 
-            self.evs = EVs
+
             self.products = temp
             return(EVs)
         except Exception as e:
@@ -291,13 +290,11 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_get_vehicle_list(self) -> list:
         return(self.ev_list)
     
-    def teslaEV_get_vehicles(self) -> dict:
-        self.products= {}
+    def teslaEV_get_vehicles(self):
         EVs = {}
         logging.debug('teslaEV_get_vehicles ')
         try:
             self.ev_list =[]
-
             code, temp = self._callApi('GET','/vehicles' )
             logging.debug('vehicles: {} '.format(temp))
             if code in ['ok']:
@@ -307,8 +304,7 @@ class teslaEVAccess(teslaAccess):
                         #self.ev_list.append(site['id'])
                         self.ev_list.append(site['vin']) # vin needed to send commands
                         self.carInfo[site['vin']] = site
-            self.evs = EVs
-            self.products = temp
+
             return(code, EVs)
         except Exception as e:
             logging.error('teslaEV_get_vehicles Exception : {}'.format(e))
