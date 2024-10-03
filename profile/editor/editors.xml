@@ -201,5 +201,7 @@
      <range  uom="56" min="0" max="500" prec="2" />
      <range  uom="25" subset="0-2,99" nls="UNKNOWN"  />  
   </editor>
-  
+     <editor id = "LAST_CMD" > 
+     <range  uom="25" subset="0-3,99" nls="CMD_RES"  />  
+  </editor>
 </editors> 

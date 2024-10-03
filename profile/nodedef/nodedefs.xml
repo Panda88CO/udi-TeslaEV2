@@ -42,7 +42,8 @@
          <st id="GV17" editor="LONGITUDE" />         
          <st id="GV18" editor="LATITUDE" />  
          <st id="GV19" editor="DURATION_H" />         
-         <st id="GV20" editor="DURATION_H" />     
+         <st id="GV20" editor="DURATION_H" />    
+         <st id="GV21" editor="LAST_CMD" />   
       </sts>
       <cmds>
          <sends>
@@ -89,6 +90,7 @@
 
          <st id="GV19" editor="DURATION_H" />
          <st id="GV20" editor="DURATION_H" />   
+         <st id="GV21" editor="LAST_CMD" />  
       </sts>
       <cmds>
          <sends>
@@ -158,6 +160,7 @@
 
          <st id="GV19" editor="DURATION_H" />
          <st id="GV20" editor="DURATION_H" />
+         <st id="GV21" editor="LAST_CMD" />  
 
       </sts>
       <cmds>

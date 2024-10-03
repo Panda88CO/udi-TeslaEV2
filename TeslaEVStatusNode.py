@@ -390,6 +390,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             {'driver': 'GV18', 'value': 99, 'uom': 25}, #latitude
             {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours
             {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update hours
+            {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status
             ]
 
 

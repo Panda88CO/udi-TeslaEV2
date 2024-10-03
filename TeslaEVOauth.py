@@ -315,7 +315,7 @@ class teslaEVAccess(teslaAccess):
     
    
     def _teslaEV_wake_ev(self, EVid):
-        logging.debug('wake_ev - {}'.format(EVid))
+        logging.debug('_teslaEV_wake_ev - {}'.format(EVid))
         trys = 1
         timeNow = time.time()
         try:
@@ -355,7 +355,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug('vehicel data: {} {}'.format(code, res))
         return(code, res)
 
-    def _teslaEV_send_ev_command(self, EVid , command, params=''):
+    def _teslaEV_send_ev_command(self, EVid , command, params=""):
         logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
         payload = params
         code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command/'+str(command),  payload )
@@ -1492,11 +1492,10 @@ class teslaEVAccess(teslaAccess):
                 logging.debug('temp {}'.format(temp))
             #temp = r.json()
                 if  code in ['ok']:
-                    if 'response' in temp:
-                        self.carInfo[EVid] = temp['response']
-                        return(code, self.carInfo[EVid])
-                    else:
-                        return(code, temp)
+                    temp['response']['result']
+                    return(code, temp['response']['result'])
+                else:
+                    return(code, temp)
             else:
                 return(None)
         except Exception as e:
@@ -1534,21 +1533,17 @@ class teslaEVAccess(teslaAccess):
         try:
             state = self.teslaEV_GetConnectionStatus(EVid) 
             if state in ['asleep']:             
-                state = self.teslaEV_Wake(EVid)
+                state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
-                payload = ""        
-                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/honk_horn', payload ) 
-                logging.debug('teslaEV_HonkHorn {}'.format(temp))
+          
+                code, temp = self._teslaEV_send_ev_command(EVid, 'honk_horn')   
+                logging.debug('teslaEV_HonkHorn {} - {}'.format(code, temp))
                 #temp = r.json()
-                if temp:
-                    if temp['response']:
-                        if temp['response']['result']:
-                            logging.debug(temp['response']['result'])
-                            return(temp['response']['result'])
-                        else:
-                            return(False)
+                if code in ['ok']:
+                    logging.debug(temp['response']['result'])
+                    return(code, temp['response']['result'])
                 else:
-                    return(False)
+                    return(code, temp)
     
         except Exception as e:
             logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
@@ -1565,21 +1560,17 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])    
             state = self.teslaEV_GetConnectionStatus(EVid) 
             if state in ['asleep']:             
-                state = self.teslaEV_Wake(EVid)
+                code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 payload = {'sound' : sound}        
-                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_boombox', payload ) 
+                code, temp = self._teslaEV_send_ev_command(EVid, '/remote_boombox', payload ) 
                 logging.debug('teslaEV_PlaySound {}'.format(temp))
                 #temp = r.json()
-                if code == 'ok':
-                    if temp['response']:
-                        if temp['response']['result']:
-                            logging.debug(temp['response']['result'])
-                            return(temp['response']['result'])
-                        else:
-                            return(False)
+                if code in  ['ok']:
+                    logging.debug(temp['response']['result'])
+                    return(code, temp['response']['result'])
                 else:
-                    logging.debug('teslaEV_PlaySound - failed - {} - {} '.format(code, temp))
+                    return(code, temp)
             else:
                 return(False)
     

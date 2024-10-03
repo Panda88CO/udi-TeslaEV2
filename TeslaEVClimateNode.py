@@ -406,6 +406,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             {'driver': 'GV14', 'value': 99, 'uom': 25}, #Steering Wheel Heat
             {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours           
             {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update Hours          
+            {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status
             ]
 
 

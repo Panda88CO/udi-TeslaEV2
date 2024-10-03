@@ -75,6 +75,12 @@ ST-nlsevstatus-GV18-NAME =  EV Latitude
 
 ST-nlsevstatus-GV19-NAME =  Hours since last car update
 ST-nlsevstatus-GV20-NAME =  Hours since last status update
+ST-nlsevstatus-GV21-NAME =  Last Command Status
+CMD_RES-0 = OK
+CMD_RES-1 = API Overload
+CMD_RES-2 = Error
+CMD_RES-3 = TBD
+CMD_RES-99 = UNKNOWN
 
 CMD-nlsevstatus-UPDATE-NAME = Update EV Status
 CMD-nlsevstatus-WAKEUP-NAME = Wake Up
@@ -134,7 +140,7 @@ ONOFF-99 = Unknown
 
 ST-nlsevclimate-GV19-NAME = Hours since car last update
 ST-nlsevclimate-GV20-NAME = Hours since climate last update
-
+ST-nlsevclimate-GV21-NAME =  Last Command Status
 CMD-nlsevclimate-UPDATE-NAME = Update EV Climate Data
 CMD-nlsevclimate-SUNROOF-NAME = Sunroof Control
 CMD-nlsevclimate-WINDOWS-NAME = Windows control
@@ -203,7 +209,7 @@ ST-nlsevcharge-GV16-NAME = charge_miles_added_rated
 
 ST-nlsevcharge-GV19-NAME =  Hours since car last update
 ST-nlsevcharge-GV20-NAME =  Hours since charge last update
-
+ST-nlsevcharge-GV21-NAME =  Last Command Status
 CMD-nlsevcharge-UPDATE-NAME = Update System Data
 CMD-nlsevcharge-CHARGEPORT-NAME = Charge Port Control 
 CHARGEPORT-0 = Close
