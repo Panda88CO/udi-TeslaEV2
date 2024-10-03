@@ -16,7 +16,7 @@ except ImportError:
                
                
 class teslaEV_StatusNode(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, tempUnitAdjust, latch2ISY, chargeState2ISY, setDriverTemp, cond2ISY,  code2ISY, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
+    from  udiLib import node_queue, command_res2ISY, wait_for_node_done, tempUnitAdjust, latch2ISY, chargeState2ISY, setDriverTemp, cond2ISY,  code2ISY, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
     def __init__(self, polyglot, primary, address, name, evid, TEV):
         super(teslaEV_StatusNode, self).__init__(polyglot, primary, address, name)
@@ -193,7 +193,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
         code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
-        self.EV_setDriver('GV21', self.commandRes2ISY(code))
+        self.EV_setDriver('GV21', self.command_res2ISY(code))
 
     def evWakeUp (self, command):
         logging.info('EVwakeUp called')
@@ -202,7 +202,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         if code in ['ok']:               
             code, res = self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
             self.updateISYdrivers()
-        self.EV_setDriver('GV21', self.commandRes2ISY(code))
+        self.EV_setDriver('GV21', self.command_res2ISY(code))
 
 
     def evHonkHorn (self, command):
@@ -212,7 +212,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         logging.debug('Wake result {} - {}'.format(code, res))
         if code in ['ok']:                  
                 code, res = self.TEV.teslaEV_HonkHorn(self.EVid)
-        self.EV_setDriver('GV21', self.commandRes2ISY(code))
+        self.EV_setDriver('GV21', self.command_res2ISY(code))
         return(code, res)
             
         #self.EV_setDriver()
@@ -226,7 +226,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         if code in ['ok']:                    
             code, res = self.TEV.teslaEV_FlashLights(self.EVid)
             #self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
-        self.EV_setDriver('GV21', self.commandRes2ISY(code))
+        self.EV_setDriver('GV21', self.command_res2ISY(code))
         return(code, res)
 
         #self.forceUpdateISYdrivers()

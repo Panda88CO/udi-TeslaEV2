@@ -225,27 +225,23 @@ class TeslaEVController(udi_interface.Node):
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV0', 1)
-        for indx, EvId in enumerate(self.TEVcloud.teslaEV_get_vehicle_list()):
+        temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
+        for indx, EvId in enumerate(temp_list):
         #for indx in range(0,len(self.vehicleList)):
             #EvId = self.vehicleList[indx]
             #vehicleId = vehicle['vehicle_id']
             logging.debug('loop: {} {}'.format(indx, EvId ))
-            nodeName = None
-            #vehicleId = self.vehicleList[vehicle]
-            #logging.debug('vehicleId {}'.format(vehicleId))
             code, info = self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
             logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo {} {}'.format(code, info))
+            nodeName = self.EVs[EvId]['display_name']
+            code, res = self.TEVcloud.teslaEV_update_vehicle_status(EVid)
             if code in ['ok']:
-                #if self.TEVcloud.teslaEV_GetCarState(EvId) == 'online':
-                vehicleInfo = self.TEVcloud.teslaEV_GetInfo(EvId)
-                logging.info('EV info: {} = {}'.format(EvId, vehicleInfo))
-                nodeName = self.TEVcloud.teslaEV_GetName(EvId)
+                nodeName = self.EVs[EVid]['display_name']
             else:
-                nodeName = self.EVs[EvId]['display_name']
-
-            if nodeName == ''  or nodeName == None:
+                # shoudl not happen but just in case 
                 nodeName = 'ev'+str(EvId)
             nodeAdr = 'ev'+str(EvId)[-14:]
+               
             nodeName = self.poly.getValidName(nodeName)
             nodeAdr = self.poly.getValidAddress(nodeAdr)
 
