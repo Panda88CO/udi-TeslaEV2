@@ -1530,6 +1530,7 @@ class teslaEVAccess(teslaAccess):
         #with requests.Session() as s:
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
+            logging.debug('teslaEV_HonkHorn {} - {}'.format(code, state))
             if state in ['asleep']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
