@@ -391,7 +391,7 @@ class teslaEVAccess(teslaAccess):
 
         except Exception as e:
             logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
-            return('error')
+            return('error', e)
 
     def teslaEV_UpdateCloudInfoAwake(self, EVid, online_known = False):
             logging.debug('teslaEV_UpdateCloudInfoAwake: {}'.format(EVid))
@@ -465,12 +465,12 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_update_connection_status(self, EVid):
         #logging.debug('teslaEV_GetConnectionStatus: for {}'.format(EVid))
         try:
-            code = self.teslaEV_update_vehicle_status(EVid)
-            logging.debug('teslaEV_update_connection_status {} {}'.format(code, self.carInfo[EVid]['state']))
+            code, res = self.teslaEV_update_vehicle_status(EVid)
+            logging.debug('teslaEV_update_connection_status {} {}'.format(code, res))
             return(code, self.carInfo[EVid]['state'])
         except Exception as e:
             logging.error('teslaEV_update_connection_status - {}'.format(e))
-            return('error')
+            return('error', e)
 
     def teslaEV_GetName(self, EVid):
         try:
