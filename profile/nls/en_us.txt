@@ -78,8 +78,8 @@ ST-nlsevstatus-GV20-NAME =  Hours since last status update
 ST-nlsevstatus-GV21-NAME =  Last Command Status
 CMD_RES-0 = OK
 CMD_RES-1 = API Overload
-CMD_RES-2 = Error
-CMD_RES-3 = TBD
+CMD_RES-2 = Offline
+CMD_RES-3 = Error
 CMD_RES-99 = UNKNOWN
 
 CMD-nlsevstatus-UPDATE-NAME = Update EV Status

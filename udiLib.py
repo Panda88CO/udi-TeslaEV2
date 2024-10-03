@@ -149,7 +149,22 @@ def code2ISY(self, state):
             return(99)
     else:
         return(None)
-
+    
+def command_res2ISY(self, state):
+    if state is not None:
+        if state.lower() == 'ok':
+            return(0)
+        elif state.lower() == 'overload':
+            return(1)
+        elif state.lower() == 'offline':
+            return(2)
+        elif state.lower() == 'error':
+            return(3)
+        else:          
+            logging.error('Unknown state passed {}'.format(state))
+            return(99)
+    else:
+        return(None)
 def online2ISY(self, state):
     if state is not None:
         if state.lower() == 'online':
