@@ -148,98 +148,7 @@ class teslaEVAccess(teslaAccess):
             self.poly.Notices['home_id'] = 'Check config to select which home/modules should be used (1 - used, 0 - not used) - then restart'
             return(True)
 
-    '''         
-    def customParamsHandler(self, userParams):
-        self.customParameters.load(userParams)
-        logging.debug('customParamsHandler called {}'.format(userParams))
-
-        oauthSettingsUpdate = {}
-        #oauthSettingsUpdate['parameters'] = {}
-        oauthSettingsUpdate['token_parameters'] = {}
-        # Example for a boolean field
-
-        if 'region' in userParams:
-            if self.customParameters['region'] != 'enter region (NA, EU, CN)':
-                self.region = str(self.customParameters['region'])
-                if self.region.upper() not in ['NA', 'EU', 'CN']:
-                    logging.error('Unsupported region {}'.format(self.region))
-                    self.poly.Notices['region'] = 'Unknown Region specified (NA = North America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
-                #else:
-
-        else:
-            logging.warning('No region found')
-            self.customParameters['region'] = 'enter region (NA, EU, CN)'
-            self.region = None
-            self.poly.Notices['region'] = 'Region not specified (NA = Nort America + Asia (-China), EU = Europe. middle East, Africa, CN = China)'
-   
-        if 'DIST_UNIT' in userParams:
-            if self.customParameters['DIST_UNIT'] != 'enter Km or Miles':
-                self.dist_unit = str(self.customParameters['DIST_UNIT'])
-                if self.region.upper() not in ['KM', 'MILES']:
-                    logging.error('Unsupported distance unit {}'.format(self.dist_unit))
-                    self.poly.Notices['dist'] = 'Unknown distance Unit specified'
-                #else:
-
-        else:
-            logging.warning('No DIST_UNIT')
-            self.customParameters['DIST_UNIT'] = 'Km or Miles'
-
-        if 'TEMP_UNIT' in userParams:
-            if self.customParameters['TEMP_UNIT'] != 'enter C or F':
-                self.temp_unit = str(self.customParameters['TEMP_UNIT'])
-                if self.region.upper() not in ['C', 'F']:
-                    logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
-                    self.poly.Notices['temp'] = 'Unknown distance Unit specified'
-                #else:
-
-        else:
-            logging.warning('No DIST_UNIT')
-            self.customParameters['DIST_UNIT'] = 'Km or Miles'       
-
-        if 'LOCATION_EN' in userParams:
-            if self.customParameters['LOCATION'] != 'True or False':
-                self.locationEn = str(self.customParameters['LOCATION'])
-                if self.locationEn.upper() not in ['TRUE', 'FALSE']:
-                    logging.error('Unsupported Location Setting {}'.format(self.locationEn))
-                    self.poly.Notices['location'] = 'Unknown distance Unit specified'
-                #else:
-
-        else:
-            logging.warning('No LOCATION')
-            self.customParameters['LOCATION'] = 'True or False'   
-
-        logging.debug('region {}'.format(self.region))
-        oauthSettingsUpdate['scope'] = self.scope 
-        oauthSettingsUpdate['auth_endpoint'] = 'https://auth.tesla.com/oauth2/v3/authorize'
-        oauthSettingsUpdate['token_endpoint'] = 'https://auth.tesla.com/oauth2/v3/token'
-        #oauthSettingsUpdate['redirect_uri'] = 'https://my.isy.io/api/cloudlink/redirect'
-        #oauthSettingsUpdate['cloudlink'] = True
-        oauthSettingsUpdate['addRedirect'] = True
-        #oauthSettingsUpdate['state'] = self.state
-        if self.region.upper() == 'NA':
-            self.Endpoint = self.EndpointNA
-        elif self.region.upper() == 'EU':
-            self.Endpoint = self.EndpointEU
-        elif self.region.upper() == 'CN':
-            self.Endpoint = self.EndpointCN
-        else:
-            logging.error('Unknow region specified {}'.format(self.region))
-            return
-           
-        self.yourApiEndpoint = self.Endpoint+self.api 
-        oauthSettingsUpdate['token_parameters']['audience'] = self.Endpoint
-        #oauthSettingsUpdate['token_parameters']['client_id'] = '6e635ec38dc4-4d2a-a35e-f164b51f3d96'
-        #oauthSettingsUpdate['token_parameters']['client_secret'] = 'ta-secret.S@z5uUjp*sxoS2rS'
-        #oauthSettingsUpdate['token_parameters']['addRedirect'] = True
-        self.updateOauthSettings(oauthSettingsUpdate)
-        time.sleep(0.1)
-        temp = self.getOauthSettings()
-        #logging.debug('Updated oAuth config 2: {}'.format(temp))
-        
-        self.handleCustomParamsDone = True
-        self.poly.Notices.clear()
-        '''
-
+ 
     def add_to_parameters(self,  key, value):
         '''add_to_parameters'''
         self.customParameters[key] = value
@@ -253,33 +162,7 @@ class teslaEVAccess(teslaAccess):
     ###  Register car pem
 
 
-       
-    '''
-    def tesla_get_products(self) -> dict:
-        self.products= {}
-        EVs = {}
-        logging.debug('tesla_get_products ')
-        try:
-            code, temp = self._callApi('GET','/products' )
-            #code, temp = self._callApi('GET','/vehicles' )
-            logging.debug('products: {} '.format(temp))
-            if 'response' in temp:
-                #for indx in range(0,len(temp['response'])):
-                #    site = temp['response'][indx]
-                for indx, site in enumerate(temp['response']):
-                    if 'vehicle_id' in site:
-                        EVs[str(site['id'])] = site
-                        #self.ev_list.append(site['id'])
-                        self.ev_list.append(site['vin']) # vin needed to send commands
-
-
-            self.products = temp
-            return(EVs)
-        except Exception as e:
-            logging.error('tesla_get_products Exception : {}'.format(e))
-    '''
-
-
+   
     def extract_needed_delay(self, input_string):
         temp =  [int(word) for word in input_string.split() if word.isdigit()]
         if temp != []:

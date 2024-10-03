@@ -176,11 +176,18 @@ class teslaEV_StatusNode(udi_interface.Node):
                     self.EV_setDriver('GV18', None)
             else:
                 self.EV_setDriver('GV17', 98, 25)
-                self.EV_setDriver('GV18', 98, 25)
+                self.EV_setDriver('GV18', 98, 25)            
 
-            self.EV_setDriver('GV19', round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2), 20)            
-            self.EV_setDriver('GV20', round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2), 20)
-       
+            try:
+                temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
+                self.EV_setDriver('GV19', temp ,20)   
+            except ValueError:
+                self.EV_setDriver('GV19', None)                                                 
+            try:
+                temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
+                self.EV_setDriver('GV20', temp,20)
+            except ValueError:
+                self.EV_setDriver('GV20', None)           
             #else:
             #    logging.info('System not ready yet')
 
