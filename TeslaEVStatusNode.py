@@ -82,7 +82,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def poll (self, code = 'ok'):    
         logging.info('Status Node Poll for {} - code: {}'.format(self.EVid, code ))        
         #self.TEV.teslaEV_GetInfo(self.EVid)
-        if self.statusNodeReady:
+        try:
             if code == 'ok':
                 self.updateISYdrivers()
                 self.climateNode.updateISYdrivers()
@@ -93,7 +93,8 @@ class teslaEV_StatusNode(udi_interface.Node):
                 logging.info('Car appears off-line/sleeping or overload  - not updating data')
             else:
                 self.EV_setDriver('GV13', 99)
-
+        except Exception as e:
+            logging.error('Status Poll exception : {}'.format(e) )
     #def forceUpdateISYdrivers(self):
     #    logging.debug('forceUpdateISYdrivers: {}'.format(self.EVid))
     #    time.sleep(1)
