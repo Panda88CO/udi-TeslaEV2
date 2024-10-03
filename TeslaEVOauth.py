@@ -1473,16 +1473,17 @@ class teslaEVAccess(teslaAccess):
         except Exception as e:
             logging.error('teslaEV_GetFrunkState Excaption: {}'.format(e))
             return(None)
+        
+
 ###############
 # Controls
 ################
     def teslaEV_FlashLights(self, EVid):
         logging.debug('teslaEV_GetVehicleInfo: for {}'.format(EVid))       
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])
-            state = self.teslaEV_GetConnectionStatus(EVid) 
+
+            code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
@@ -1495,34 +1496,12 @@ class teslaEVAccess(teslaAccess):
                 else:
                     return(code, temp)
             else:
-                return(None)
+                return(code, state)
         except Exception as e:
             logging.error('Exception teslaEV_FlashLight for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
-            return(None)
+            return('error', e)
 
-
-    '''
-    def teslaEV_Wake(self, EVid):
-        logging.debug('teslaEV_Wake: for {}'.format(EVid))
-        #S = self.teslaApi.teslaConnect()
-        online = False
-        attempts = 0 
-        MAX_ATTEMPTS = 6 # try for 1 minute max
-        #with requests.Session() as s:
-        try:
-            state = self.teslaEV_GetConnectionStatus(EVid)
-            if state in ['asleep']:  
-                state = self.teslaEV_Wake(EVid)
-                #s.auth = OAuth2BearerToken(S['access_token'])            
-            self.online == state       
-            return(self.online)
-        except Exception as e:
-            logging.error('Exception teslaEV_Wake for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(None)
-    '''
 
     def teslaEV_HonkHorn(self, EVid):
         logging.debug('teslaEV_HonkHorn for {}'.format(EVid))
@@ -1539,7 +1518,7 @@ class teslaEVAccess(teslaAccess):
                 logging.debug('teslaEV_HonkHorn {} - {}'.format(code, temp))
                 #temp = r.json()
                 if code in ['ok']:
-                    logging.debug(temp['response']['result'])
+                    logging.debug(code, temp['response']['result'])
                     return(code, temp['response']['result'])
                 else:
                     return(code, temp)
@@ -1568,7 +1547,7 @@ class teslaEVAccess(teslaAccess):
                 logging.debug('teslaEV_PlaySound {}'.format(res))
                 #temp = r.json()
                 if code in  ['ok']:
-                    logging.debug(res['response']['result'])
+                    logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
                 else:
                     return(code, res)
@@ -1600,7 +1579,7 @@ class teslaEVAccess(teslaAccess):
                     logging.debug('Unknown door control passed: {}'.format(ctrl))
                     return('error', 'error')
                 if code in ['ok']:
-                    logging.debug(res['response']['result'])
+                    logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
                 else:
                     return(code, state)
@@ -1634,7 +1613,7 @@ class teslaEVAccess(teslaAccess):
 
                 logging.debug(code, res)
                 if code in ['ok']:
-                    logging.debug(res['response']['result'])
+                    logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
                 else:
                     return(code, state)
@@ -1667,7 +1646,7 @@ class teslaEVAccess(teslaAccess):
 
                 logging.debug(code, res)
                 if code in ['ok']:
-                    logging.debug(res['response']['result'])
+                    logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
                 else:
                     return(code, state)
