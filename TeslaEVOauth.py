@@ -451,11 +451,13 @@ class teslaEVAccess(teslaAccess):
         EVs = {}
         logging.debug('teslaEV_get_vehicle_info ')
         try:
-            code, temp = self._callApi('GET','/vehicles/'+str(EVid) )
-            logging.debug('vehicle {} info : {} {} '.format(EVid, code, temp))
+            code, res = self._callApi('GET','/vehicles/'+str(EVid) )
+            logging.debug('vehicle {} info : {} {} '.format(EVid, code, res))
             if code in ['ok']:
-                self.carInfo[temp['response']['vin']] = temp['response']
-            return(code)
+                self.carInfo[res['response']['vin']] = res['response']
+                return(code, res['response'])
+            else:
+                return(code, res)
         except Exception as e:
             logging.error('teslaEV_update_vehicle_status Exception : {}'.format(e))
     
