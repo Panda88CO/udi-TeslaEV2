@@ -213,34 +213,28 @@ class TeslaEVController(udi_interface.Node):
             self.poly.Notices['auth'] = 'Please initiate authentication'
             time.sleep(5)
 
-
-        self.tesla_initialize()
-        code, self.EVs = self.TEVcloud.teslaEV_get_vehicles()
-        #self.EVs_installed = {}
-        logging.debug('EVs : {}'.format(self.EVs))
         assigned_addresses =['controller']
         self.vehicleList = self.TEVcloud.teslaEV_get_vehicle_list()
-
         logging.debug('vehicleList: {}'.format(self.vehicleList))
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
         self.EV_setDriver('GV0', 1)
         temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
-        for indx, EvId in enumerate(temp_list):
+        for indx, EVid in enumerate(temp_list):
         #for indx in range(0,len(self.vehicleList)):
-            #EvId = self.vehicleList[indx]
+            #EVid = self.vehicleList[indx]
             #vehicleId = vehicle['vehicle_id']
-            logging.debug('loop: {} {}'.format(indx, EvId ))
-            code, info = self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
-            logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo {} {}'.format(code, info))
-            nodeName = self.EVs[EvId]['display_name']
+            logging.debug('loop: {} {}'.format(indx, EVid ))
+            code, res = self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
+            logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo {} {}'.format(code, res))            
             code, res = self.TEVcloud.teslaEV_update_vehicle_status(EVid)
+            logging.debug('self.TEVcloud.teslaEV_update_vehicle_status {} {}'.format(code, res))
             if code in ['ok']:
-                nodeName = self.EVs[EVid]['display_name']
+                nodeName = res['display_name']
             else:
-                # shoudl not happen but just in case 
-                nodeName = 'ev'+str(EvId)
-            nodeAdr = 'ev'+str(EvId)[-14:]
+                # should not happen but just in case 
+                nodeName = 'ev'+str(EVid)
+            nodeAdr = 'ev'+str(EVid)[-14:]
                
             nodeName = self.poly.getValidName(nodeName)
             nodeAdr = self.poly.getValidAddress(nodeAdr)
@@ -248,11 +242,11 @@ class TeslaEVController(udi_interface.Node):
             if not self.poly.getNode(nodeAdr):
                 logging.debug('Node Address : {} {}'.format(self.poly.getNode(nodeAdr),nodeAdr ))
             logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))
-            #self.TEVcloud.teslaEV_UpdateCloudInfo(EvId)
-            self.status_nodes[EvId] = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EvId, self.TEVcloud)        
+            #self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
+            self.status_nodes[EVid] = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EVid, self.TEVcloud)        
             assigned_addresses.append(nodeAdr)
-            while not (self.status_nodes[EvId].subnodesReady() or self.status_nodes[EvId].statusNodeReady):
-                logging.debug('Subnodes {}  Status {}'.format(self.status_nodes[EvId].subnodesReady(), self.status_nodes[EvId].statusNodeReady ))
+            while not (self.status_nodes[EVid].subnodesReady() or self.status_nodes[EVid].statusNodeReady):
+                logging.debug('Subnodes {}  Status {}'.format(self.status_nodes[EVid].subnodesReady(), self.status_nodes[EVid].statusNodeReady ))
                 logging.debug('waiting for nodes to be created')
                 time.sleep(5)
             
@@ -306,26 +300,6 @@ class TeslaEVController(udi_interface.Node):
     user changes something, we want to re-initialize.
     '''
 
-
-    def tesla_start(self):
-        self.tesla_initialize()
-        self.createNodes()
-
-    def tesla_initialize(self):
-        logging.info('starting Login process')
-        try:
-            self.EV_setDriver('GV0', 1)
-            #self.TEV.teslaEV_SetDistUnit(self.dUnit)
-            #self.TEV.teslaEV_SetTempUnit(self.tUnit)
-            #self.TEV.teslaEV_SetRegion(self.region)
-
-
-        except Exception as e:
-            logging.debug('Exception Controller start: '+ str(e))
-            logging.error('Did not connect to Tesla Cloud ')
-
-        logging.debug ('Controller - initialization done')
-
     def portal_initialize(self, portalId, portalSecret):
         logging.debug('portal_initialize {} {}'.format(portalId, portalSecret))
         #portalId = None
@@ -346,7 +320,7 @@ class TeslaEVController(udi_interface.Node):
             else:
                 logging.info('Waiting for system/nodes to initialize')
 
-# Something is not correct here - too many times through
+
     def shortPoll(self):
         logging.info('Tesla EV Controller shortPoll(HeartBeat)')
         self.heartbeat()
@@ -364,9 +338,7 @@ class TeslaEVController(udi_interface.Node):
         except Exception as E:
             logging.info('Not all nodes ready: {}'.format(E))
 
-#            self.Rtoken  = self.TEVcloud.getRtoken()
-#            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
-#                self.Parameters['REFRESH_TOKEN'] = self.Rtoken 
+
         
     def longPoll(self):
         logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))        
@@ -384,16 +356,11 @@ class TeslaEVController(udi_interface.Node):
         except Exception as E:
             logging.info('Not all nodes ready: {}'.format(E))
 
-#            self.Rtoken  = self.TEVcloud.getRtoken()
-#            if self.Rtoken  != self.Parameters['REFRESH_TOKEN']:
-#                self.Parameters['REFRESH_TOKEN'] = self.Rtoken
-
 
     def poll(self, status_code): # dummey poll function
         if status_code == 'ok':
             self.updateISYdrivers()
         else:
-
             pass
 
     def updateISYdrivers(self):
