@@ -216,6 +216,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evHonkHorn (self, command):
         logging.info('EVhonkHorn called')        
         code, res = self.TEV.teslaEV_HonkHorn(self.EVid)
+        logging.info('return  {} - {}'.format(code, res))  
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 
@@ -227,7 +228,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evFlashLights (self, command):
         logging.info('EVflashLights called')
         code, res = self.TEV.teslaEV_FlashLights(self.EVid)
-
+        logging.info('return  {} - {}'.format(code, res))  
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 
@@ -252,6 +253,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV21', self.command_res2ISY('error'))
             return('error', 'code wrong')
         code, res =  self.TEV.teslaEV_Doors(self.EVid, cmd)
+        logging.info('return  {} - {}'.format(code, res))
         self.EV_setDriver('GV3', doorCtrl)
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
@@ -272,22 +274,17 @@ class teslaEV_StatusNode(udi_interface.Node):
         logging.info('evControlSunroof called')
         #self.TEV.teslaEV_Wake(self.EVid)
         sunroofCtrl = int(float(command.get('value')))
-        self.TEV.teslaEV_update_connection_status(self.EVid)
-        if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
-            if self.TEV.teslaEV_Wake(self.EVid):            
-                self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
-        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
-            if sunroofCtrl == 1:
-                code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'vent')
-                #self.EV_setDriver()
-            elif sunroofCtrl == 0:
-                code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'close')    
-            elif sunroofCtrl == 2:
-                code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'stop')                  
-            else:
-                logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl))
+
+        if sunroofCtrl == 1:
+            code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'vent')
+            #self.EV_setDriver()
+        elif sunroofCtrl == 0:
+            code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'close')    
+        elif sunroofCtrl == 2:
+            code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'stop')                  
         else:
-            logging.info('Not able to send command - EV is not online')
+            logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl))
+    
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 

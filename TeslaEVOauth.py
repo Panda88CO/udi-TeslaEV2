@@ -1020,18 +1020,28 @@ class teslaEVAccess(teslaAccess):
         try:
             if cmd not in ['vent','close', 'stop'] :
                 logging.error('Wrong command passed to (vent or close) to teslaEV_SunRoof: {} '.format(cmd))
-                return(False)
+                return('error', 'wrong command')
             #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = { 'state': cmd}        
-            code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/sun_roof_control', payload ) 
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+            payload = { 'state': cmd}     
+            code, res = self._teslaEV_send_ev_command(EVid, '/er_homelink', payload )    
+            #code, temp = self._callApi('POST','/vehicles/'+str(EVid) +'/command/sun_roof_control', payload ) 
+
+            logging.debug('teslaEV_SunRoof {} - {}'.format(code, res))
+    
+            if code in ['ok']:
+                logging.debug(code, res['response']['result'])
+                return(code, res['response']['result'])
+            else:
+                return(code, res)
+
+    
         except Exception as e:
-            logging.error('Exception teslaEV_SunRoof for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             
-            return(False)
+            return('error', e)
+
+
 
 
     def teslaEV_AutoCondition(self, EVid, ctrl):
