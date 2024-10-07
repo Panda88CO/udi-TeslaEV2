@@ -38,8 +38,12 @@ class TeslaEVController(udi_interface.Node):
         self.address = address
         #self.tokenPassword = ""
         self.n_queue = []
-        self.dUnit = 1 #  Miles = 1, Kilometer = 0
-        self.tUnit = 0 #  C = 0, F=1,
+        self.CELCIUS = 0
+        self.FARENHEIT = 1 
+        self.KM = 0
+        self.MILES = 1
+        self.dUnit = self.MILES #  Miles = 1, Kilometer = 0
+        self.tUnit = self.FARENHEIT  #  C = 0, F=1,
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
         self.customParameters = Custom(self.poly, 'customparams')

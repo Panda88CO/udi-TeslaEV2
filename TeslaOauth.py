@@ -258,7 +258,7 @@ class teslaAccess(OAuth):
 
 
     # Call your external service API
-    def _callApi(self, method='GET', url=None, body=''):
+    def _callApi(self, method='GET', url=None, body={}):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
@@ -284,6 +284,7 @@ class teslaAccess(OAuth):
 
         completeUrl = self.yourPortalEndpoint + url
 
+        
         headers = {
             #'Content-Type': 'application/json',
             'Authorization': f'Bearer { portalToken }',
@@ -295,8 +296,15 @@ class teslaAccess(OAuth):
         if method in [ 'PATCH', 'POST'] and body is None:
             logging.error(f"body is required when using { method } { completeUrl }")
         else:
-            body = json.dumps(body)
-        logging.debug(' call info url={}, header {}, body ={}'.format(completeUrl, headers, body))
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer { portalToken }',
+                #'Authorization': portalToken,
+                'X-tesla-auth' : accessToken
+            }   
+            payload = json.dumps(body)
+
+        logging.debug(' call info url={}, header {}, body ={}'.format(completeUrl, headers, payload))
 
         try:
             if method == 'GET':
@@ -304,9 +312,9 @@ class teslaAccess(OAuth):
             elif method == 'DELETE':
                 response = requests.delete(completeUrl, headers=headers)
             elif method == 'PATCH':
-                response = requests.patch(completeUrl, headers=headers, json=body)
+                response = requests.patch(completeUrl, headers=headers, json=payload)
             elif method == 'POST':
-                response = requests.post(completeUrl, headers=headers, json=body)
+                response = requests.post(completeUrl, headers=headers, json=payload)
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
             #logging.debug('API response: {}'.format(response))

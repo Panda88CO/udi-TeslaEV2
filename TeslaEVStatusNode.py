@@ -127,19 +127,19 @@ class teslaEV_StatusNode(udi_interface.Node):
 
             self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)))
             
-            temp = self.TEV.teslaEV_GetWindoStates(self.EVid)
-            if 'FrontLeft' not in temp:
-                temp['FrontLeft'] = None
-            if 'FrontRight' not in temp:
-                temp['FrontRight'] = None
-            if 'RearLeft' not in temp:
-                temp['RearLeft'] = None
-            if 'RearLeft' not in temp:
-                temp['RearLeft'] = None
-            self.EV_setDriver('GV6', temp['FrontLeft'])
-            self.EV_setDriver('GV7', temp['FrontRight'])
-            self.EV_setDriver('GV8', temp['RearLeft'])
-            self.EV_setDriver('GV9', temp['RearRight'])
+            windows  = self.TEV.teslaEV_GetWindoStates(self.EVid)
+            if 'FrontLeft' not in windows:
+                windows['FrontLeft'] = None
+            if 'FrontRight' not in windows:
+                windows['FrontRight'] = None
+            if 'RearLeft' not in windows:
+                windows['RearLeft'] = None
+            if 'RearRight' not in windows:
+                windows['RearRight'] = None
+            self.EV_setDriver('GV6', windows['FrontLeft'])
+            self.EV_setDriver('GV7', windows['FrontRight'])
+            self.EV_setDriver('GV8', windows['RearLeft'])
+            self.EV_setDriver('GV9', windows['RearRight'])
             
             #self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
             if self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
@@ -196,7 +196,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def ISYupdate (self, command):
         logging.info('ISY-update status node  called')
-        self.TEV.teslaEV_update_connection_status(self.EVid)
+        code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
         code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()

@@ -88,22 +88,22 @@ class teslaEV_ClimateNode(udi_interface.Node):
             self.setDriverTemp('GV4', self.TEV.teslaEV_GetRightTemp(self.EVid))
 
             #logging.debug('GV5-9: {}'.format(self.TEV.teslaEV_GetSeatHeating(self.EVid)))
-            temp = self.TEV.teslaEV_GetSeatHeating(self.EVid)
-            if 'FrontLeft' not in temp:
-                temp['FrontLeft'] = None
-            if 'FrontRight' not in temp:
-                temp['FrontRight'] = None
-            if 'RearLeft' not in temp:
-                temp['RearLeft'] = None
-            if 'RearMiddle' not in temp:
-                temp['RearMiddle'] = None
-            if 'RearRight' not in temp:                
-                temp['RearRight'] = None
-            self.EV_setDriver('GV5', self.cond2ISY(temp['FrontLeft']))
-            self.EV_setDriver('GV6', self.cond2ISY(temp['FrontRight']))
-            self.EV_setDriver('GV7', self.cond2ISY(temp['RearLeft']))
-            self.EV_setDriver('GV8', self.cond2ISY(temp['RearMiddle']))
-            self.EV_setDriver('GV9', self.cond2ISY(temp['RearRight']))
+            seatHeat = self.TEV.teslaEV_GetSeatHeating(self.EVid)
+            if 'FrontLeft' not in seatHeat:
+                seatHeat['FrontLeft'] = None
+            if 'FrontRight' not in seatHeat:
+                seatHeat['FrontRight'] = None
+            if 'RearLeft' not in seatHeat:
+                seatHeat['RearLeft'] = None
+            if 'RearMiddle' not in seatHeat:
+                seatHeat['RearMiddle'] = None
+            if 'RearRight' not in seatHeat:                
+                seatHeat['RearRight'] = None
+            self.EV_setDriver('GV5', self.cond2ISY(seatHeat['FrontLeft']))
+            self.EV_setDriver('GV6', self.cond2ISY(seatHeat['FrontRight']))
+            self.EV_setDriver('GV7', self.cond2ISY(seatHeat['RearLeft']))
+            self.EV_setDriver('GV8', self.cond2ISY(seatHeat['RearMiddle']))
+            self.EV_setDriver('GV9', self.cond2ISY(seatHeat['RearRight']))
 
             #logging.debug('GV10: {}'.format(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)))
             self.EV_setDriver('GV10', self.bool2ISY(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)))
@@ -234,21 +234,29 @@ class teslaEV_ClimateNode(udi_interface.Node):
         #cabinTemp = float(command.get('value'))
         query = command.get("query")
         if 'driver.uom4' in query:
-            driverTempC    = int(query.get('driver.uom4'))
+            driverTemp    = int(query.get('driver.uom4'))
+            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.FAENHEIT:
+                driverTemp    = int(driverTemp*9/5+32)
         elif 'driver.uom17' in query:
-            driverTempC    = int((int(query.get('driver.uom17'))-32)*5/9)
+            driverTemp    = int(query.get('driver.uom17'))
+            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.CELCIUS:
+                driverTemp    = int((driverTemp-32)*5/9)
         if 'passenger.uom4' in query:
-            passengerTempC = int(query.get('passenger.uom4'))  
+            passengerTemp = int(query.get('passenger.uom4'))  
+            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.FAENHEIT:
+                passengerTemp    = int(passengerTemp*9/5+32)
         elif 'passenger.uom17' in query:
-            passengerTempC    = int((int(query.get('passenger.uom17'))-32)*5/9)
+            passengerTemp    = int((int(query.get('passenger.uom17'))-32)*5/9)
+            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.CELCIUS:
+                driverTemp    = int((passengerTemp-32)*5/9)
         self.TEV.teslaEV_update_connection_status(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
-            if self.TEV.teslaEV_SetCabinTemps(self.EVid, driverTempC, passengerTempC):
-                self.setDriverTemp( 'GV3', driverTempC )
-                self.setDriverTemp( 'GV4', passengerTempC )
+            if self.TEV.teslaEV_SetCabinTemps(self.EVid, driverTemp, passengerTemp):
+                self.setDriverTemp( 'GV3', driverTemp )
+                self.setDriverTemp( 'GV4', passengerTemp )
         else:
             logging.info('Not able to send command - EV is not online')    
         #temp = self.TEV.tesleEV_GetCabinTemp(self.EVid)

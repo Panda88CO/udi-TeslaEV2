@@ -58,8 +58,10 @@ class teslaEVAccess(teslaAccess):
         #self.customerDataHandlerDone = False
         self.customNsHandlerDone = False
         self.customOauthHandlerDone = False
-        self.temp_unit = 0
-        self.dist_unit = 1
+        self.temp_unit = self.tUnit #inherit from main 
+        self.gui_temp_unit = self.temp_unit
+        self.dist_unit = self.dUnit #inherit from main 
+        self.gui_dist_unit = self.dist_unit
 
         self.carInfo = {}
         self.carStateList = ['online', 'Offline', 'aleep', 'unknown', 'error']
@@ -262,6 +264,7 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
+                        self.extract_gui_info(EVid)
                     return(code, res)
                 else:
                     return(code, state)
@@ -284,6 +287,7 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
+                        self.extract_gui_info(EVid)
                         return(code, res)
                     else:
                         return(code, state)
@@ -296,7 +300,46 @@ class teslaEVAccess(teslaAccess):
                 logging.debug('Exception teslaEV_UpdateCloudInfo: {} '.format(e))
                 return('error')
    
-    
+    '''
+    def extract_gui_info(self, EVid):
+        try:
+            if 'gui_settings' in self.carInfo[EVid]:
+                if self.carInfo[EVid]['gui_settings']['gui_temperature_units'] in 'F':
+                    self.gui_temp_unit  = 1
+                else:
+                    self.gui_temp_unit  = 0
+   
+                if self.carInfo[EVid]['gui_settings']['gui_distance_units'] in ['mi/hr']:
+                    self.gui_dist_unit = '1'
+                else:
+                    self.gui_dist_unit = '0'
+        except Exception as e:
+            logging.error('No gui unit found- {}'.format(e))
+            self.gui_tUnit =  self.temp_unit
+            self.gui_dist_unit = self.dist_unit
+    '''
+
+    def teslaEV_get_gui_info(self, EVid, unit):
+        try:
+            if unit == 'temp':
+                if self.carInfo[EVid]['gui_settings']['gui_temperature_units'] in 'F':
+                    return 1
+                else:
+                    return 0
+            elif unit == 'dist':
+                if self.carInfo[EVid]['gui_settings']['gui_distance_units'] in ['mi/hr']:
+                    return 1
+                else:
+                    return 0
+        except Exception as e:
+            logging.error('No gui unit found- {}'.format(e))
+            if unit == 'temp':
+                return(self.temp_unit)
+            elif unit == 'dist':
+                return(self.dist_unit)
+            else:
+                return(None)
+
     def process_EV_data(self, carData):
         logging.debug('process_EV_data')
         if 'response' in carData:
@@ -1305,6 +1348,7 @@ class teslaEVAccess(teslaAccess):
                 temp['RearRight'] = self.carInfo[EVid]['vehicle_state']['rp_window']
             else:
                 temp['RearRight'] = None
+            logging.debug('teslaEV_GetWindoStates {} {}'.format(EVid,temp ))
             return(temp)
         except Exception as e:
             logging.debug(' Exception teslaEV_GetWindoStates - {}'.format(e))
@@ -1350,8 +1394,10 @@ class teslaEVAccess(teslaAccess):
         try:
             if self.carInfo[EVid]['vehicle_state']['rt'] == 0:
                 return(0)
-            else:
+            elif self.carInfo[EVid]['vehicle_state']['rt'] == 1:
                 return(1)
+            else:
+                return(None)
         except Exception as e:
             logging.error('teslaEV_GetTrunkState Excaption: {}'.format(e))
             return(None)
@@ -1361,8 +1407,10 @@ class teslaEVAccess(teslaAccess):
         try:
             if self.carInfo[EVid]['vehicle_state']['ft'] == 0:
                 return(0)
-            else:
+            elif self.carInfo[EVid]['vehicle_state']['ft'] == 1:
                 return(1)
+            else:
+                return(None)
         except Exception as e:
             logging.error('teslaEV_GetFrunkState Excaption: {}'.format(e))
             return(None)

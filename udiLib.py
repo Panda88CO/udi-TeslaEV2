@@ -260,11 +260,15 @@ def tempUnitAdjust(self, tempC):
 def setDriverTemp(self, Key, value):
     logging.debug('setDriverTemp : TempUnit: {}, value: {}'.format(self.TEV.teslaEV_GetTempUnit(), value))
     if value is None:
-        self.EV_setDriver(Key, 99,25)  
-    elif self.TEV.teslaEV_GetTempUnit()  == 0:
-        self.EV_setDriver(Key, round(round(2*value,0)/2,1),4)
-    elif self.TEV.teslaEV_GetTempUnit()  == 1:
+        self.EV_setDriver(Key, 99, 25)  
+    elif self.TEV.teslaEV_GetTempUnit()  == 0 and self.temp_unit == 0:
+            self.EV_setDriver(Key, round(round(2*value,0)/2,1),4)
+    elif self.TEV.teslaEV_GetTempUnit()  == 1 and self.temp_unit == 1:
+        self.EV_setDriver(Key, round(round(2*value,0)/2,0),17)
+    elif self.TEV.teslaEV_GetTempUnit()  == 0 and self.temp_unit == 1:
         self.EV_setDriver(Key, round(32+ 1.8*value, 0),17)
+    elif self.TEV.teslaEV_GetTempUnit()  == 1 and self.temp_unit == 0:
+        self.EV_setDriver(Key, round(round(2*(value-32)*5/9,0)/2, 1),4)
     else:
         return (None)
 
