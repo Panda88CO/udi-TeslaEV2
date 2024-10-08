@@ -239,7 +239,7 @@ class teslaEVAccess(teslaAccess):
     def _teslaEV_send_ev_command(self, EVid , command, params={}):
         logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
         payload = params
-        code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command/'+str(command),  payload )
+        code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command'+str(command),  payload )
         #logging.debug('teslaEV_SetChargeLimit r :'.format(r))
         if code in ['overload']:
             return(code, self.get_delay(res))
@@ -1438,7 +1438,7 @@ class teslaEVAccess(teslaAccess):
             if state in ['asleep']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
-                code, temp = self._teslaEV_send_ev_command(EVid, 'flash_lights')  
+                code, temp = self._teslaEV_send_ev_command(EVid, '/flash_lights')  
                 logging.debug('temp {}'.format(temp))
             #temp = r.json()
                 if  code in ['ok']:
@@ -1465,7 +1465,7 @@ class teslaEVAccess(teslaAccess):
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
           
-                code, temp = self._teslaEV_send_ev_command(EVid, 'honk_horn')   
+                code, temp = self._teslaEV_send_ev_command(EVid, '/honk_horn')   
                 logging.debug('teslaEV_HonkHorn {} - {}'.format(code, temp))
                 #temp = r.json()
                 if code in ['ok']:
