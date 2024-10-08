@@ -264,7 +264,7 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
-                        self.extract_gui_info(EVid)
+                        #self.extract_gui_info(EVid)
                     return(code, res)
                 else:
                     return(code, state)
@@ -286,12 +286,8 @@ class teslaEVAccess(teslaAccess):
                 if code == 'ok' and state in ['online']:
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
-                        self.carInfo[EVid] = self.process_EV_data(res)
-                        #if self.temp_unit is None:
-                        #    self.teslaEV_get_gui_info(EVid, 'temp')
-                        #if self.dist_unit is None:
-                        #    self.teslaEV_get_gui_info(EVid, 'dist')                        
-                        #return(code, res)
+                        self.carInfo[EVid] = self.process_EV_data(res)                     
+                        return(code, res)
                     else:
                         return(code, state)
                 elif code == 'overload':
