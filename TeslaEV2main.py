@@ -154,9 +154,11 @@ class TeslaEVController(udi_interface.Node):
                     self.poly.Notices['dist'] = 'Unknown distance Unit specified'
                 else:
                     if self.dist_unit.upper() == 'KM':
-                        self.TEVcloud.teslaEV_SetDistUnit(0)
+                        self.distUnit = 0
+                        #self.TEVcloud.teslaEV_SetDistUnit(0)
                     else:
                         self.TEVcloud.teslaEV_SetDistUnit(1)
+                        self.distUnit = 1
         else:
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'
@@ -169,12 +171,14 @@ class TeslaEVController(udi_interface.Node):
                     self.poly.Notices['temp'] = 'Unknown distance Unit specified'
                 else:
                     if self.temp_unit.upper() == 'C':
-                        self.TEVcloud.teslaEV_SetTempUnit(0)
+                        self.tempUnit = 0
+                        #self.TEVcloud.teslaEV_SetTempUnit(0)
                     else:
-                        self.TEVcloud.teslaEV_SetTempUnit(1)
+                        self.tempUnit = 1
+                        #self.TEVcloud.teslaEV_SetTempUnit(1)
         else:
             logging.warning('No TEMP_UNIT')
-            self.customParameters['TEMP_UNIT'] = 'C or F'    
+            self.customParameters['TEMP_UNIT'] = 'C or F'
         logging.debug('customParamsHandler finish ')
 
 
@@ -235,8 +239,6 @@ class TeslaEVController(udi_interface.Node):
             #EVid = self.vehicleList[indx]
             #vehicleId = vehicle['vehicle_id']
             logging.debug('loop: {} {}'.format(indx, EVid ))
-            code, res = self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
-            logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo {} {}'.format(code, res))            
             code, res = self.TEVcloud.teslaEV_update_vehicle_status(EVid)
             logging.debug('self.TEVcloud.teslaEV_update_vehicle_status {} {}'.format(code, res))
             if code in ['ok']:
@@ -248,7 +250,8 @@ class TeslaEVController(udi_interface.Node):
                
             nodeName = self.poly.getValidName(nodeName)
             nodeAdr = self.poly.getValidAddress(nodeAdr)
-
+            code, res = self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
+            logging.debug('self.TEVcloud.teslaEV_UpdateCloudInfo {} {}'.format(code, res))    
             if not self.poly.getNode(nodeAdr):
                 logging.debug('Node Address : {} {}'.format(self.poly.getNode(nodeAdr),nodeAdr ))
             logging.info('Creating Status node {} for {}'.format(nodeAdr, nodeName))

@@ -58,13 +58,13 @@ class teslaEVAccess(teslaAccess):
         #self.customerDataHandlerDone = False
         self.customNsHandlerDone = False
         self.customOauthHandlerDone = False
-        self.temp_unit = self.tUnit #inherit from main 
-        self.gui_temp_unit = self.temp_unit
-        self.dist_unit = self.dUnit #inherit from main 
-        self.gui_dist_unit = self.dist_unit
+        self.CELCIUS = 0
+        self.KM = 0
+        #self.gui_temp_unit = None
+        #self.gui_dist_unit = None
 
         self.carInfo = {}
-        self.carStateList = ['online', 'Offline', 'aleep', 'unknown', 'error']
+        self.carStateList = ['online', 'offline', 'aleep', 'unknown', 'error']
         self.carState = 'Unknown'
 
         self.locationEn = False
@@ -287,8 +287,11 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
-                        self.extract_gui_info(EVid)
-                        return(code, res)
+                        #if self.temp_unit is None:
+                        #    self.teslaEV_get_gui_info(EVid, 'temp')
+                        #if self.dist_unit is None:
+                        #    self.teslaEV_get_gui_info(EVid, 'dist')                        
+                        #return(code, res)
                     else:
                         return(code, state)
                 elif code == 'overload':
@@ -322,21 +325,21 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_get_gui_info(self, EVid, unit):
         try:
             if unit == 'temp':
-                if self.carInfo[EVid]['gui_settings']['gui_temperature_units'] in 'F':
+                if 'F' in [self.carInfo[EVid]['gui_settings']['gui_temperature_units']]:
                     return 1
                 else:
                     return 0
             elif unit == 'dist':
-                if self.carInfo[EVid]['gui_settings']['gui_distance_units'] in ['mi/hr']:
+                if ['mi/hr'] in [self.carInfo[EVid]['gui_settings']['gui_distance_units']]:
                     return 1
                 else:
                     return 0
         except Exception as e:
             logging.error('No gui unit found- {}'.format(e))
             if unit == 'temp':
-                return(self.temp_unit)
+                return(1) # F
             elif unit == 'dist':
-                return(self.dist_unit)
+                return(1) # Miles
             else:
                 return(None)
 
@@ -1113,19 +1116,33 @@ class teslaEVAccess(teslaAccess):
 
 
     def teslaEV_SetCabinTemps(self, EVid, driverTempC, passergerTempC):
-        logging.debug('teslaEV_AutoCondition {} / {}for {}'.format(driverTempC, passergerTempC, EVid))
+        logging.debug('teslaEV_SetCabinTemps {} / {}for {}'.format(driverTempC, passergerTempC, EVid))
         
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {'driver_temp' : int(driverTempC), 'passenger_temp':int(passergerTempC) }      
-            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/set_temps', payload ) 
-            #temp = r.json()
-            logging.debug('call-API {}'.format( temp['response']['result']))
-            return(temp['response']['result'])
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:    
+                if self.CELCIUS != self.teslaEV_get_gui_info(EVid, 'temp'): # car operates in F
+                    driverTemp = driverTempC*9/5 + 32
+                    passergerTemp = passergerTempC*9/5 + 32
+
+                payload = {'driver_temp' : int(driverTemp), 'passenger_temp':int(passergerTemp) }      
+                code, res = self._teslaEV_send_ev_command(EVid,'/set_temps', payload ) 
+                #temp = r.json()
+                logging.debug('teslaEV_SetCabinTemps-API {}'.format( res['response']['result']))
+                if code in  ['ok']:
+                    logging.debug(code, res['response']['result'])
+                    return(code, res['response']['result'])
+                else:
+                    return(code, res)
+            else:
+                return('error', 'error')
+            #return(res['response']['result'])
+    
         except Exception as e:
-            logging.error('Exception teslaEV_AutoCondition for vehicle id {}: {}'.format(EVid, e))
+            logging.error('Exception teslaEV_SetCabinTemps for vehicle id {}: {}'.format(EVid, e))
             logging.error('Trying to reconnect')
             
             return(False)
