@@ -235,20 +235,14 @@ class teslaEV_ClimateNode(udi_interface.Node):
         query = command.get("query")
         if 'driver.uom4' in query:
             driverTemp    = int(query.get('driver.uom4'))
-            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.FAENHEIT:
-                driverTemp    = int(driverTemp*9/5+32)
         elif 'driver.uom17' in query:
             driverTemp    = int(query.get('driver.uom17'))
-            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.CELCIUS:
-                driverTemp    = int((driverTemp-32)*5/9)
+            driverTemp    = int((driverTemp-32)*5/9)
         if 'passenger.uom4' in query:
             passengerTemp = int(query.get('passenger.uom4'))  
-            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.FAENHEIT:
-                passengerTemp    = int(passengerTemp*9/5+32)
         elif 'passenger.uom17' in query:
             passengerTemp    = int((int(query.get('passenger.uom17'))-32)*5/9)
-            if self.TEV.teslaEV_get_gui_info(self.EVid, 'temp') ==  self.CELCIUS:
-                driverTemp    = int((passengerTemp-32)*5/9)
+            driverTemp    = int((passengerTemp-32)*5/9)
         self.TEV.teslaEV_update_connection_status(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            

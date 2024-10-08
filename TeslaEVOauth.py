@@ -1124,11 +1124,8 @@ class teslaEVAccess(teslaAccess):
             if state in ['asleep']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
-                if self.CELCIUS != self.teslaEV_get_gui_info(EVid, 'temp'): # car operates in F
-                    driverTemp = driverTempC*9/5 + 32
-                    passergerTemp = passergerTempC*9/5 + 32
 
-                payload = {'driver_temp' : int(driverTemp), 'passenger_temp':int(passergerTemp) }      
+                payload = {'driver_temp' : int(driverTempC), 'passenger_temp':int(passergerTempC) }      
                 code, res = self._teslaEV_send_ev_command(EVid,'/set_temps', payload ) 
                 #temp = r.json()
                 logging.debug('teslaEV_SetCabinTemps-API {}'.format( res['response']['result']))
