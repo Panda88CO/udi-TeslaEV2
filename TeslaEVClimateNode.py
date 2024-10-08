@@ -236,13 +236,11 @@ class teslaEV_ClimateNode(udi_interface.Node):
         if 'driver.uom4' in query:
             driverTemp    = int(query.get('driver.uom4'))
         elif 'driver.uom17' in query:
-            driverTemp    = int(query.get('driver.uom17'))
-            driverTemp    = int((driverTemp-32)*5/9)
+            driverTemp    = int((int(query.get('driver.uom17'))-32)*5/9)
         if 'passenger.uom4' in query:
             passengerTemp = int(query.get('passenger.uom4'))  
         elif 'passenger.uom17' in query:
             passengerTemp    = int((int(query.get('passenger.uom17'))-32)*5/9)
-            driverTemp    = int((passengerTemp-32)*5/9)
         self.TEV.teslaEV_update_connection_status(self.EVid) 
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
