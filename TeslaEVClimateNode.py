@@ -232,6 +232,8 @@ class teslaEV_ClimateNode(udi_interface.Node):
     def evSetCabinTemp (self, command):
         logging.info('evSetCabinTemp called') 
         #cabinTemp = float(command.get('value'))
+        driverTemp = None
+        passengerTemp = None
         query = command.get("query")
         if 'driver.uom4' in query:
             driverTemp    = int(query.get('driver.uom4'))
@@ -245,7 +247,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
         if self.TEV.teslaEV_GetCarState(self.EVid) == 'asleep':
             if self.TEV.teslaEV_Wake(self.EVid):            
                 self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
-        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online':
+        if self.TEV.teslaEV_GetCarState(self.EVid) == 'online' and passengerTemp is not None  and driverTemp is not None :
             if self.TEV.teslaEV_SetCabinTemps(self.EVid, driverTemp, passengerTemp):
                 self.setDriverTemp( 'GV3', driverTemp )
                 self.setDriverTemp( 'GV4', passengerTemp )
