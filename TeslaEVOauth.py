@@ -236,7 +236,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug('vehicel data: {} {}'.format(code, res))
         return(code, res)
 
-    def _teslaEV_send_ev_command(self, EVid , command, params={}):
+    def _teslaEV_send_ev_command(self, EVid , command, params=None):
         logging.debug('send_ev_command - command  {} - params: {} - {}'.format(command, params, EVid))
         payload = params
         code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command'+str(command),  payload )

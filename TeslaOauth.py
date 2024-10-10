@@ -258,7 +258,7 @@ class teslaAccess(OAuth):
 
 
     # Call your external service API
-    def _callApi(self, method='GET', url=None, body={}):
+    def _callApi(self, method='GET', url=None, body=None):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
@@ -288,20 +288,21 @@ class teslaAccess(OAuth):
         headers = {
             #'Content-Type': 'application/json',
             'Authorization': f'Bearer { portalToken }',
-            #'Authorization': portalToken,
             'X-tesla-auth' : accessToken
             
         }
 
-        if method in [ 'PATCH', 'POST'] and body is None:
-            logging.error(f"body is required when using { method } { completeUrl }")
-        else:
+        if method in [ 'PATCH', 'POST']:
             headers = {
                 'Content-Type': 'application/json',
                 'Authorization': f'Bearer { portalToken }',
                 'X-tesla-auth' : accessToken
-            }   
-            payload = json.dumps(body)
+            }
+            if body is None:
+                payload = {}
+            else:
+                #payload = json.dumps(body)
+                payload = body
 
         logging.debug(' call info url={}, header {}, body ={}'.format(completeUrl, headers, payload))
 
