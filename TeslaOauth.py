@@ -299,7 +299,6 @@ class teslaAccess(OAuth):
             headers = {
                 'Content-Type': 'application/json',
                 'Authorization': f'Bearer { portalToken }',
-                #'Authorization': portalToken,
                 'X-tesla-auth' : accessToken
             }   
             payload = json.dumps(body)
