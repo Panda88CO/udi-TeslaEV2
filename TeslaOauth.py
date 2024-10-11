@@ -262,6 +262,7 @@ class teslaAccess(OAuth):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
+            payload = body
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
             portalToken = self.getPortalToken(self.portalId, self.portal_secret)
