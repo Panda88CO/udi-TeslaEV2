@@ -1121,7 +1121,7 @@ class teslaEVAccess(teslaAccess):
                 payload = {'driver_temp' : int(driverTempC), 'passenger_temp':int(passergerTempC) }      
                 code, res = self._teslaEV_send_ev_command(EVid,'/set_temps', payload ) 
                 #temp = r.json()
-                logging.debug('teslaEV_SetCabinTemps-API {}'.format( res['response']['result']))
+                logging.debug('teslaEV_SetCabinTemps-API {} {}'.format(code, res))
                 if code in  ['ok']:
                     logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
