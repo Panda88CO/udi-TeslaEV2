@@ -1123,7 +1123,7 @@ class teslaEVAccess(teslaAccess):
                 #temp = r.json()
                 logging.debug('teslaEV_SetCabinTemps-API {} {}'.format(code, res))
                 if code in  ['ok']:
-                    logging.debug(code, res['response']['result'])
+                    logging.debug('res ok: {} {}'.format(code, res['response']['result']))
                     return(code, res['response']['result'])
                 else:
                     logging.error('Non 200 response: {} {}'.format(code, res))
