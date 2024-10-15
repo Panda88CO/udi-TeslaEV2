@@ -262,6 +262,7 @@ class teslaAccess(OAuth):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
+            payload = body
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
             portalToken = self.getPortalToken(self.portalId, self.portal_secret)
@@ -317,7 +318,7 @@ class teslaAccess(OAuth):
                 response = requests.post(completeUrl, headers=headers, json=payload)
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
-            #logging.debug('API response: {}'.format(response))
+            logging.debug('request response: {}'.format(response))
             logging.debug('API response1: {}'.format(response.status_code))
             
             

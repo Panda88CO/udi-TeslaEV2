@@ -264,8 +264,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         sound = int(float(command.get('value')))
         if sound == 0 or sound == 2000: 
             code, res = self.TEV.teslaEV_PlaySound(self.EVid, sound)
-
-        self.EV_setDriver('GV21', self.command_res2ISY(code))
+            self.EV_setDriver('GV21', self.command_res2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 
 
@@ -284,7 +283,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'stop')                  
         else:
             logging.error('Wrong command for evSunroof: {}'.format(sunroofCtrl))
-    
+            code = 'error'
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 
