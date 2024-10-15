@@ -318,8 +318,8 @@ class teslaAccess(OAuth):
                 response = requests.post(completeUrl, headers=headers, json=payload)
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
-            logging.debug('request response: {}'.format(response))
-            logging.debug('API response1: {}'.format(response.status_code))
+            #logging.debug('request response: {}'.format(response))
+            #logging.debug('API response1: {}'.format(response.status_code))
             
             
             response.raise_for_status()

@@ -341,6 +341,7 @@ class teslaEVAccess(teslaAccess):
 
     def process_EV_data(self, carData):
         logging.debug('process_EV_data')
+        temp = {}
         if 'response' in carData:
             if 'version' in carData['response']:
                 if carData['response']['version'] == 9: # latest release
@@ -737,47 +738,29 @@ class teslaEVAccess(teslaAccess):
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            #payload = {}      
-            if ctrl == 'open':  
-
-                code, temp = self._teslaEV_send_ev_command(EVid,'/charge_port_door_open') 
-            elif ctrl == 'close':
-                code, temp = self._teslaEV_send_ev_command(EVid,'/charge_port_door_close') 
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:
+                if ctrl == 'open':
+                    code, res = self._teslaEV_send_ev_command(EVid,'/charge_port_door_open') 
+                elif ctrl == 'close':
+                    code, res = self._teslaEV_send_ev_command(EVid,'/charge_port_door_close') 
+                else:
+                    return('error', 'unknown command sent {}'.format(ctrl))
+                if code in  ['ok']:
+                    #logging.debug('res ok: {} {}'.format(code, res['response']['result']))
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
             else:
-                logging.debug('Unknown teslaEV_ChargePort command passed for vehicle id (open, close) {}: {}'.format(EVid, ctrl))
-                return(False)
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
-        except Exception as e:
-            logging.error('Exception teslaEV_ChargePort for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            return(False)
-
+                return('error', 'error')
+            #return(res['response']['result'])
     
-    '''
-    def teslaEV_ChargePort(self, EVid, ctrl):
-        logging.debug('teslaEV_ChargePort{} for {}'.format(ctrl, EVid))
- 
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
-        try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            #payload = {}      
-            if ctrl == 'open':  
-                code, temp = self._teslaEV_send_ev_command(EVid,'/charge_port_door_open') 
-            elif ctrl == 'close':
-                code, temp = self._teslaEV_send_ev_command(EVid, '/charge_port_door_close') 
-            else:
-                logging.debug('Unknown teslaEV_ChargePort command passed for vehicle id (open, close) {}: {}'.format(EVid, ctrl))
-                return(False)
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
         except Exception as e:
             logging.error('Exception teslaEV_ChargePort for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            return(False)
-    '''
+            return('error', e)
 
     def teslaEV_Charging(self, EVid, ctrl):
         logging.debug('teslaEV_Charging {} for {}'.format(ctrl, EVid))
@@ -787,66 +770,87 @@ class teslaEVAccess(teslaAccess):
         try:
             #s.auth = OAuth2BearerToken(S['access_token'])    
             #payload = {}      
-
-            if ctrl == 'start':  
-                code, temp = self._teslaEV_send_ev_command(EVid, '/charge_start' )
-            elif ctrl == 'stop':
-                code, temp = self._teslaEV_send_ev_command(EVid, '/charge_stop' )
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:
+                if ctrl == 'start':  
+                    code, res = self._teslaEV_send_ev_command(EVid, '/charge_start' )
+                elif ctrl == 'stop':
+                    code, res = self._teslaEV_send_ev_command(EVid, '/charge_stop' )
+                else:
+                    logging.debug('Unknown teslaEV_Charging command passed for vehicle id (start, stop) {}: {}'.format(EVid, ctrl))
+                    return('error', 'unknown command sent {}'.format(ctrl))
+                if code in  ['ok']:
+                    #logging.debug('res ok: {} {}'.format(code, res['response']['result']))
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
             else:
-                logging.debug('Unknown teslaEV_Charging command passed for vehicle id (start, stop) {}: {}'.format(EVid, ctrl))
-                return('error', {})
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(code, temp['response']['result'])
+                return('error', 'error')
+
         except Exception as e:
-            logging.error('Exception teslaEV_AteslaEV_ChargingutoCondition for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(False)
+            logging.error('Exception teslaEV_AteslaEV_ChargingutoCondition for vehicle id {}: {}'.format(EVid, e))            
+            return('error', e)
+
 
 
     def teslaEV_SetChargeLimit (self, EVid, limit):
         logging.debug('teslaEV_SetChargeLimit {} for {}'.format(limit, EVid))
-       
-        if int(limit) > 100 or int(limit) < 0:
-            logging.error('Invalid seat heat level passed (0-100%) : {}'.format(limit))
-            return(False)
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
         try:
-            payload = { 'percent':int(limit)}    
-            #s.auth = OAuth2BearerToken(S['access_token'])
-            #logging.debug('POST: {} {}'.format(self.TESLA_URL + self.API+ '/vehicles/'+str(EVid) +'/command/set_charge_limit', payload ))
-            code, temp = self._teslaEV_send_ev_command(EVid, '/set_charge_limit',  payload ) 
-            #logging.debug('teslaEV_SetChargeLimit r :'.format(r))
-            #temp = r.json()
-            logging.debug('teslaEV_SetChargeLimit temp :'.format(temp))
-            return(temp['response']['result'])
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:    
+                if int(limit) > 100 or int(limit) < 0:
+                    logging.error('Invalid seat heat level passed (0-100%) : {}'.format(limit))
+                    return('error', 'Illegal range passed')
+                #S = self.teslaApi.teslaConnect()
+                #with requests.Session() as s:
+  
+                payload = { 'percent':int(limit)}    
+                code, res = self._teslaEV_send_ev_command(EVid, '/set_charge_limit',  payload ) 
+                if code in  ['ok']:
+                    #logging.debug('res ok: {} {}'.format(code, res['response']['result']))
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
+            else:
+                return('error', 'error')
         except Exception as e:
-            logging.error('Exception teslaEV_SetChargeLimit for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(False)
+            logging.error('Exception teslaEV_SetChargeLimit for vehicle id {}: {}'.format(EVid, e))      
+            return('error', e)
+
+
 
     def teslaEV_SetChargeLimitAmps (self, EVid, limit):
         logging.debug('teslaEV_SetChargeLimitAmps {} for {} -'.format(limit, EVid))
-       
-        if limit > 300 or limit < 0:
-            logging.error('Invalid seat heat level passed (0-300A) : {}'.format(limit))
-            return(False)
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
         try:
-            payload = { 'charging_amps': int(limit)}    
-            #s.auth = OAuth2BearerToken(S['access_token'])
-            code, temp = self._teslaEV_send_ev_command(EVid, '/set_charging_amps', payload ) 
-            #temp = r.json()
-            return(temp['response']['result'])
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:    
+       
+                if limit > 300 or limit < 0:
+                    logging.error('Invalid seat heat level passed (0-300A) : {}'.format(limit))
+                    return('error', 'Illegal range passed')
+                payload = { 'charging_amps': int(limit)}    
+                code, res = self._teslaEV_send_ev_command(EVid, '/set_charging_amps', payload ) 
+                if code in  ['ok']:
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
+            else:
+                return('error', 'error')
+
         except Exception as e:
             logging.error('Exception teslaEV_SetChargeLimitAmps for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
+
             
-            return(False)
+            return('error', e)
 
 
 
@@ -1030,54 +1034,59 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_Windows(self, EVid, cmd):
         logging.debug('teslaEV_Windows {} for {}'.format(cmd, EVid))
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            if cmd != 'vent' and cmd != 'close':
-                logging.error('Wrong command passed to (vent or close) to teslaEV_Windows: {} '.format(cmd))
-                return(False)
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
-                        'lon':self.carInfo[EVid]['drive_state']['longitude'],
-                        'command': cmd}        
-            code, temp = self._teslaEV_send_ev_command(EVid, '/window_control', payload ) 
-            #temp = r.json()
-            if code == 'ok':
-                logging.debug(temp['response']['result'])
-                return(temp['response']['result'])
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:    
+                if cmd != 'vent' and cmd != 'close':
+                    logging.error('Wrong command passed (vent or close) to teslaEV_Windows: {} '.format(cmd))
+                    return('error', 'Wrong parameter passed: {}'.format(cmd))
+                payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
+                            'lon':self.carInfo[EVid]['drive_state']['longitude'],
+                            'command': cmd}        
+                code, res = self._teslaEV_send_ev_command(EVid, '/window_control', payload ) 
+
+                if code in  ['ok']:
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
             else:
-                return(None)
+                return('error', 'error')
         except Exception as e:
-            logging.error('Exception teslaEV_Windows for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')            
-            return(False)
+            logging.error('Exception teslaEV_Windows for vehicle id {}: {}'.format(EVid, e))       
+            return('error', e)
 
 
     def teslaEV_SunRoof(self, EVid, cmd):
         logging.debug('teslaEV_SunRoof {} for {}'.format(cmd, EVid))
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            if cmd not in ['vent','close', 'stop'] :
-                logging.error('Wrong command passed to (vent or close) to teslaEV_SunRoof: {} '.format(cmd))
-                return('error', 'wrong command')
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = { 'state': cmd}     
-            code, res = self._teslaEV_send_ev_command(EVid, '/sun_roof_control', payload )    
-  
-            logging.debug('teslaEV_SunRoof {} - {}'.format(code, res))
-    
-            if code in ['ok']:
-                logging.debug(code, res['response']['result'])
-                return(code, res['response']['result'])
-            else:
-                return(code, res)
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:                
+                if cmd not in ['vent','close', 'stop'] :
+                    logging.error('Wrong command passed to (vent or close) to teslaEV_SunRoof: {} '.format(cmd))
+                    return('error', 'Wrong parameter passed: {}'.format(cmd))
+                #s.auth = OAuth2BearerToken(S['access_token'])    
+                payload = { 'state': cmd}     
+                code, res = self._teslaEV_send_ev_command(EVid, '/sun_roof_control', payload )    
 
     
-        except Exception as e:
-            logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
+                if code in  ['ok']:
+                    #logging.debug('res ok: {} {}'.format(code, res['response']['result']))
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
+            else:
+                return('error', 'error')
             
+        except Exception as e:
+            logging.error('Exception teslaEV_SunRoof for vehicle id {}: {}'.format(EVid, e))            
             return('error', e)
 
 
@@ -1085,33 +1094,38 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_AutoCondition(self, EVid, ctrl):
         logging.debug('teslaEV_AutoCondition {} for {}'.format(ctrl, EVid))
-        
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            payload = {}      
-            if ctrl == 'start':  
-                code, temp = self._teslaEV_send_ev_command(EVid, '/auto_conditioning_start',  payload ) 
-            elif ctrl == 'stop':
-                code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/auto_conditioning_stop',  payload ) 
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:    
+                if ctrl == 'start':  
+                    code, res = self._teslaEV_send_ev_command(EVid, '/auto_conditioning_start') 
+                elif ctrl == 'stop':
+                    code, res = self._teslaEV_send_ev_command(EVid, '/auto_conditioning_stop') 
+                else:
+                    logging.debug('Unknown AutoCondition command passed for vehicle id {}: {}'.format(EVid, ctrl))
+                    return('error', 'Wrong parameter passed: {}'.format(ctrl))
+                if code in  ['ok']:
+                    #logging.debug('res ok: {} {}'.format(code, res['response']['result']))
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
             else:
-                logging.debug('Unknown AutoCondition command passed for vehicle id {}: {}'.format(EVid, ctrl))
-                return(False)
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+                return('error', 'error')
+
         except Exception as e:
             logging.error('Exception teslaEV_AutoCondition for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
+            return('error', e)
             
-            return(False)
+
 
 
     def teslaEV_SetCabinTemps(self, EVid, driverTempC, passergerTempC):
         logging.debug('teslaEV_SetCabinTemps {} / {}for {}'.format(driverTempC, passergerTempC, EVid))
-        
-
+    
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:
@@ -1120,109 +1134,123 @@ class teslaEVAccess(teslaAccess):
 
                 payload = {'driver_temp' : int(driverTempC), 'passenger_temp':int(passergerTempC) }      
                 code, res = self._teslaEV_send_ev_command(EVid,'/set_temps', payload ) 
-                #temp = r.json()
-                logging.debug('teslaEV_SetCabinTemps-API {} {}'.format(code, res))
                 if code in  ['ok']:
-                    logging.debug('res ok: {} {}'.format(code, res['response']['result']))
                     return(code, res['response']['result'])
                 else:
                     logging.error('Non 200 response: {} {}'.format(code, res))
                     return(code, res)
             else:
                 return('error', 'error')
-            #return(res['response']['result'])
+
     
         except Exception as e:
-            logging.error('Exception teslaEV_SetCabinTemps for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(False)
+            logging.error('Exception teslaEV_SetCabinTemps for vehicle id {}: {}'.format(EVid, e))           
+            return('error', e)
 
 
     def teslaEV_DefrostMax(self, EVid, ctrl):
         logging.debug('teslaEV_DefrostMax {} for {}'.format(ctrl, EVid))
  
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
         try:
-            payload = {}    
-            if ctrl == 'on':
-                payload = {'on':True,'manual_override':True }  
-            elif  ctrl == 'off':
-                payload = {'on':False,'manual_override':True }  
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:                
+                payload = {}    
+                if ctrl == 'on':
+                    payload = {'on':True,'manual_override':True }  
+                elif  ctrl == 'off':
+                    payload = {'on':False,'manual_override':True }  
+                else:
+                    logging.error('Wrong parameter for teslaEV_DefrostMax (on/off) for vehicle id {}: {}'.format(EVid, ctrl))
+                    return(False)
+      
+                code, res = self._teslaEV_send_ev_command(EVid, '/set_preconditioning_max', payload ) 
+                if code in  ['ok']:
+                    #logging.debug('res ok: {} {}'.format(code, res['response']['result']))
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
             else:
-                logging.error('Wrong parameter for teslaEV_DefrostMax (on/off) for vehicle id {}: {}'.format(EVid, ctrl))
-                return(False)
-            #s.auth = OAuth2BearerToken(S['access_token'])
-            code, temp = self._teslaEV_send_ev_command(EVid, '/set_preconditioning_max', payload ) 
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+                return('error', 'error')
+
         except Exception as e:
-            logging.error('Exception teslaEV_AutoCondition for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(False)
+            logging.error('Exception teslaEV_DefrostMax for vehicle id {}: {}'.format(EVid, e))
+
+            return('error', e)
 
 
     def teslaEV_SetSeatHeating (self, EVid, seat, levelHeat):
         logging.debug('teslaEV_SetSeatHeating {}, {} for {}'.format(levelHeat, seat, EVid))
-        seats = [0, 1, 2, 4, 5 ] 
-        rearSeats =  [2, 4, 5 ] 
-        if int(levelHeat) > 3 or int(levelHeat) < 0:
-            logging.error('Invalid seat heat level passed (0-3) : {}'.format(levelHeat))
-            return(False)
-        if seat not in seats: 
-            logging.error('Invalid seatpassed 0,1, 2, 4, 5 : {}'.format(seat))
-            return(False)  
-        elif not self.rearSeatHeat and seat in rearSeats:
-            logging.error('Rear seat heat not supported on this car')
-            return (False)  
-
-        #S = self.teslaApi.teslaConnect()
-    #with requests.Session() as s:
         try:
-            payload = { 'heater': seat, 'level':int(levelHeat)}    
-            #s.auth = OAuth2BearerToken(S['access_token'])
-            code, temp = self._callApi('POST', '/vehicles/'+str(EVid) +'/command/remote_seat_heater_request', payload ) 
-            #temp = r.json()
-            logging.debug(temp['response']['result'])
-            return(temp['response']['result'])
+            code, state = self.teslaEV_update_connection_status(EVid) 
+            if state in ['asleep']:
+                code, state = self._teslaEV_wake_ev(EVid)
+            if state in ['online']:    
+
+                seats = [0, 1, 2, 4, 5 ] 
+                rearSeats =  [2, 4, 5 ] 
+                if int(levelHeat) > 3 or int(levelHeat) < 0:
+                    logging.error('Invalid seat heat level passed (0-3) : {}'.format(levelHeat))
+                    return('error', 'Invalid seat heat level passed (0-3) : {}'.format(levelHeat))
+                if seat not in seats: 
+                    logging.error('Invalid seatpassed 0,1, 2, 4, 5 : {}'.format(seat))
+                    return('error','Invalid seatpassed 0,1, 2, 4, 5 : {}'.format(seat))  
+                elif not self.rearSeatHeat and seat in rearSeats:
+                    logging.error('Rear seat heat not supported on this car')
+                    return ('error', 'Rear seat heat not supported on this car')  
+
+                payload = { 'heater': seat, 'level':int(levelHeat)}    
+                code, res = self._teslaEV_send_ev_command(EVid, '/remote_seat_heater_request', payload ) 
+                if code in  ['ok']:
+                    return(code, res['response']['result'])
+                else:
+                    logging.error('Non 200 response: {} {}'.format(code, res))
+                    return(code, res)
+            else:
+                return('error', 'error')
+
         except Exception as e:
             logging.error('Exception teslaEV_SetSeatHeating for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
-            return(False)
+            return('error', e)
 
 
     def teslaEV_SteeringWheelHeat(self, EVid, ctrl):
         logging.debug('teslaEV_SteeringWheelHeat {} for {}'.format(ctrl, EVid))
-        if self.steeringWheelHeatDetected:
-            #S = self.teslaApi.teslaConnect()
-            #with requests.Session() as s:
-            try:
-                payload = {}    
-                if ctrl == 'on':
-                    payload = {'on':True}  
-                elif  ctrl == 'off':
-                    payload = {'on':False}  
-                else:
-                    logging.error('Wrong paralf.carInfo[id]meter for teslaEV_SteeringWheelHeat (on/off) for vehicle id {}: {}'.format(EVid, ctrl))
-                    return(False)
-                #s.auth = OAuth2BearerToken(S['access_token'])
-                code, temp = self._teslaEV_send_ev_command(EVid, '/remote_steering_wheel_heater_request', payload ) 
-                #temp = r.json()
-                logging.debug(temp['response']['result'])
-                return(temp['response']['result'])
-            except Exception as e:
-                logging.error('Exception teslaEV_SteeringWheelHeat for vehicle id {}: {}'.format(EVid, e))
-                logging.error('Trying to reconnect')
-                
-                return(False)
-        else:
-            logging.error('Steering Wheet does not seem to support heating')
-            return(False)
 
+        try:
+            if self.steeringWheelHeatDetected:
+                code, state = self.teslaEV_update_connection_status(EVid) 
+                if state in ['asleep']:
+                    code, state = self._teslaEV_wake_ev(EVid)
+                if state in ['online']:    
+
+                    payload = {}    
+                    if ctrl == 'on':
+                        payload = {'on':True}  
+                    elif  ctrl == 'off':
+                        payload = {'on':False}  
+                    else:
+                        logging.error('Wrong paralf.carInfo[id]meter for teslaEV_SteeringWheelHeat (on/off) for vehicle id {}: {}'.format(EVid, ctrl))
+                        return('error', 'Wrong parameter passed: {}'.format(ctrl))
+
+                    code, res = self._teslaEV_send_ev_command(EVid, '/remote_steering_wheel_heater_request', payload ) 
+                    if code in  ['ok']:
+   
+                        return(code, res['response']['result'])
+                    else:
+                        logging.error('Non 200 response: {} {}'.format(code, res))
+                        return(code, res)
+                else:
+                    return('error', 'error')
+
+            else:
+                logging.error('Steering Wheet does not seem to support heating')
+                return('error', 'Steering Wheet does not seem to support heating')
+        except Exception as e:
+            logging.error('Exception teslaEV_SteeringWheelHeat for vehicle id {}: {}'.format(EVid, e))
+            return('error', e)
 
 ####################
 # Status Data
@@ -1448,7 +1476,6 @@ class teslaEVAccess(teslaAccess):
                 return(code, state)
         except Exception as e:
             logging.error('Exception teslaEV_FlashLight for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
             return('error', e)
 
 
@@ -1475,18 +1502,15 @@ class teslaEVAccess(teslaAccess):
                 return('error', state)
     
         except Exception as e:
-            logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
+            logging.error('Exception teslaEV_HonkHorn for vehicle id {}: {}'.format(EVid, e))           
             return('error', e)
 
 
     def teslaEV_PlaySound(self, EVid, sound):
         logging.debug('teslaEV_PlaySound for {}'.format(EVid))
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
+
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:             
                 code, state = self._teslaEV_wake_ev(EVid)
@@ -1505,8 +1529,6 @@ class teslaEVAccess(teslaAccess):
     
         except Exception as e:
             logging.error('Exception teslaEV_PlaySound for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')
-            
             return('error', e)
 
 # Needs to be updated 
@@ -1515,7 +1537,6 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_Doors {} for {}'.format(ctrl, EVid))
 
         try:
-
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:             
                 code, state = self._teslaEV_wake_ev(EVid)
@@ -1526,9 +1547,8 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_send_ev_command(EVid, '/door_lock' )
                 else:
                     logging.debug('Unknown door control passed: {}'.format(ctrl))
-                    return('error', 'error')
+                    return('error', 'Unknown door control passed: {}'.format(ctrl))
                 if code in ['ok']:
-                    logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
                 else:
                     return(code, state)
@@ -1545,7 +1565,6 @@ class teslaEVAccess(teslaAccess):
         logging.debug('teslaEV_Doors {} for {}'.format(frunkTrunk, EVid))
         
         try:
-
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:             
                 code, state = self._teslaEV_wake_ev(EVid)
@@ -1556,44 +1575,36 @@ class teslaEVAccess(teslaAccess):
                         cmd = 'rear' 
                 else:
                     logging.debug('Unknown trunk command passed: {}'.format(cmd))
-                    return(False)
+                    return('error', 'Unknown trunk command passed: {}'.format(cmd))
                 payload = {'which_trunk':cmd}      
                 code, res = self._teslaEV_send_ev_command(EVid, '/actuate_trunk', payload ) 
 
-                logging.debug(code, res)
                 if code in ['ok']:
-                    logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
                 else:
                     return(code, state)
             else:
                 return('error', state)
-            
-        
+                    
         except Exception as e:
             logging.error('Exception teslaEV_TrunkFrunk for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')            
             return('error', e)
 
 
     def teslaEV_HomeLink(self, EVid):
         logging.debug('teslaEV_HomeLink for {}'.format(EVid))
 
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
+
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:             
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
             
                 payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
-                        'lon':self.carInfo[EVid]['drive_state']['longitude']}   
-                
+                        'lon':self.carInfo[EVid]['drive_state']['longitude']}    
                 code, res = self._teslaEV_send_ev_command(EVid, '/trigger_homelink', payload ) 
-
-                logging.debug(code, res)
                 if code in ['ok']:
                     logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
@@ -1604,6 +1615,6 @@ class teslaEVAccess(teslaAccess):
 
         except Exception as e:
             logging.error('Exception teslaEV_HomeLink for vehicle id {}: {}'.format(EVid, e))
-            logging.error('Trying to reconnect')            
+       
             return('error', e)
 
