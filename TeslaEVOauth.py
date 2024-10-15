@@ -1126,7 +1126,7 @@ class teslaEVAccess(teslaAccess):
                     logging.debug(code, res['response']['result'])
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {} {}'.format(code, res)))
+                    logging.error('Non 200 response: {} {}'.format(code, res))
                     return(code, res)
             else:
                 return('error', 'error')
