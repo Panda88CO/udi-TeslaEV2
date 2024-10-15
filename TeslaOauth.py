@@ -302,7 +302,8 @@ class teslaAccess(OAuth):
                 'Authorization': f'Bearer { portalToken }',
                 'X-tesla-auth' : accessToken
             }   
-            payload = json.dumps(body)
+            #payload = json.dumps(body)
+            payload = body
 
         logging.debug(' call info url={}, header {}, body ={}'.format(completeUrl, headers, payload))
 
