@@ -304,14 +304,6 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV21', self.code2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 
-        #if self.TEV.teslaEV_GetSunRoofPercent(self.EVid) != None:
-            #logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofPercent(self.EVid)))
-            #self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
-        #elif self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
-            #logging.debug('GV10: {}'.format(self.TEV.teslaEV_GetSunRoofState(self.EVid)))
-            #self.EV_setDriver('GV10', self.openClose2ISY(self.TEV.teslaEV_GetSunRoofState(self.EVid)), 25)
-
-        #self.forceUpdateISYdrivers()
 
     def evOpenFrunk (self, command):
         logging.info('evOpenFrunk called')
@@ -326,14 +318,9 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV21', self.code2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 
-        #self.forceUpdateISYdrivers()
-        #self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), True, True)
 
     def evOpenTrunk (self, command):
         logging.info('evOpenTrunk called')   
-        #self.TEV.teslaEV_Wake(self.EVid)        
-                
-     
         code, res = self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Trunk')
         logging.debug('Trunk result {} - {}'.format(code, res))
         if code in ['ok']:
@@ -342,15 +329,12 @@ class teslaEV_StatusNode(udi_interface.Node):
         else:
             logging.info('Not able to send command - EV is not online')
             self.EV_setDriver('GV21', self.code2ISY(code))            
-        #self.forceUpdateISYdrivers()
-        #self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), True, True)
         self.EV_setDriver('GV21', self.command_res2ISY(code))
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)))
 
 
     def evHomelink (self, command):
         logging.info('evHomelink called')
-        #self.TEV.teslaEV_Wake(self.EVid)   
         code, res = self.TEV.teslaEV_HomeLink(self.EVid)
         if code in ['ok']:
              self.EV_setDriver('GV21', self.command_res2ISY(res))
