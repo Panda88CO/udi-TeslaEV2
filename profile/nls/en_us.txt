@@ -80,6 +80,7 @@ CMD_RES-0 = OK
 CMD_RES-1 = API Overload
 CMD_RES-2 = Offline
 CMD_RES-3 = Error
+CMD_RES-4 = Failed
 CMD_RES-99 = Unknown
 
 CMD-nlsevstatus-UPDATE-NAME = Update EV Status
