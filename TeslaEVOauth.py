@@ -52,6 +52,10 @@ class teslaEVAccess(teslaAccess):
         self.EndpointCN= 'https://fleet-api.prd.cn.vn.cloud.tesla.cn'
         self.api  = '/api/1'
         self.time_start = int(time.time())
+        self.update_time = {}
+        #self.time_climate = self.time_start
+        #self.time_charge = self.time_start
+        #self.time_status = self.time_start
         #self.state = secrets.token_hex(16)
         self.region = 'NA'
         self.handleCustomParamsDone = False
@@ -189,7 +193,11 @@ class teslaEVAccess(teslaAccess):
                         #self.ev_list.append(site['id'])
                         self.ev_list.append(site['vin']) # vin needed to send commands
                         self.carInfo[site['vin']] = site
-
+                        if site['vin'] not in self.update_time:
+                            self.update_time[site['vin']] = {}
+                            self.update_time[site['vin']]['climate'] = self.time_start
+                            self.update_time[site['vin']]['charge'] = self.time_start
+                            self.update_time[site['vin']]['status'] = self.time_start
             return(code, EVs)
         except Exception as e:
             logging.error('teslaEV_get_vehicles Exception : {}'.format(e))
@@ -633,9 +641,10 @@ class teslaEVAccess(teslaAccess):
             timeNow = int(time.time())
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['charge_state']['timestamp']/1000 ))
             if 'timestamp' in self.carInfo[EVid]['charge_state']:
-                return(int(timeNow - float(self.carInfo[EVid]['charge_state']['timestamp']/1000)))
+                self.update_time[EVid]['charge'] = float(self.carInfo[EVid]['charge_state']['timestamp']/1000)
+                return(int(timeNow - self.update_time[EVid]['charge']))
             else:
-                return(timeNow-self.time_start)
+                return(timeNow-self.update_time[EVid]['charge'] )
         except Exception as e:
             logging.debug('Exception teslaEV_GetTimeSinceLastChargeUpdate - {}'.format(e))
             return(None)  
@@ -909,9 +918,10 @@ class teslaEVAccess(teslaAccess):
             timeNow = int(time.time())
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['climate_state']['timestamp']/1000 ))
             if 'timestamp' in self.carInfo[EVid]['climate_state']:
-                return(int(timeNow - float(self.carInfo[EVid]['climate_state']['timestamp']/1000)))
+                self.update_time[EVid]['climate'] = float(self.carInfo[EVid]['climate_state']['timestamp']/1000)
+                return(int(timeNow - self.update_time[EVid]['climate']))
             else:
-                return(timeNow - self.time_start)
+                return(timeNow - self.update_time[EVid]['climate'])
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastClimateUpdate - {}'.format(e))
             return(None)
@@ -1334,9 +1344,10 @@ class teslaEVAccess(teslaAccess):
             timeNow = int(time.time())
             logging.debug('Time Now {} Last Update {}'.format(timeNow,self.carInfo[EVid]['vehicle_state']['timestamp']/1000 ))
             if 'timestamp' in self.carInfo[EVid]['vehicle_state']:
-                return(int(timeNow - float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)))
+                self.update_time[EVid]['status'] = float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)
+                return(int(timeNow - self.update_time[EVid]['status'] ))
             else:
-                return(timeNow - self.time_start)
+                return(timeNow - self.update_time[EVid]['status'])
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastStatusUpdate - {}'.format(e))
             return(None)
