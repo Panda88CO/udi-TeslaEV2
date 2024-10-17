@@ -66,7 +66,8 @@ class teslaEVAccess(teslaAccess):
         self.KM = 0
         #self.gui_temp_unit = None
         #self.gui_dist_unit = None
-
+        self.temp_unit = 0
+        self.dist_unit = 1
         self.carInfo = {}
         self.carStateList = ['online', 'offline', 'aleep', 'unknown', 'error']
         self.carState = 'Unknown'
@@ -475,7 +476,7 @@ class teslaEVAccess(teslaAccess):
             return(float(timeMinimum))
         except Exception as e:
             logging.debug('Exception teslaEV_GetTimeSinceLastCarUpdate - {}'.format(e))
-            return(None)
+            return(0)
 
 ####################
 # Charge Data
@@ -924,7 +925,7 @@ class teslaEVAccess(teslaAccess):
                 return(timeNow - self.update_time[EVid]['climate'])
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastClimateUpdate - {}'.format(e))
-            return(None)
+            return(0)
 
     def teslaEV_GetCabinTemp(self, EVid):
         try:
@@ -1350,7 +1351,7 @@ class teslaEVAccess(teslaAccess):
                 return(timeNow - self.update_time[EVid]['status'])
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastStatusUpdate - {}'.format(e))
-            return(None)
+            return(0)
 
     def teslaEV_HomeLinkNearby(self, EVid):
         #logging.debug('teslaEV_HomeLinkNearby: for {}'.format(EVid))
