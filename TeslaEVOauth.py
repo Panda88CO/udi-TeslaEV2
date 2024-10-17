@@ -51,7 +51,7 @@ class teslaEVAccess(teslaAccess):
         self.EndpointEU= 'https://fleet-api.prd.eu.vn.cloud.tesla.com'
         self.EndpointCN= 'https://fleet-api.prd.cn.vn.cloud.tesla.cn'
         self.api  = '/api/1'
-
+        self.time_start = int(time.time())
         #self.state = secrets.token_hex(16)
         self.region = 'NA'
         self.handleCustomParamsDone = False
@@ -459,7 +459,7 @@ class teslaEVAccess(teslaAccess):
         try:
             logging.debug('teslaEV_GetTimeSinceLastCarUpdate')
             timeNow = int(time.time())
-            lst = [self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid), timeNow]
+            lst = [self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid), timeNow-self.time_start]
             logging.debug( 'Time list {}'.format(lst))
             timeMinimum =  min(filter(lambda x: x is not None, lst)) if any(lst) else None
             #timeMinimum = min( self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid) )
@@ -635,7 +635,7 @@ class teslaEVAccess(teslaAccess):
             if 'timestamp' in self.carInfo[EVid]['charge_state']:
                 return(int(timeNow - float(self.carInfo[EVid]['charge_state']['timestamp']/1000)))
             else:
-                return(0)
+                return(timeNow-self.time_start)
         except Exception as e:
             logging.debug('Exception teslaEV_GetTimeSinceLastChargeUpdate - {}'.format(e))
             return(None)  
@@ -911,7 +911,7 @@ class teslaEVAccess(teslaAccess):
             if 'timestamp' in self.carInfo[EVid]['climate_state']:
                 return(int(timeNow - float(self.carInfo[EVid]['climate_state']['timestamp']/1000)))
             else:
-                return(0)
+                return(timeNow - self.time_start)
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastClimateUpdate - {}'.format(e))
             return(None)
@@ -1336,7 +1336,7 @@ class teslaEVAccess(teslaAccess):
             if 'timestamp' in self.carInfo[EVid]['vehicle_state']:
                 return(int(timeNow - float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)))
             else:
-                return(0)
+                return(timeNow - self.time_start)
         except Exception as e:
             logging.debug(' Exception teslaEV_GetTimeSinceLastStatusUpdate - {}'.format(e))
             return(None)
