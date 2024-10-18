@@ -12,6 +12,9 @@ Code is written in Python 3
 
 ## Installation
 Requires PG3x
+To issue commands one must instll an electronic key on the EV
+On you mobile device open  https://tesla.com/_ak/my.isy.io. It should open the tesla app and approve the key install 
+ 
 Run the node server 
 Update configuration parameters - most important is region NA (North America), EU (Europe and most of rest of world), CN (China)
 Set TEMP_UNIT and DIST_UNIT
