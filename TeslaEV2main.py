@@ -160,7 +160,7 @@ class TeslaEVController(udi_interface.Node):
                     else:
                         self.TEVcloud.teslaEV_SetDistUnit(1)
                         self.distUnit = 1
-            logging.debug('distUnit = {}'.format(self.distUnit ))
+            #logging.debug('distUnit = {}'.format(self.distUnit ))
         else:
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'
@@ -178,7 +178,7 @@ class TeslaEVController(udi_interface.Node):
                     else:
                         self.tempUnit = 1
                         self.TEVcloud.teslaEV_SetTempUnit(1)
-            logging.debug('tempUnit = {}'.format(self.tempUnit ))
+            #logging.debug('tempUnit = {}'.format(self.tempUnit ))
         else:
             logging.warning('No TEMP_UNIT')
             self.customParameters['TEMP_UNIT'] = 'C or F'
