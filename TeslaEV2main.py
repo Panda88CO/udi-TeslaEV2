@@ -150,16 +150,17 @@ class TeslaEVController(udi_interface.Node):
             if self.customParameters['DIST_UNIT'] != 'Km or Miless':
                 self.dist_unit = str(self.customParameters['DIST_UNIT'])
 
-                if self.dist_unit.upper() not in ['KM', 'MILES']:
+                if self.dist_unit[0].upper() not in ['K', 'M']:
                     logging.error('Unsupported distance unit {}'.format(self.dist_unit))
                     self.poly.Notices['dist'] = 'Unknown distance Unit specified'
                 else:
-                    if self.dist_unit.upper() == 'KM':
+                    if self.dist_unit[0].upper() == 'K':
                         self.distUnit = 0
                         self.TEVcloud.teslaEV_SetDistUnit(0)
                     else:
                         self.TEVcloud.teslaEV_SetDistUnit(1)
                         self.distUnit = 1
+            logging.debug('distUnit = {}'.format(self.distUnit ))
         else:
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'
@@ -167,16 +168,17 @@ class TeslaEVController(udi_interface.Node):
         if 'TEMP_UNIT' in userParams:
             if self.customParameters['TEMP_UNIT'] != 'C or F':
                 self.temp_unit = str(self.customParameters['TEMP_UNIT'])
-                if self.temp_unit.upper() not in ['C', 'F']:
+                if self.temp_unit[0].upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
                     self.poly.Notices['temp'] = 'Unknown distance Unit specified'
                 else:
-                    if self.temp_unit.upper() == 'C':
+                    if self.temp_unit[0].upper() == 'C':
                         self.tempUnit = 0
                         self.TEVcloud.teslaEV_SetTempUnit(0)
                     else:
                         self.tempUnit = 1
                         self.TEVcloud.teslaEV_SetTempUnit(1)
+            logging.debug('tempUnit = {}'.format(self.tempUnit ))
         else:
             logging.warning('No TEMP_UNIT')
             self.customParameters['TEMP_UNIT'] = 'C or F'
