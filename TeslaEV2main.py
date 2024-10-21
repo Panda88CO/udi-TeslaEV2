@@ -399,12 +399,12 @@ class TeslaEVController(udi_interface.Node):
 
     drivers = [
             {'driver': 'ST', 'value':0, 'uom':2},
-            {'driver': 'GV0', 'value':0, 'uom':25},  
+            {'driver': 'GV0', 'value':0, 'uom':25},
             {'driver': 'GV1', 'value':0, 'uom':107},
-            {'driver': 'GV2', 'value':0, 'uom':25},  
-            {'driver': 'GV3', 'value':0, 'uom':25},     
-                  
+            {'driver': 'GV2', 'value':0, 'uom':25},
+            {'driver': 'GV3', 'value':0, 'uom':25},
             ]
+    
             # ST - node started
             # GV0 Access to TeslaApi
             # GV1 Number of EVs

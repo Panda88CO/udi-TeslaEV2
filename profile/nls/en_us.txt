@@ -2,7 +2,6 @@ ND-controller-NAME = Tesla EV Info
 ND-controller-ICON = EnergyMonitor
 CMD-nlscontroller-UPDATE-NAME = Update System Data
 ST-nlscontroller-ST-NAME = Controller Connected
-
 ST-nlscontroller-GV0-NAME = Connected to Tesla Cloud
 API-0 = False
 API-1 = True

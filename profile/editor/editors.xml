@@ -175,7 +175,7 @@
   </editor>
 
   <editor id = "T_UNIT" > 
-     <range  uom="25" subset="0-2" nls="T_UNIT"  />  
+     <range  uom="25" subset="0-1" nls="T_UNIT"  />  
   </editor>
 
    <editor id = "D_UNIT" > 
