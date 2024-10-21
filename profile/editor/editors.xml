@@ -9,6 +9,7 @@
 
   <editor id = "DURATION_H" > 
      <range  uom="20"  min="0" max="1000" prec="2" />
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor> 
 
   <editor id = "NBREVS" > 
@@ -24,22 +25,28 @@
   </editor>
   
   <editor id = "NUMBER" > 
-     <range  uom="25" subset="0-3,99" nls="NUMBER"/>
+     <range  uom="25" subset="0-3,98,99" nls="NUMBER"/>
   </editor>
   
 
   <editor id = "BOOLSTATE" > 
-     <range  uom="25" subset="0-1,99" nls="BOOLSTATE"/>
+     <range  uom="25" subset="0-1,98,99" nls="BOOLSTATE"/>
   </editor> 
   
+ <editor id = "BOOLOCKLSTATE" > 
+     <range  uom="25" subset="0-1,98,99" nls="LOCKSTATE"/>
+  </editor> 
+
   <editor id = "ODOMETER" > 
       <range  uom="83" min="0" max="999999" prec="1" />
       <range  uom="116" min="0" max="999999" prec="1" />
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor>
   
    <editor id = "DISTANCE" > 
       <range  uom="83" min="0" max="800" prec="0" />
       <range  uom="116" min="0" max="500" prec="0" />
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor>
 
   <editor id = "WINDOW" > 
@@ -48,6 +55,10 @@
 
    <editor id = "WINDOWCTRL" > 
      <range  uom="25" subset="0-1" nls="WINDOWCTRL" />
+  </editor>
+
+   <editor id = "SOUNDS" > 
+     <range  uom="25" subset="0,2000" nls="SOUNDS" />
   </editor>
 
   <editor id = "LOCKUNLOCK" > 
@@ -62,17 +73,17 @@
      <range uom="51" min="0" max="100" prec="1" />
      <range uom="25" subset="0-1, 99" nls="OPENCLOSE"/>
   </editor>
+   <editor id = "PERCENT_INP" > 
+     <range uom="51" min="0" max="100" prec="1" />
+  </editor>
   
   <editor id = "OPENCLOSE" > 
      <range  uom="25" subset="0-1, 99" nls="OPENCLOSE" />
   </editor>
 
-
-
   <editor id = "TEMP" > 
     <range uom="4" min="-50" max="75" step="0.5" prec="1" />
     <range uom="17" min="-50" max="150" step="1" prec="1" />
-    <range uom="26" min="-223" max="348" step="0.5" prec="1" />
     <range  uom="25" subset="0-1,99" nls="UNKNOWN" />
   </editor>
 
@@ -81,7 +92,7 @@
   </editor>
   
   <editor id = "PREC_STATUS" > 
-     <range  uom="25" subset="0-1,99" nls="PREC_STATUS" />
+     <range  uom="25" subset="0-2,99" nls="PREC_STATUS" />
   </editor>
   
   <editor id = "ONOFF" > 
@@ -89,16 +100,17 @@
   </editor>
   
   <editor id = "SUNROOFCTRL" > 
-     <range  uom="25" subset="0-1" nls="SUNROOFCTRL"  />  
+     <range  uom="25" subset="0-2" nls="SUNROOFCTRL"  />  
   </editor>
   
   <editor id = "AUTOCONCTRL" > 
-     <range  uom="25" subset="0-1" nls="AUTOCONCTRL"  />  
+     <range  uom="25" subset="0-1" nls="PREC_STATUS"  />  
   </editor>
   
   <editor id = "CABINTEMP" > 
-      <range  uom="17" min="59" max="83" prec="1"  /> 
-      <range  uom="4" min="15" max="28" prec="1"  />  
+      <range  uom="17" min="59" max="83" step="1" prec="1"  /> 
+      <range  uom="4" min="15" max="28" step="0.5" prec="1"  />  
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />      
   </editor>
   
   <editor id = "DEFROST" > 
@@ -122,6 +134,11 @@
      <range  uom="1" min="0" max="300" prec="1" />
      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor>
+
+  <editor id = "AMPS_INP" > 
+     <range  uom="1" min="0" max="300" prec="1" />
+  </editor>
+
     <editor id = "VOLT" > 
      <range  uom="72" min="0" max="800" prec="1" />
      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
@@ -158,31 +175,33 @@
   </editor>
 
   <editor id = "T_UNIT" > 
-     <range  uom="25" subset="0-1" nls="TEMPUNIT"  />  
+     <range  uom="25" subset="0-1" nls="T_UNIT"  />  
   </editor>
 
    <editor id = "D_UNIT" > 
-     <range  uom="25" subset="0-1" nls="DISTUNIT"  />  
+     <range  uom="25" subset="0-1" nls="D_UNIT"  />  
   </editor>
   
    <editor id = "CARSTATE" > 
      
-     <range  uom="25" subset="0-2,99" nls="CARSTATE"  />  
+     <range  uom="25" subset="0-5,99" nls="CARSTATE"  />  
   </editor>
 
    <editor id = "LONGITUDE" > 
       <range  uom="56" min="-180" max="180" prec="3" />
-      <range  uom="25" subset="99" nls="UNKNOWN"  />  
+      <range  uom="25" subset="98,99" nls="UNKNOWN"  />  
   </editor>
 
    <editor id = "LATITUDE" > 
      <range  uom="56" min="-90" max="90" prec="3" />
-     <range  uom="25" subset="99" nls="UNKNOWN"  />  
+     <range  uom="25" subset="98,99" nls="UNKNOWN"  />  
   </editor>
 
   <editor id = "IDEA_DIST" > 
      <range  uom="56" min="0" max="500" prec="2" />
      <range  uom="25" subset="0-2,99" nls="UNKNOWN"  />  
   </editor>
-  
+     <editor id = "LAST_CMD" > 
+     <range  uom="25" subset="0-3,99" nls="CMD_RES"  />  
+  </editor>
 </editors> 
