@@ -43,8 +43,8 @@ class TeslaEVController(udi_interface.Node):
         self.FARENHEIT = 1 
         self.KM = 0
         self.MILES = 1
-        self.dUnit = self.MILES #  Miles = 1, Kilometer = 0
-        self.tUnit = self.FARENHEIT  #  C = 0, F=1,
+        #self.dUnit = self.MILES #  Miles = 1, Kilometer = 0
+        #self.tUnit = self.FARENHEIT  #  C = 0, F=1,
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
         self.customParameters = Custom(self.poly, 'customparams')
@@ -380,10 +380,10 @@ class TeslaEVController(udi_interface.Node):
     def updateISYdrivers(self):
         logging.debug('System updateISYdrivers - Controller')       
         value = self.TEVcloud.authenticated()
-        self.EV_setDriver('GV0', value)
+        self.EV_setDriver('GV0', self.bool2ISY(value))
         self.EV_setDriver('GV1', self.GV1)
-        self.EV_setDriver('GV2', self.dUnit)
-        self.EV_setDriver('GV3', self.tUnit)
+        self.EV_setDriver('GV2', self.distUnit)
+        self.EV_setDriver('GV3', self.tempUnit)
 
 
 
