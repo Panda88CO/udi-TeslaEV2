@@ -32,7 +32,7 @@ ShortPoll = default 10 min (120 call/day)
     Polls data from car if it is awake - does nothing if car is asleep
     sends heartbeat to ISY
 
-LongPoll = default 60min (24)
+LongPoll = default 60min (24 call/day)
     Polls data from car. If it is asleep it will wake the csara and retrieve data
 
 ## Notes 

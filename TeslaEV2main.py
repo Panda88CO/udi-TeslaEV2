@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-VERSION = '0.1.23'
+VERSION = '0.1.24'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -232,10 +232,10 @@ class TeslaEVController(udi_interface.Node):
         else:
             logging.error('Failed to retrieve EVs')
             exit()
-            
+        self.EV_setDriver('GV0', 1, 70)            
         self.GV1 = len(self.vehicleList)
         self.EV_setDriver('GV1', self.GV1)
-        self.EV_setDriver('GV0', 1)
+
         
         for indx, EVid in enumerate( self.vehicleList):
         #for indx in range(0,len(self.vehicleList)):
