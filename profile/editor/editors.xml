@@ -1,6 +1,6 @@
 <editors> 
   <editor id = "NODE_ST" > 
-     <range  uom="2" min="0" max="1" />
+     <range  uom="25" subset="0-1"  nls='BOOLSTATE'/>
   </editor>
   
   <editor id = "API" > 

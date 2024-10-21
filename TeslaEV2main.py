@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-VERSION = '0.1.24'
+VERSION = '0.1.25'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -401,7 +401,7 @@ class TeslaEVController(udi_interface.Node):
                 }
 
     drivers = [
-            {'driver': 'ST', 'value':0, 'uom':2},
+            {'driver': 'ST', 'value':0, 'uom':25},
             {'driver': 'GV0', 'value':0, 'uom':25},
             {'driver': 'GV1', 'value':0, 'uom':70},
             {'driver': 'GV2', 'value':0, 'uom':25},
