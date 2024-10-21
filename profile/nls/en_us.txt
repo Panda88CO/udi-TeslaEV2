@@ -40,6 +40,7 @@ NUMBER-98 = Not Enabled
 NUMBER-99 = Unknown
 BOOLSTATE-0 = False
 BOOLSTATE-1 = True
+BOOLSTATE-98 = Not Enabled
 BOOLSTATE-99 = Unknown
 ST-nlsevstatus-GV3-NAME = EV Door State
 ST-nlsevstatus-GV4-NAME = Odometer 
@@ -66,8 +67,8 @@ CARSTATE-1 = Online
 CARSTATE-2 = Sleeping
 CARSTATE-4 = API overload
 CARSTATE-5 = API error
-
 CARSTATE-99 = Unknown 
+
 ST-nlsevstatus-GV16-NAME =  Ideal Battery Distance
 ST-nlsevstatus-GV17-NAME =  EV Longitude
 ST-nlsevstatus-GV18-NAME =  EV Latitude

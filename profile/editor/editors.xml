@@ -62,7 +62,7 @@
   </editor>
 
   <editor id = "LOCKUNLOCK" > 
-     <range  uom="25" subset="0-1" nls="LOCKUNLOCK" />
+     <range  uom="25" subset="0-1,99" nls="LOCKUNLOCK" />
   </editor>
 
   <editor id = "SUNROOFCTRL" > 
@@ -202,6 +202,6 @@
      <range  uom="25" subset="0-2,99" nls="UNKNOWN"  />  
   </editor>
      <editor id = "LAST_CMD" > 
-     <range  uom="25" subset="0-3,99" nls="CMD_RES"  />  
+     <range  uom="25" subset="0-4,99" nls="CMD_RES"  />  
   </editor>
 </editors> 
