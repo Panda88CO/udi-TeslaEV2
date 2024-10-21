@@ -13,7 +13,7 @@
   </editor> 
 
   <editor id = "NBREVS" > 
-     <range  uom="107" min="0" max="9" />
+     <range  uom="70" min="0" max="9" />
   </editor>
 
   <editor id = "CONSOLE" > 
