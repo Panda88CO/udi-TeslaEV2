@@ -229,14 +229,15 @@ class TeslaEVController(udi_interface.Node):
         if code in ['ok']:
             self.vehicleList = self.TEVcloud.teslaEV_get_vehicle_list()
             logging.debug('vehicleList: {} - {}'.format(code, self.vehicleList))
+            self.EV_setDriver('GV0', self.bool2ISY(True))   
         else:
             logging.error('Failed to retrieve EVs')
+            self.EV_setDriver('GV0', self.bool2ISY(False))   
             exit()
-        self.EV_setDriver('GV0', 1, 70)            
-        self.GV1 = len(self.vehicleList)
+
+        self.GV1 = int(len(self.vehicleList))
         self.EV_setDriver('GV1', self.GV1)
 
-        
         for indx, EVid in enumerate( self.vehicleList):
         #for indx in range(0,len(self.vehicleList)):
             #EVid = self.vehicleList[indx]
