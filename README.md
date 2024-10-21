@@ -6,9 +6,6 @@ Status gives an overview and allow some generic control
 Climate controls Climate settings as well as Windows
 Charging control Charging settings 
 
-## Code
-Code is written in Python 3 
-
 
 ## Installation
 Requires PG3x
