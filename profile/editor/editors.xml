@@ -21,7 +21,7 @@
   </editor>
   
   <editor id = "MINU" > 
-     <range  uom="44" min="0" max="1440"  />
+  
   </editor>
   
   <editor id = "NUMBER" > 
