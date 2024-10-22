@@ -13,7 +13,7 @@
   </editor> 
 
   <editor id = "NBREVS" > 
-     <range  uom="70" min="0" max="9" />
+     <range  uom="56" min="0" max="9" />
   </editor>
 
   <editor id = "CONSOLE" > 
@@ -21,7 +21,7 @@
   </editor>
   
   <editor id = "MINU" > 
-  
+      <range  uom="44" min="0" max="1440"   />
   </editor>
   
   <editor id = "NUMBER" > 
@@ -141,15 +141,15 @@
 
     <editor id = "VOLT" > 
      <range  uom="72" min="0" max="800" prec="1" />
-     <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
+     <range  uom="25" subset="0-1,99" nls="UNKNOWN" />
   </editor>
 
   <editor id = "CHGSTATE" > 
-     <range  uom="25" subset="0-5,99" nls="CHGSTATE"  />  
+     <range  uom="25" subset="0-5,99" nls="CHGSTATE"/>  
   </editor>
 
   <editor id = "STARTSTOP" > 
-     <range  uom="25" subset="0-1,99" nls="STARTSTOP"  />  
+     <range  uom="25" subset="0-1,99" nls="STARTSTOP" />  
   </editor>
 
   <editor id = "KWH" > 
@@ -175,7 +175,7 @@
   </editor>
 
   <editor id = "T_UNIT" > 
-     <range  uom="25" subset="0-1" nls="T_UNIT"  />  
+     <range  uom="25" subset="0-1,99" nls="T_UNIT"  />  
   </editor>
 
    <editor id = "D_UNIT" > 

@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-VERSION = '0.1.25'
+VERSION = '0.1.26'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -72,7 +72,7 @@ class TeslaEVController(udi_interface.Node):
         self.customParam_done = False
         self.config_done = False
         #self.poly.setLogLevel('debug')
-        self.EV_setDriver('ST', 1)
+        self.EV_setDriver('ST', 1, 25)
         logging.info('Controller init DONE')
 
     def check_config(self):
@@ -229,14 +229,14 @@ class TeslaEVController(udi_interface.Node):
         if code in ['ok']:
             self.vehicleList = self.TEVcloud.teslaEV_get_vehicle_list()
             logging.debug('vehicleList: {} - {}'.format(code, self.vehicleList))
-            self.EV_setDriver('GV0', self.bool2ISY(True))   
+            self.EV_setDriver('GV0', self.bool2ISY(True), 25)   
         else:
             logging.error('Failed to retrieve EVs')
-            self.EV_setDriver('GV0', self.bool2ISY(False))   
+            self.EV_setDriver('GV0', self.bool2ISY(False), 25)   
             exit()
 
         self.GV1 = int(len(self.vehicleList))
-        self.EV_setDriver('GV1', self.GV1)
+        self.EV_setDriver('GV1', self.GV1, 56)
 
         for indx, EVid in enumerate( self.vehicleList):
         #for indx in range(0,len(self.vehicleList)):
@@ -291,7 +291,7 @@ class TeslaEVController(udi_interface.Node):
         self.Notices.clear()
         #if self.TEV:
         #    self.TEV.disconnectTEV()
-        self.EV_setDriver('ST', 0 )
+        self.EV_setDriver('ST', 0, 25 )
         logging.debug('stop - Cleaning up')
         self.poly.stop()
 
@@ -382,10 +382,10 @@ class TeslaEVController(udi_interface.Node):
     def updateISYdrivers(self):
         logging.debug('System updateISYdrivers - Controller')       
         value = self.TEVcloud.authenticated()
-        self.EV_setDriver('GV0', self.bool2ISY(value))
-        self.EV_setDriver('GV1', self.GV1)
-        self.EV_setDriver('GV2', self.distUnit)
-        self.EV_setDriver('GV3', self.tempUnit)
+        self.EV_setDriver('GV0', self.bool2ISY(value), 25)
+        self.EV_setDriver('GV1', self.GV1, 56)
+        self.EV_setDriver('GV2', self.distUnit, 25)
+        self.EV_setDriver('GV3', self.tempUnit, 25)
 
 
 
@@ -403,9 +403,9 @@ class TeslaEVController(udi_interface.Node):
     drivers = [
             {'driver': 'ST', 'value':0, 'uom':25},
             {'driver': 'GV0', 'value':0, 'uom':25},
-            {'driver': 'GV1', 'value':0, 'uom':70},
-            {'driver': 'GV2', 'value':0, 'uom':25},
-            {'driver': 'GV3', 'value':0, 'uom':25},
+            {'driver': 'GV1', 'value':0, 'uom':56},
+            {'driver': 'GV2', 'value':99, 'uom':25},
+            {'driver': 'GV3', 'value':99, 'uom':25},
             ]
     
             # ST - node started

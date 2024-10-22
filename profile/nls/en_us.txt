@@ -9,10 +9,11 @@ ST-nlscontroller-GV1-NAME = Number of EVs
 ST-nlscontroller-GV2-NAME = Distance Unit
 D_UNIT-0 = Km
 D_UNIT-1 = Miles
+D_UNIT-99 = Unknown
 ST-nlscontroller-GV3-NAME = Temperature Unit
 T_UNIT-0 = Celcius
 T_UNIT-1 = Farenheit
-
+T_UNIT-99 = Unknown
 
 
 ND-evstatus-NAME = EV Status
@@ -171,7 +172,7 @@ STEERINGW-1 = Enabled
 
 ND-evcharge-NAME = EV charging Data
 ND-evcharge-ICON = Electricity
-ST-nlsevcharge-ST-NAME = Node Connected
+# ST-nlsevcharge-ST-NAME = Node Connected
 ST-nlsevcharge-GV1-NAME = Fast Charger
 PRESENT-0 = No 
 PRESENT-1 = Yes
