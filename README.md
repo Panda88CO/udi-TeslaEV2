@@ -14,10 +14,10 @@ On you mobile device open  https://tesla.com/_ak/my.isy.io. It should open the t
  
 Run the node server 
 Update configuration parameters - most important is region NA (North America), EU (Europe and most of rest of world), CN (China)
-Set TEMP_UNIT and DIST_UNIT
-Set LOCATION_EN
+Set TEMP_UNIT (C/F) and DIST_UNIT (Miles/Km) 
+Set LOCATION_EN (True/False)
+Location is needed to get access to longitue and latitude needed to control windows (close) as well as homelink 
 Note, if Location is enabled - an Icon will show on App.
-Location is needed to get access to longitue and latitude as well as homelink 
 
 Restart node server and press autheticate (should only be needed first time)
 
@@ -32,7 +32,7 @@ ShortPoll = default 10 min (120 call/day)
     Polls data from car if it is awake - does nothing if car is asleep
     sends heartbeat to ISY
 
-LongPoll = default 60min (24)
+LongPoll = default 60min (24 call/day)
     Polls data from car. If it is asleep it will wake the csara and retrieve data
 
 ## Notes 

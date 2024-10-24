@@ -20,7 +20,6 @@ import math
 import numbers 
 
 def node_queue(self, data):
-    #logging.debug('node_queue {}'.format(data))
     self.n_queue.append(data['address'])
 
 def wait_for_node_done(self):
@@ -29,7 +28,7 @@ def wait_for_node_done(self):
     self.n_queue.pop()
 
 def mask2key (self, mask):
-    logging.debug('mask2key : {}'.format(mask))
+    logging.debug('mask2key : {mask}')
     return(int(round(math.log2(mask),0)))
     
 def daysToMask (self, dayList):
@@ -106,7 +105,7 @@ def daylist2bin(self, daylist):
 
 
 def season2ISY(self, season):
-    logging.debug('season2ISY {}'.format(season))
+    logging.debug('season2ISY {season}')
     if season is not None:
         if season.upper() == 'WINTER':
             return(0)
@@ -129,7 +128,7 @@ def state2ISY(self, state):
         elif state.lower() == 'unknown':
             return(99)
         else:          
-            logging.error('Unknown state passed {}'.format(state))
+            logging.error('Unknown state passed {state}')
             return(99)
     else:
         return(None)
@@ -145,7 +144,7 @@ def code2ISY(self, state):
         elif state.lower() == 'error':
             return(5)
         else:          
-            logging.error('Unknown state passed {}'.format(state))
+            logging.error('Unknown state passed {state}')
             return(99)
     else:
         return(None)
@@ -218,7 +217,7 @@ def chargeState2ISY(self, state):
         return(None)
 
 def period2ISY(self, period):
-    logging.debug('period2ISY {}'.format(period))
+    logging.debug('period2ISY {period}')
     if period is not None:
         if period.upper() == 'OFF_PEAK':
             return(0)
@@ -232,7 +231,7 @@ def period2ISY(self, period):
         return(None)
 
 def EV_setDriver(self, key, value, Unit=None):
-    logging.debug('EV_setDriver : {} {} {}'.format(key, value, Unit))
+    logging.debug('EV_setDriver : {key} {value} {Unit}')
     try:
         if value is None:
             logging.debug('None value passed = seting 99, UOM 25')
@@ -264,8 +263,7 @@ def setDriverTemp(self, Key, value):
         return (None)
 
 def send_rel_temp_to_isy(self, temperature, stateVar):
-    logging.debug('convert_temp_to_isy - {}'.format(temperature))
-    logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
+    logging.debug('convert_temp_to_isy - {temperature}')
     if self.ISY_temp_unit == 0: # Celsius in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
             self.node.setDriver(stateVar, round(temperature,1), True, True, 4)
@@ -284,8 +282,7 @@ def send_rel_temp_to_isy(self, temperature, stateVar):
 
 
 def send_temp_to_isy (self, temperature, stateVar):
-    logging.debug('convert_temp_to_isy - {}'.format(temperature))
-    logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
+    logging.debug('convert_temp_to_isy - {temperature}')
     if self.ISY_temp_unit == 0: # Celsius in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
             self.node.setDriver(stateVar, round(temperature,1), True, True, 4)
@@ -315,4 +312,4 @@ def heartbeat(self):
         self.hb = 0
 
 def handleLevelChange(self, level):
-    logging.info('New log level: {}'.format(level))        
+    logging.info('New log level: {level}')        

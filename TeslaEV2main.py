@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 #from TeslaCloudEVapi  import teslaCloudEVapi
 from TeslaEVOauth import teslaAccess
 
-VERSION = '0.1.22'
+VERSION = '0.1.27'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -43,8 +43,8 @@ class TeslaEVController(udi_interface.Node):
         self.FARENHEIT = 1 
         self.KM = 0
         self.MILES = 1
-        self.dUnit = self.MILES #  Miles = 1, Kilometer = 0
-        self.tUnit = self.FARENHEIT  #  C = 0, F=1,
+        #self.dUnit = self.MILES #  Miles = 1, Kilometer = 0
+        #self.tUnit = self.FARENHEIT  #  C = 0, F=1,
         self.supportedParams = ['DIST_UNIT', 'TEMP_UNIT']
         self.paramsProcessed = False
         self.customParameters = Custom(self.poly, 'customparams')
@@ -72,7 +72,7 @@ class TeslaEVController(udi_interface.Node):
         self.customParam_done = False
         self.config_done = False
         #self.poly.setLogLevel('debug')
-        self.EV_setDriver('ST', 1)
+        self.EV_setDriver('ST', 1, 25)
         logging.info('Controller init DONE')
 
     def check_config(self):
@@ -150,16 +150,17 @@ class TeslaEVController(udi_interface.Node):
             if self.customParameters['DIST_UNIT'] != 'Km or Miless':
                 self.dist_unit = str(self.customParameters['DIST_UNIT'])
 
-                if self.dist_unit.upper() not in ['KM', 'MILES']:
+                if self.dist_unit[0].upper() not in ['K', 'M']:
                     logging.error('Unsupported distance unit {}'.format(self.dist_unit))
                     self.poly.Notices['dist'] = 'Unknown distance Unit specified'
                 else:
-                    if self.dist_unit.upper() == 'KM':
+                    if self.dist_unit[0].upper() == 'K':
                         self.distUnit = 0
                         self.TEVcloud.teslaEV_SetDistUnit(0)
                     else:
                         self.TEVcloud.teslaEV_SetDistUnit(1)
                         self.distUnit = 1
+            #logging.debug('distUnit = {}'.format(self.distUnit ))
         else:
             logging.warning('No DIST_UNIT')
             self.customParameters['DIST_UNIT'] = 'Km or Miles'
@@ -167,16 +168,17 @@ class TeslaEVController(udi_interface.Node):
         if 'TEMP_UNIT' in userParams:
             if self.customParameters['TEMP_UNIT'] != 'C or F':
                 self.temp_unit = str(self.customParameters['TEMP_UNIT'])
-                if self.temp_unit.upper() not in ['C', 'F']:
+                if self.temp_unit[0].upper() not in ['C', 'F']:
                     logging.error('Unsupported temperatue unit {}'.format(self.temp_unit))
                     self.poly.Notices['temp'] = 'Unknown distance Unit specified'
                 else:
-                    if self.temp_unit.upper() == 'C':
+                    if self.temp_unit[0].upper() == 'C':
                         self.tempUnit = 0
                         self.TEVcloud.teslaEV_SetTempUnit(0)
                     else:
                         self.tempUnit = 1
                         self.TEVcloud.teslaEV_SetTempUnit(1)
+            #logging.debug('tempUnit = {}'.format(self.tempUnit ))
         else:
             logging.warning('No TEMP_UNIT')
             self.customParameters['TEMP_UNIT'] = 'C or F'
@@ -227,14 +229,15 @@ class TeslaEVController(udi_interface.Node):
         if code in ['ok']:
             self.vehicleList = self.TEVcloud.teslaEV_get_vehicle_list()
             logging.debug('vehicleList: {} - {}'.format(code, self.vehicleList))
+            self.EV_setDriver('GV0', self.bool2ISY(True), 25)   
         else:
             logging.error('Failed to retrieve EVs')
+            self.EV_setDriver('GV0', self.bool2ISY(False), 25)   
             exit()
-            
-        self.GV1 = len(self.vehicleList)
-        self.EV_setDriver('GV1', self.GV1)
-        self.EV_setDriver('GV0', 1)
-        
+
+        self.GV1 = int(len(self.vehicleList))
+        self.EV_setDriver('GV1', self.GV1, 56)
+
         for indx, EVid in enumerate( self.vehicleList):
         #for indx in range(0,len(self.vehicleList)):
             #EVid = self.vehicleList[indx]
@@ -275,7 +278,6 @@ class TeslaEVController(udi_interface.Node):
             if node['primaryNode'] not in assigned_addresses:
                 logging.debug('Removing node : {} {}'.format(node['name'], node))
                 self.poly.delNode(node['address'])
-        
         self.updateISYdrivers()
         self.initialized = True
 
@@ -289,7 +291,7 @@ class TeslaEVController(udi_interface.Node):
         self.Notices.clear()
         #if self.TEV:
         #    self.TEV.disconnectTEV()
-        self.EV_setDriver('ST', 0 )
+        self.EV_setDriver('ST', 0, 25 )
         logging.debug('stop - Cleaning up')
         self.poly.stop()
 
@@ -380,10 +382,10 @@ class TeslaEVController(udi_interface.Node):
     def updateISYdrivers(self):
         logging.debug('System updateISYdrivers - Controller')       
         value = self.TEVcloud.authenticated()
-        self.EV_setDriver('GV0', value)
-        self.EV_setDriver('GV1', self.GV1)
-        self.EV_setDriver('GV2', self.dUnit)
-        self.EV_setDriver('GV3', self.tUnit)
+        self.EV_setDriver('GV0', self.bool2ISY(value), 25)
+        self.EV_setDriver('GV1', self.GV1, 56)
+        self.EV_setDriver('GV2', self.distUnit, 25)
+        self.EV_setDriver('GV3', self.tempUnit, 25)
 
 
 
@@ -399,11 +401,11 @@ class TeslaEVController(udi_interface.Node):
                 }
 
     drivers = [
-            {'driver': 'ST', 'value':0, 'uom':2},
+            {'driver': 'ST', 'value':0, 'uom':25},
             {'driver': 'GV0', 'value':0, 'uom':25},
-            {'driver': 'GV1', 'value':0, 'uom':107},
-            {'driver': 'GV2', 'value':0, 'uom':25},
-            {'driver': 'GV3', 'value':0, 'uom':25},
+            {'driver': 'GV1', 'value':0, 'uom':56},
+            {'driver': 'GV2', 'value':99, 'uom':25},
+            {'driver': 'GV3', 'value':99, 'uom':25},
             ]
     
             # ST - node started
