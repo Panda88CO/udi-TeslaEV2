@@ -84,12 +84,12 @@ class teslaEV_StatusNode(udi_interface.Node):
 
         try:
             if type in ['short']:
-                code, data  = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(self.EVid)
+                code, state  = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(self.EVid)
             elif type in ['long']:
-                code, data =  self.TEVcloud.teslaEV_UpdateCloudInfo(self.EVid)
+                code, state =  self.TEVcloud.teslaEV_UpdateCloudInfo(self.EVid)
             else:
                 return
-            if code in ['ok'] and 
+            if code in ['ok'] and state in ['online']:
                 self.updateISYdrivers()
                 self.climateNode.updateISYdrivers()
                 self.chargeNode.updateISYdrivers()

@@ -273,9 +273,7 @@ class teslaEVAccess(teslaAccess):
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
                         #self.extract_gui_info(EVid)
-                    return(code, res)
-                else:
-                    return(code, state)
+                return(code, state)
             elif code == 'overload':
                 delay = self.next_wake_call - time.time()
                 return(code, delay)
@@ -356,6 +354,7 @@ class teslaEVAccess(teslaAccess):
                     temp = carData['response']['data']
             else:
                 temp = carData['response']
+            
         else:
             temp = 'Error'
         logging.debug(f'process_EV_data: {temp}')
@@ -636,7 +635,8 @@ class teslaEVAccess(teslaAccess):
         try:
             timeNow = int(time.time())
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['charge_state']['timestamp']/1000 ))
-            if 'timestamp' in self.carInfo[EVid]['charge_state']:
+            logging.debug(f'state : {self.carInfo[EVid]['state'] }')
+            if 'timestamp' in self.carInfo[EVid]['charge_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['charge'] = float(self.carInfo[EVid]['charge_state']['timestamp']/1000)
                 return(int(timeNow - self.update_time[EVid]['charge']))
             else:
@@ -909,8 +909,10 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_GetTimeSinceLastClimateUpdate(self, EVid):
         try:
             timeNow = int(time.time())
+
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['climate_state']['timestamp']/1000 ))
-            if 'timestamp' in self.carInfo[EVid]['climate_state']:
+            logging.debug(f'state : {self.carInfo[EVid]['state'] }')            
+            if 'timestamp' in self.carInfo[EVid]['climate_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['climate'] = float(self.carInfo[EVid]['climate_state']['timestamp']/1000)
                 return(int(timeNow - self.update_time[EVid]['climate']))
             else:
@@ -1330,7 +1332,8 @@ class teslaEVAccess(teslaAccess):
         try:
             timeNow = int(time.time())
             logging.debug('Time Now {} Last Update {}'.format(timeNow,self.carInfo[EVid]['vehicle_state']['timestamp']/1000 ))
-            if 'timestamp' in self.carInfo[EVid]['vehicle_state']:
+            logging.debug(f'state : {self.carInfo[EVid]['state']}')            
+            if 'timestamp' in self.carInfo[EVid]['vehicle_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['status'] = float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)
                 return(int(timeNow - self.update_time[EVid]['status'] ))
             else:
