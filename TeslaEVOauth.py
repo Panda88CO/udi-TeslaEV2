@@ -90,38 +90,38 @@ class teslaEVAccess(teslaAccess):
         time.sleep(1)
 
         #while not self.handleCustomParamsDone:
-        #    logging.debug('Waiting for customParams to complete - getAccessToken')
+        #    logging.debug(f'Waiting for customParams to complete - getAccessToken')
         #    time.sleep(0.2)
         # self.getAccessToken()
     
     # The OAuth class needs to be hooked to these 3 handlers
     #def customDataHandler(self, data):
-    #    logging.debug('customDataHandler called')
+    #    logging.debug(f'customDataHandler called')
         #while not self.handleCustomParamsDone:
-        #    logging.debug('Waiting for customDataHandler to complete')
+        #    logging.debug(f'Waiting for customDataHandler to complete')
         #    time.sleep(1)
     #    super().customDataHandler(data)
     #    self.customDataHandlerDone = True
-    #    logging.debug('customDataHandler Finished')
+    #    logging.debug(f'customDataHandler Finished')
 
     ##def customNsHandler(self, key, data):
-    ##    logging.debug('customNsHandler called')
+    ##    logging.debug(f'customNsHandler called')
     #    #while not self.customParamsDone():
-    #    #    logging.debug('Waiting for customNsHandler to complete')
+    #    #    logging.debug(f'Waiting for customNsHandler to complete')
     #    #    time.sleep(1)
     #    #self.updateOauthConfig()
     #    super().customNsHandler(key, data)
     #    self.customNsHandlerDone = True
-    #    logging.debug('customNsHandler Finished')
+    #    logging.debug(f'customNsHandler Finished')
 
     #def oauthHandler(self, token):
-    #    logging.debug('oauthHandler called')
+    #    logging.debug(f'oauthHandler called')
     #    while not (self.customParamsDone() and self.customNsDone()):
-    #        logging.debug('Waiting for initilization to complete before oAuth')
+    #        logging.debug(f'Waiting for initilization to complete before oAuth')
     #        time.sleep(5)
  
         #self.customOauthHandlerDone = True
-    #    logging.debug('oauthHandler Finished')
+    #    logging.debug(f'oauthHandler Finished')
 
     def customNsDone(self):
         return(self.customNsHandlerDone)
@@ -146,7 +146,7 @@ class teslaEVAccess(teslaAccess):
 
     
     def main_module_enabled(self, node_name):
-        logging.debug('main_module_enabled called {node_name}')
+        logging.debug(f'main_module_enabled called {node_name}')
         if node_name in self.customParameters :           
             return(int(self.customParameters[node_name]) == 1)
         else:
@@ -181,11 +181,11 @@ class teslaEVAccess(teslaAccess):
     
     def teslaEV_get_vehicles(self):
         EVs = {}
-        logging.debug('teslaEV_get_vehicles ')
+        logging.debug(f'teslaEV_get_vehicles ')
         try:
             self.ev_list =[]
             code, temp = self._callApi('GET','/vehicles' )
-            logging.debug('vehicles: {temp}')
+            logging.debug(f'vehicles: {temp}')
             if code in ['ok']:
                 for indx, site in enumerate(temp['response']):
                     if 'vin' in site:
@@ -200,11 +200,11 @@ class teslaEVAccess(teslaAccess):
                             self.update_time[site['vin']]['status'] = self.time_start
             return(code, EVs)
         except Exception as e:
-            logging.error('teslaEV_get_vehicles Exception : {e}')
+            logging.error(f'teslaEV_get_vehicles Exception : {e}')
     
    
     def _teslaEV_wake_ev(self, EVid):
-        logging.debug('_teslaEV_wake_ev - {EVid}')
+        logging.debug(f'_teslaEV_wake_ev - {EVid}')
         trys = 1
         timeNow = time.time()
         try:
@@ -213,16 +213,16 @@ class teslaEVAccess(teslaAccess):
                 if timeNow >= self.next_wake_call:
                     if state in ['asleep']:
                         code, res  = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
-                        logging.debug('wakeup: {code} - {res}')
+                        logging.debug(f'wakeup: {code} - {res}')
                         if code in  ['ok']:
                             time.sleep(5)
                             code, state = self.teslaEV_update_connection_status(EVid)
-                            logging.debug('wake_ev while loop {code} - {state}')
+                            logging.debug(f'wake_ev while loop {code} - {state}')
                             while code in ['ok'] and state not in ['online'] and trys < 5:
                                 trys += 1
                                 time.sleep(5)
                                 code, state = self.teslaEV_update_connection_status(EVid)
-                                logging.debug('wake_ev while loop {trys} {code} {state}')
+                                logging.debug(f'wake_ev while loop {trys} {code} {state}')
                         if code in ['overload']:
                             delay = self.extract_needed_delay(res)
                             self.next_wake_call = timeNow + int(delay)
@@ -231,21 +231,21 @@ class teslaEVAccess(teslaAccess):
                     logging.warning('Too many calls to wake API - need to wait {delay} secods')
                     return(code, state)
         except Exception as e:
-            logging.error('_teslaEV_wake_ev Exception : {e}')
+            logging.error(f'_teslaEV_wake_ev Exception : {e}')
 
 
     def _teslaEV_get_ev_data(self, EVid):
-        logging.debug('get_ev_data - state {EVid}')
+        logging.debug(f'get_ev_data - state {EVid}')
         if self.locationEn:
             payload = {'endpoints':'charge_state;climate_state;drive_state;location_data;vehicle_config;vehicle_state'}
         else:
             payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
         code, res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
-        logging.debug('vehicel data: {code} {res}')
+        logging.debug(f'vehicel data: {code} {res}')
         return(code, res)
 
     def _teslaEV_send_ev_command(self, EVid , command, params=None):
-        logging.debug('send_ev_command - command  {command} - params: {params} - {EVid}')
+        logging.debug(f'send_ev_command - command  {command} - params: {params} - {EVid}')
         payload = params
         code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command'+str(command),  payload )
 
@@ -261,13 +261,13 @@ class teslaEVAccess(teslaAccess):
             return(numbers[0]) 
 
     def teslaEV_UpdateCloudInfo(self, EVid):
-        logging.debug('teslaEV_UpdateCloudInfo: {EVid}')
+        logging.debug(f'teslaEV_UpdateCloudInfo: {EVid}')
         code = 'unknown'
         res = None
         try:
             code, state  = self._teslaEV_wake_ev(EVid)                
             if code == 'ok':
-                logging.debug('Wake_up result : {state}')
+                logging.debug(f'Wake_up result : {state}')
                 if state in ['online']:
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
@@ -284,11 +284,11 @@ class teslaEVAccess(teslaAccess):
             
 
         except Exception as e:
-            logging.debug('Exception teslaEV_UpdateCloudInfo: {e}')
+            logging.debug(f'Exception teslaEV_UpdateCloudInfo: {e}')
             return('error', e)
 
     def teslaEV_UpdateCloudInfoAwake(self, EVid, online_known = False):
-            logging.debug('teslaEV_UpdateCloudInfoAwake: {EVid}')
+            logging.debug(f'teslaEV_UpdateCloudInfoAwake: {EVid}')
             try:
                 code, state = self.teslaEV_update_connection_status(EVid)
                 if code == 'ok' and state in ['online']:
@@ -304,7 +304,7 @@ class teslaEVAccess(teslaAccess):
                 else:
                     return(code, state)
             except Exception as e:
-                logging.debug('Exception teslaEV_UpdateCloudInfo: {e}')
+                logging.debug(f'Exception teslaEV_UpdateCloudInfo: {e}')
                 return('error')
    
     '''
@@ -321,7 +321,7 @@ class teslaEVAccess(teslaAccess):
                 else:
                     self.gui_dist_unit = '0'
         except Exception as e:
-            logging.error('No gui unit found- {e}')
+            logging.error(f'No gui unit found- {e}')
             self.gui_tUnit =  self.temp_unit
             self.gui_dist_unit = self.dist_unit
     '''
@@ -339,7 +339,7 @@ class teslaEVAccess(teslaAccess):
                 else:
                     return 0
         except Exception as e:
-            logging.error('No gui unit found- {e}')
+            logging.error(f'No gui unit found- {e}')
             if unit == 'temp':
                 return(1) # F
             elif unit == 'dist':
@@ -348,7 +348,7 @@ class teslaEVAccess(teslaAccess):
                 return(None)
 
     def process_EV_data(self, carData):
-        logging.debug('process_EV_data')
+        logging.debug(f'process_EV_data')
         temp = {}
         if 'response' in carData:
             if 'version' in carData['response']:
@@ -358,7 +358,7 @@ class teslaEVAccess(teslaAccess):
                 temp = carData['response']
         else:
             temp = 'Error'
-        logging.debug('process_EV_data: {temp}')
+        logging.debug(f'process_EV_data: {temp}')
         return(temp)
             
 
@@ -370,38 +370,38 @@ class teslaEVAccess(teslaAccess):
 
             return(self.carInfo[EVid]['state'])
         except Exception as e:
-            logging.error('teslaEV_GetCarState Exception : {e}')
+            logging.error(f'teslaEV_GetCarState Exception : {e}')
             return(None)
 
 
     def teslaEV_GetConnectionStatus(self, EVid):
-        #logging.debug('teslaEV_GetConnectionStatus: for {EVid}')
+        #logging.debug(f'teslaEV_GetConnectionStatus: for {EVid}')
         return(self.carInfo[EVid]['state'])
 
     def teslaEV_update_vehicle_status(self, EVid) -> dict:
         self.products= {}
         EVs = {}
-        logging.debug('teslaEV_get_vehicle_info ')
+        logging.debug(f'teslaEV_get_vehicle_info ')
         try:
             code, res = self._callApi('GET','/vehicles/'+str(EVid) )
-            logging.debug('vehicle {EVid} info : {code} {res} ')
+            logging.debug(f'vehicle {EVid} info : {code} {res} ')
             if code in ['ok']:
                 self.carInfo[res['response']['vin']] = res['response']
                 return(code, res['response'])
             else:
                 return(code, res)
         except Exception as e:
-            logging.error('teslaEV_update_vehicle_status Exception : {e}')
+            logging.error(f'teslaEV_update_vehicle_status Exception : {e}')
     
 
     def teslaEV_update_connection_status(self, EVid):
-        #logging.debug('teslaEV_GetConnectionStatus: for {EVid}')
+        #logging.debug(f'teslaEV_GetConnectionStatus: for {EVid}')
         try:
             code, res = self.teslaEV_update_vehicle_status(EVid)
-            logging.debug('teslaEV_update_connection_status {code} {res}')
+            logging.debug(f'teslaEV_update_connection_status {code} {res}')
             return(code, self.carInfo[EVid]['state'])
         except Exception as e:
-            logging.error('teslaEV_update_connection_status - {e}')
+            logging.error(f'teslaEV_update_connection_status - {e}')
             return('error', e)
 
     def teslaEV_GetName(self, EVid):
@@ -409,14 +409,14 @@ class teslaEVAccess(teslaAccess):
             return(self.carInfo[EVid]['vehicle_state']['vehicle_name'])
 
         except Exception as e:
-            logging.debug('teslaEV_GetName - No EV name found - {e}')
+            logging.debug(f'teslaEV_GetName - No EV name found - {e}')
             return(None)
 
 
     def teslaEV_GetInfo(self, EVid):
         if EVid in self.carInfo:
 
-            logging.debug('teslaEV_GetInfo {}: {}'.format(EVid, self.carInfo[EVid]))
+            logging.debug(f'teslaEV_GetInfo {EVid}: {self.carInfo[EVid]}')
             return(self.carInfo[EVid])
         else:
             return(None)
@@ -436,19 +436,19 @@ class teslaEVAccess(teslaAccess):
                 temp['latitude'] = self.carInfo[EVid]['drive_state']['active_route_latitude']                
             return(temp)
         except Exception as e:
-            logging.error('teslaEV_GetLocation - location error')
+            logging.error(f'teslaEV_GetLocation - location error')
             return(temp)
 
 
     def teslaEV_SetDistUnit(self, dUnit):
-        logging.debug('teslaEV_SetDistUnit: {dUnit}')
+        logging.debug(f'teslaEV_SetDistUnit: {dUnit}')
         self.dist_unit = dUnit
 
     def teslaEV_GetDistUnit(self):
         return(self.dist_unit)
 
     def teslaEV_SetTempUnit(self, tUnit):
-        logging.debug('teslaEV_SetDistUnit: {tUnit}')
+        logging.debug(f'teslaEV_SetDistUnit: {tUnit}')
         self.temp_unit = tUnit
 
     def teslaEV_GetTempUnit(self):
@@ -456,21 +456,21 @@ class teslaEVAccess(teslaAccess):
 
 
     def teslaEV_SetRegion(self, tRegion):
-        logging.debug('teslaEV_SetRegion: {tRegion}')
+        logging.debug(f'teslaEV_SetRegion: {tRegion}')
         self.region = tRegion
 
     def teslaEV_GetTimeSinceLastCarUpdate(self, EVid):
         try:
-            logging.debug('teslaEV_GetTimeSinceLastCarUpdate')
+            logging.debug(f'teslaEV_GetTimeSinceLastCarUpdate')
             timeNow = int(time.time())
             lst = [self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid), timeNow-self.time_start]
-            logging.debug( 'Time list {lst}')
+            logging.debug(f'Time list {lst}')
             timeMinimum =  min(filter(lambda x: x is not None, lst)) if any(lst) else None
             #timeMinimum = min( self.teslaEV_GetTimeSinceLastClimateUpdate(EVid),self.teslaEV_GetTimeSinceLastChargeUpdate(EVid), self.teslaEV_GetTimeSinceLastStatusUpdate(EVid) )
-            logging.debug('Time Now {timeNow} Last UPdate {timeMinimum}')
+            logging.debug(f'Time Now {timeNow} Last UPdate {timeMinimum}')
             return(float(timeMinimum))
         except Exception as e:
-            logging.debug('Exception teslaEV_GetTimeSinceLastCarUpdate - {e}')
+            logging.debug(f'Exception teslaEV_GetTimeSinceLastCarUpdate - {e}')
             return(0)
 
 ####################
@@ -478,7 +478,7 @@ class teslaEVAccess(teslaAccess):
 ####################
     '''
     def teslaEV_GetChargingInfo(self, EVid):
-        logging.debug('teslaEV_GetChargingInfo: for {EVid}')
+        logging.debug(f'teslaEV_GetChargingInfo: for {EVid}')
         temp = {}
         if 'fast_charger_present' in  self.carInfo[EVid]['charge_state']:
             temp['fast_charger_present'] = self.carInfo[EVid]['charge_state']['fast_charger_present']
@@ -527,7 +527,7 @@ class teslaEVAccess(teslaAccess):
         try:
             return(self.carInfo['charge_state']['timestamp'])
         except Exception as e:
-            logging.debug('Exception teslaEV_GetChargeTimestamp - {e}')
+            logging.debug(f'Exception teslaEV_GetChargeTimestamp - {e}')
             return(None)
 
 
@@ -538,98 +538,98 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_GetIdelBatteryRange - {e}')
+            logging.debug(f'Exception teslaEV_GetIdelBatteryRange - {e}')
             return(None)
 
 
 
     def teslaEV_charge_current_request_max(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'charge_current_request_max' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charge_current_request_max'],1)) 
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_charge_current_request_max - {e}')
+            logging.debug(f'Exception teslaEV_charge_current_request_max - {e}')
             return(None)            
 
     def teslaEV_charge_current_request(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'charge_current_request' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charge_current_request'],1)) 
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_charge_current_request - {e}')
+            logging.debug(f'Exception teslaEV_charge_current_request - {e}')
             return(None)            
             
 
     def teslaEV_charger_actual_current(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'charger_actual_current' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charger_actual_current'],1)) 
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_charger_actual_current - {e}')
+            logging.debug(f'Exception teslaEV_charger_actual_current - {e}')
             return(None)              
 
     def teslaEV_charge_amps(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'charge_amps' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charge_amps'],1)) 
             else:
                 return(None)      
         except Exception as e:
-            logging.debug('Exception teslaEV_charge_amps - {e}')
+            logging.debug(f'Exception teslaEV_charge_amps - {e}')
             return(None)         
 
     def teslaEV_time_to_full_charge(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'time_to_full_charge' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['time_to_full_charge']*60,0)) 
             else:
                 return(None)            
         except Exception as e:
-            logging.debug('Exception teslaEV_time_to_full_charge - {e}')
+            logging.debug(f'Exception teslaEV_time_to_full_charge - {e}')
             return(None)         
         
     def teslaEV_charge_energy_added(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'charge_energy_added' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charge_energy_added'],1)) 
             else:
                 return(None)  
         except Exception as e:
-            logging.debug('Exception teslaEV_charge_energy_added - {e}')
+            logging.debug(f'Exception teslaEV_charge_energy_added - {e}')
             return(None)                        
 
     def teslaEV_charge_miles_added_rated(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'time_to_full_charge' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charge_miles_added_rated'],1)) 
             else:
                 return(None)            
         except Exception as e:
-            logging.debug('Exception teslaEV_charge_miles_added_rated - {e}')
+            logging.debug(f'Exception teslaEV_charge_miles_added_rated - {e}')
             return(None)                        
 
     def teslaEV_charger_voltage(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'charger_voltage' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charger_voltage'],0)) 
             else:
                 return(None)       
         except Exception as e:
-            logging.debug('Exception teslaEV_charger_voltage - {e}')
+            logging.debug(f'Exception teslaEV_charger_voltage - {e}')
             return(None)                  
 
     def teslaEV_GetTimeSinceLastChargeUpdate(self, EVid):
@@ -642,103 +642,103 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(timeNow-self.update_time[EVid]['charge'] )
         except Exception as e:
-            logging.debug('Exception teslaEV_GetTimeSinceLastChargeUpdate - {e}')
+            logging.debug(f'Exception teslaEV_GetTimeSinceLastChargeUpdate - {e}')
             return(None)  
         
     def teslaEV_FastChargerPresent(self, EVid):
-        #logging.debug('teslaEV_FastchargerPresent for {EVid}')
+        #logging.debug(f'teslaEV_FastchargerPresent for {EVid}')
         try:
             return(self.carInfo[EVid]['charge_state']['fast_charger_present'])
         except Exception as e:
-            logging.debug('Exception teslaEV_FastChargerPresent - {e}')
+            logging.debug(f'Exception teslaEV_FastChargerPresent - {e}')
             return(None)  
   
     def teslaEV_ChargePortOpen(self, EVid):
-        #logging.debug('teslaEV_ChargePortOpen for {EVid}')
+        #logging.debug(f'teslaEV_ChargePortOpen for {EVid}')
         try:
             return(self.carInfo[EVid]['charge_state']['charge_port_door_open']) 
         except Exception as e:
-            logging.debug('Exception teslaEV_ChargePortOpen - {e}')
+            logging.debug(f'Exception teslaEV_ChargePortOpen - {e}')
             return(None)  
 
     def teslaEV_ChargePortLatched(self, EVid):
-        #logging.debug('teslaEV_ChargePortOpen for {EVid}')
+        #logging.debug(f'teslaEV_ChargePortOpen for {EVid}')
         try:
             return(self.carInfo[EVid]['charge_state']['charge_port_latch']) 
         except Exception as e:
-            logging.debug('Exception teslaEV_ChargePortLatched - {e}')
+            logging.debug(f'Exception teslaEV_ChargePortLatched - {e}')
             return(None)  
         
     def teslaEV_GetBatteryRange(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'battery_range' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['battery_range'],0)) 
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_GetBatteryRange - {e}')
+            logging.debug(f'Exception teslaEV_GetBatteryRange - {e}')
             return(None)  
         
     def teslaEV_GetBatteryLevel(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryLevel for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryLevel for {EVid}')
             if 'battery_level' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['battery_level'],1)) 
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_GetBatteryLevel - {e}')
+            logging.debug(f'Exception teslaEV_GetBatteryLevel - {e}')
             return(None)  
         
     def teslaEV_MaxChargeCurrent(self, EVid):
-        #logging.debug('teslaEV_MaxChargeCurrent for {EVid}')
+        #logging.debug(f'teslaEV_MaxChargeCurrent for {EVid}')
         try:
             return( self.carInfo[EVid]['charge_state']['charge_current_request_max'])             
         except Exception as e:
-            logging.debug('Exception teslaEV_MaxChargeCurrent - {e}')
+            logging.debug(f'Exception teslaEV_MaxChargeCurrent - {e}')
             return(None)       
 
     def teslaEV_ChargeState(self, EVid):
-        #logging.debug('teslaEV_GetChargingState for {EVid}')
+        #logging.debug(f'teslaEV_GetChargingState for {EVid}')
         try:
             return( self.carInfo[EVid]['charge_state']['charging_state'])  
         except Exception as e:
-            logging.debug('Exception teslaEV_ChargeState - {e}')
+            logging.debug(f'Exception teslaEV_ChargeState - {e}')
             return(None)     
         
     def teslaEV_ChargingRequested(self, EVid):
-        #logging.debug('teslaEV_ChargingRequested for {EVid}')
+        #logging.debug(f'teslaEV_ChargingRequested for {EVid}')
         try:
             return(  self.carInfo[EVid]['charge_state']['charge_enable_request'])  
         except Exception as e:
-            logging.debug('Exception teslaEV_ChargingRequested - {e}')
+            logging.debug(f'Exception teslaEV_ChargingRequested - {e}')
             return(None)  
     
     def teslaEV_GetChargingPower(self, EVid):
         try:
-            #logging.debug('teslaEV_GetChargingPower for {EVid}')
+            #logging.debug(f'teslaEV_GetChargingPower for {EVid}')
             if 'charger_power' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charger_power'],1)) 
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_GetChargingPower - {e}')
+            logging.debug(f'Exception teslaEV_GetChargingPower - {e}')
             return(None)              
 
     def teslaEV_GetBatteryMaxCharge(self, EVid):
         try:
-            #logging.debug('teslaEV_GetBatteryMaxCharge for {EVid}')
+            #logging.debug(f'teslaEV_GetBatteryMaxCharge for {EVid}')
             if 'charge_limit_soc' in self.carInfo[EVid]['charge_state']:
                 return(round(self.carInfo[EVid]['charge_state']['charge_limit_soc'],1)) 
             else:
                 return(None)
         except Exception as e:
-            logging.debug('Exception teslaEV_GetBatteryMaxCharge - {e}')
+            logging.debug(f'Exception teslaEV_GetBatteryMaxCharge - {e}')
             return(None)              
            
     def teslaEV_ChargePort(self, EVid, ctrl):
-        logging.debug('teslaEV_ChargePort {ctrl} for {EVid}')
+        logging.debug(f'teslaEV_ChargePort {ctrl} for {EVid}')
  
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
@@ -756,18 +756,18 @@ class teslaEVAccess(teslaAccess):
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
 
     
         except Exception as e:
-            logging.error('Exception teslaEV_ChargePort for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_ChargePort for vehicle id {EVid}: {e}')
             return('error', e)
 
     def teslaEV_Charging(self, EVid, ctrl):
-        logging.debug('teslaEV_Charging {ctrl} for {EVid}')
+        logging.debug(f'teslaEV_Charging {ctrl} for {EVid}')
  
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
@@ -783,31 +783,31 @@ class teslaEVAccess(teslaAccess):
                 elif ctrl == 'stop':
                     code, res = self._teslaEV_send_ev_command(EVid, '/charge_stop' )
                 else:
-                    logging.debug('Unknown teslaEV_Charging command passed for vehicle id (start, stop) {EVid}: {ctrl}')
+                    logging.debug(f'Unknown teslaEV_Charging command passed for vehicle id (start, stop) {EVid}: {ctrl}')
                     return('error', 'unknown command sent {ctrl}')
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
 
         except Exception as e:
-            logging.error('Exception teslaEV_AteslaEV_ChargingutoCondition for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_AteslaEV_ChargingutoCondition for vehicle id {EVid}: {e}')
             return('error', e)
 
 
 
     def teslaEV_SetChargeLimit (self, EVid, limit):
-        logging.debug('teslaEV_SetChargeLimit {limit} for {EVid}')
+        logging.debug(f'teslaEV_SetChargeLimit {limit} for {EVid}')
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 if int(limit) > 100 or int(limit) < 0:
-                    logging.error('Invalid seat heat level passed (0-100%) : {limit}')
+                    logging.error(f'Invalid seat heat level passed (0-100%) : {limit}')
                     return('error', 'Illegal range passed')
 
   
@@ -817,18 +817,18 @@ class teslaEVAccess(teslaAccess):
 
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
         except Exception as e:
-            logging.error('Exception teslaEV_SetChargeLimit for vehicle id {EVid}: {e}')      
+            logging.error(f'Exception teslaEV_SetChargeLimit for vehicle id {EVid}: {e}')      
             return('error', e)
 
 
 
     def teslaEV_SetChargeLimitAmps (self, EVid, limit):
-        logging.debug('teslaEV_SetChargeLimitAmps {limit} for {EVid} -')
+        logging.debug(f'teslaEV_SetChargeLimitAmps {limit} for {EVid} -')
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:
@@ -836,20 +836,20 @@ class teslaEVAccess(teslaAccess):
             if state in ['online']:    
        
                 if limit > 300 or limit < 0:
-                    logging.error('Invalid seat heat level passed (0-300A) : {limit}')
+                    logging.error(f'Invalid seat heat level passed (0-300A) : {limit}')
                     return('error', 'Illegal range passed')
                 payload = { 'charging_amps': int(limit)}    
                 code, res = self._teslaEV_send_ev_command(EVid, '/set_charging_amps', payload ) 
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
 
         except Exception as e:
-            logging.error('Exception teslaEV_SetChargeLimitAmps for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_SetChargeLimitAmps for vehicle id {EVid}: {e}')
 
             
             return('error', e)
@@ -863,7 +863,7 @@ class teslaEVAccess(teslaAccess):
 
     '''
     def teslaEV_GetClimateInfo(self, EVid):
-        logging.debug('teslaEV_GetClimateInfo: for {EVid}')
+        logging.debug(f'teslaEV_GetClimateInfo: for {EVid}')
         temp = {}
         if 'climate_state' in self.carInfo[EVid]:
             if 'inside_temp' in self.carInfo[EVid]['climate_state']:
@@ -903,7 +903,7 @@ class teslaEVAccess(teslaAccess):
         try:
             return(self.carInfo[EVid]['climate_state']['timestamp'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetClimateTimestamp - {e}')
+            logging.debug(f' Exception teslaEV_GetClimateTimestamp - {e}')
             return(None)
 
     def teslaEV_GetTimeSinceLastClimateUpdate(self, EVid):
@@ -916,7 +916,7 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(timeNow - self.update_time[EVid]['climate'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetTimeSinceLastClimateUpdate - {e}')
+            logging.debug(f' Exception teslaEV_GetTimeSinceLastClimateUpdate - {e}')
             return(0)
 
     def teslaEV_GetCabinTemp(self, EVid):
@@ -927,7 +927,7 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(None)
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetCabinTemp - {e}')
+            logging.debug(f' Exception teslaEV_GetCabinTemp - {e}')
             return(None)
         
     def teslaEV_GetOutdoorTemp(self, EVid):
@@ -938,34 +938,34 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(None)
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetOutdoorTemp - {e}')
+            logging.debug(f' Exception teslaEV_GetOutdoorTemp - {e}')
             return(None)
         
     def teslaEV_GetLeftTemp(self, EVid):
         try:
-            #logging.debug('teslaEV_GetLeftTemp for {EVid}')
+            #logging.debug(f'teslaEV_GetLeftTemp for {EVid}')
             if 'driver_temp_setting' in self.carInfo[EVid]['climate_state']:
                 return(round(self.carInfo[EVid]['climate_state']['driver_temp_setting'],1))   
             else:
                 return(None) 
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetLeftTemp - {e}')
+            logging.debug(f' Exception teslaEV_GetLeftTemp - {e}')
             return(None)            
 
     def teslaEV_GetRightTemp(self, EVid):
         try:
-            #logging.debug('teslaEV_GetRightTemp for {EVid}')
+            #logging.debug(f'teslaEV_GetRightTemp for {EVid}')
             if 'passenger_temp_setting' in self.carInfo[EVid]['climate_state']:
                 return(round(self.carInfo[EVid]['climate_state']['passenger_temp_setting'],1))   
             else:
                 return(None)
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetRightTemp - {e}')
+            logging.debug(f' Exception teslaEV_GetRightTemp - {e}')
             return(None)            
 
     def teslaEV_GetSeatHeating(self, EVid):
         try:
-        #logging.debug('teslaEV_GetSeatHeating for {EVid}')
+        #logging.debug(f'teslaEV_GetSeatHeating for {EVid}')
             temp = {}
             if 'seat_heater_left' in self.carInfo[EVid]['climate_state']:
                 temp['FrontLeft'] = self.carInfo[EVid]['climate_state']['seat_heater_left']
@@ -979,7 +979,7 @@ class teslaEVAccess(teslaAccess):
                 temp['RearRight'] = self.carInfo[EVid]['climate_state']['seat_heater_rear_right']           
             return(temp)
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetSeatHeating - {e}')
+            logging.debug(f' Exception teslaEV_GetSeatHeating - {e}')
             return(temp)            
  
 
@@ -988,42 +988,42 @@ class teslaEVAccess(teslaAccess):
 
             return( self.carInfo[EVid]['climate_state']['is_auto_conditioning_on']) 
         except Exception as e:
-            logging.debug(' Exception teslaEV_AutoConditioningRunning - {e}')
+            logging.debug(f' Exception teslaEV_AutoConditioningRunning - {e}')
             return(None)      
 
     def teslaEV_PreConditioningEnabled(self, EVid):
-        #logging.debug('teslaEV_PreConditioningEnabled for {EVid}')
+        #logging.debug(f'teslaEV_PreConditioningEnabled for {EVid}')
         try:
             return(self.carInfo[EVid]['climate_state']['is_preconditioning'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_PreConditioningEnabled - {e}')
+            logging.debug(f' Exception teslaEV_PreConditioningEnabled - {e}')
             return(None)      
 
     def teslaEV_MaxCabinTempCtrl(self, EVid):
-        #logging.debug('teslaEV_MaxCabinTempCtrl for {EVid}')
+        #logging.debug(f'teslaEV_MaxCabinTempCtrl for {EVid}')
         try:
             if 'max_avail_temp' in self.carInfo[EVid]['climate_state']:
                 return(round(self.carInfo[EVid]['climate_state']['max_avail_temp'],1))   
             else:
                 return(None)
         except Exception as e:
-            logging.debug(' Exception teslaEV_MaxCabinTempCtrl - {e}')
+            logging.debug(f' Exception teslaEV_MaxCabinTempCtrl - {e}')
             return(None)
         
         
     def teslaEV_MinCabinTempCtrl(self, EVid):
-        #logging.debug('teslaEV_MinCabinTempCtrl for {EVid}')
+        #logging.debug(f'teslaEV_MinCabinTempCtrl for {EVid}')
         try:
             if 'min_avail_temp' in self.carInfo[EVid]['climate_state']:
                 return(round(self.carInfo[EVid]['climate_state']['min_avail_temp'],1))   
             else:
                 return(None)
         except Exception as e:
-            logging.debug(' Exception teslaEV_MinCabinTempCtrl - {e}')
+            logging.debug(f' Exception teslaEV_MinCabinTempCtrl - {e}')
             return(None)
         
     def teslaEV_SteeringWheelHeatOn(self, EVid):
-        #logging.debug('teslaEV_SteeringWheelHeatOn for {EVid}')
+        #logging.debug(f'teslaEV_SteeringWheelHeatOn for {EVid}')
         try:
             if (self.carInfo[EVid]['climate_state']['steering_wheel_heater']):
                 return(self.carInfo[EVid]['climate_state']['steering_wheel_heat_level'])
@@ -1032,11 +1032,11 @@ class teslaEVAccess(teslaAccess):
             
 
         except Exception as e:
-            logging.error('teslaEV_SteeringWheelHeatOn Exception : {e}')
+            logging.error(f'teslaEV_SteeringWheelHeatOn Exception : {e}')
             return(None)
 
     def teslaEV_Windows(self, EVid, cmd):
-        logging.debug('teslaEV_Windows {cmd} for {EVid}')
+        logging.debug(f'teslaEV_Windows {cmd} for {EVid}')
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
@@ -1045,7 +1045,7 @@ class teslaEVAccess(teslaAccess):
             if state in ['online']:    
                 #self.teslaEV_GetLocation()
                 if cmd != 'vent' and cmd != 'close':
-                    logging.error('Wrong command passed (vent or close) to teslaEV_Windows: {cmd}')
+                    logging.error(f'Wrong command passed (vent or close) to teslaEV_Windows: {cmd}')
                     return('error', 'Wrong parameter passed: {cmd}')
                 payload = {'lat':self.carInfo[EVid]['drive_state']['latitude'],
                             'lon':self.carInfo[EVid]['drive_state']['longitude'],
@@ -1055,17 +1055,17 @@ class teslaEVAccess(teslaAccess):
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
         except Exception as e:
-            logging.error('Exception teslaEV_Windows for vehicle id {EVid}: {e}')       
+            logging.error(f'Exception teslaEV_Windows for vehicle id {EVid}: {e}')       
             return('error', e)
 
 
     def teslaEV_SunRoof(self, EVid, cmd):
-        logging.debug('teslaEV_SunRoof {cmd} for {EVid}')
+        logging.debug(f'teslaEV_SunRoof {cmd} for {EVid}')
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
@@ -1073,7 +1073,7 @@ class teslaEVAccess(teslaAccess):
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:                
                 if cmd not in ['vent','close', 'stop'] :
-                    logging.error('Wrong command passed to (vent or close) to teslaEV_SunRoof: {cmd}')
+                    logging.error(f'Wrong command passed to (vent or close) to teslaEV_SunRoof: {cmd}')
                     return('error', 'Wrong parameter passed: {cmd}')
                 payload = { 'state': cmd}     
                 code, res = self._teslaEV_send_ev_command(EVid, '/sun_roof_control', payload )    
@@ -1081,18 +1081,18 @@ class teslaEVAccess(teslaAccess):
 
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
             
         except Exception as e:
-            logging.error('Exception teslaEV_SunRoof for vehicle id {EVid}: {e}')            
+            logging.error(f'Exception teslaEV_SunRoof for vehicle id {EVid}: {e}')            
             return('error', e)
 
 
     def teslaEV_AutoCondition(self, EVid, ctrl):
-        logging.debug('teslaEV_AutoCondition {ctrl} for {EVid}')
+        logging.debug(f'teslaEV_AutoCondition {ctrl} for {EVid}')
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
@@ -1104,25 +1104,25 @@ class teslaEVAccess(teslaAccess):
                 elif ctrl == 'stop':
                     code, res = self._teslaEV_send_ev_command(EVid, '/auto_conditioning_stop') 
                 else:
-                    logging.debug('Unknown AutoCondition command passed for vehicle id {EVid}: {ctrl}')
+                    logging.debug(f'Unknown AutoCondition command passed for vehicle id {EVid}: {ctrl}')
                     return('error', 'Wrong parameter passed: {ctrl}')
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
 
         except Exception as e:
-            logging.error('Exception teslaEV_AutoCondition for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_AutoCondition for vehicle id {EVid}: {e}')
             return('error', e)
             
 
 
 
     def teslaEV_SetCabinTemps(self, EVid, driverTempC, passergerTempC):
-        logging.debug('teslaEV_SetCabinTemps {driverTempC} / {passergerTempC} for {EVid}')
+        logging.debug(f'teslaEV_SetCabinTemps {driverTempC} / {passergerTempC} for {EVid}')
     
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
@@ -1135,19 +1135,19 @@ class teslaEVAccess(teslaAccess):
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
 
     
         except Exception as e:
-            logging.error('Exception teslaEV_SetCabinTemps for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_SetCabinTemps for vehicle id {EVid}: {e}')
             return('error', e)
 
 
     def teslaEV_DefrostMax(self, EVid, ctrl):
-        logging.debug('teslaEV_DefrostMax {ctrl} for {EVid}')
+        logging.debug(f'teslaEV_DefrostMax {ctrl} for {EVid}')
  
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
@@ -1160,7 +1160,7 @@ class teslaEVAccess(teslaAccess):
                 elif  ctrl == 'off':
                     payload = {'on':False,'manual_override':True }  
                 else:
-                    logging.error('Wrong parameter for teslaEV_DefrostMax (on/off) for vehicle id {EVid} : {ctrl}')
+                    logging.error(f'Wrong parameter for teslaEV_DefrostMax (on/off) for vehicle id {EVid} : {ctrl}')
                     return(False)
       
                 code, res = self._teslaEV_send_ev_command(EVid, '/set_preconditioning_max', payload ) 
@@ -1168,19 +1168,19 @@ class teslaEVAccess(teslaAccess):
 
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
 
         except Exception as e:
-            logging.error('Exception teslaEV_DefrostMax for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_DefrostMax for vehicle id {EVid}: {e}')
 
             return('error', e)
 
 
     def teslaEV_SetSeatHeating (self, EVid, seat, levelHeat):
-        logging.debug('teslaEV_SetSeatHeating {levelHeat}, {seat} for {EVid}')
+        logging.debug(f'teslaEV_SetSeatHeating {levelHeat}, {seat} for {EVid}')
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep']:
@@ -1190,13 +1190,13 @@ class teslaEVAccess(teslaAccess):
                 seats = [0, 1, 2, 4, 5 ] 
                 rearSeats =  [2, 4, 5 ] 
                 if int(levelHeat) > 3 or int(levelHeat) < 0:
-                    logging.error('Invalid seat heat level passed (0-3) : {levelHeat}')
+                    logging.error(f'Invalid seat heat level passed (0-3) : {levelHeat}')
                     return('error', 'Invalid seat heat level passed (0-3) : {levelHeat}')
                 if seat not in seats: 
-                    logging.error('Invalid seatpassed 0,1, 2, 4, 5 : {seat}')
+                    logging.error(f'Invalid seatpassed 0,1, 2, 4, 5 : {seat}')
                     return('error','Invalid seatpassed 0,1, 2, 4, 5 : {seat}')  
                 elif not self.rearSeatHeat and seat in rearSeats:
-                    logging.error('Rear seat heat not supported on this car')
+                    logging.error(f'Rear seat heat not supported on this car')
                     return ('error', 'Rear seat heat not supported on this car')  
 
                 payload = { 'heater': seat, 'level':int(levelHeat)}    
@@ -1204,18 +1204,18 @@ class teslaEVAccess(teslaAccess):
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
-                    logging.error('Non 200 response: {code} {res}')
+                    logging.error(f'Non 200 response: {code} {res}')
                     return(code, res)
             else:
                 return('error', 'error')
 
         except Exception as e:
-            logging.error('Exception teslaEV_SetSeatHeating for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_SetSeatHeating for vehicle id {EVid}: {e}')
             return('error', e)
 
 
     def teslaEV_SteeringWheelHeat(self, EVid, ctrl):
-        logging.debug('teslaEV_SteeringWheelHeat {ctrl} for {EVid}')
+        logging.debug(f'teslaEV_SteeringWheelHeat {ctrl} for {EVid}')
 
         try:
             if self.steeringWheelHeatDetected:
@@ -1230,7 +1230,7 @@ class teslaEVAccess(teslaAccess):
                     elif  ctrl == 'off':
                         payload = {'on':False}  
                     else:
-                        logging.error('Wrong paralf.carInfo[id]meter for teslaEV_SteeringWheelHeat (on/off) for vehicle id {EVid} : {ctrl}')
+                        logging.error(f'Wrong paralf.carInfo[id]meter for teslaEV_SteeringWheelHeat (on/off) for vehicle id {EVid} : {ctrl}')
                         return('error', 'Wrong parameter passed: {ctrl}')
 
                     code, res = self._teslaEV_send_ev_command(EVid, '/remote_steering_wheel_heater_request', payload ) 
@@ -1238,16 +1238,16 @@ class teslaEVAccess(teslaAccess):
    
                         return(code, res['response']['result'])
                     else:
-                        logging.error('Non 200 response: {code} {res}')
+                        logging.error(f'Non 200 response: {code} {res}')
                         return(code, res)
                 else:
                     return('error', 'error')
 
             else:
-                logging.error('Steering Wheet does not seem to support heating')
+                logging.error(f'Steering Wheet does not seem to support heating')
                 return('error', 'Steering Wheet does not seem to support heating')
         except Exception as e:
-            logging.error('Exception teslaEV_SteeringWheelHeat for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_SteeringWheelHeat for vehicle id {EVid}: {e}')
             return('error', e)
 
 ####################
@@ -1311,19 +1311,19 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_GetCenterDisplay(self, EVid):
 
-        #logging.debug('teslaEV_GetCenterDisplay: for {EVid}')
+        #logging.debug(f'teslaEV_GetCenterDisplay: for {EVid}')
 
         try:
             return(self.carInfo[EVid]['vehicle_state']['center_display_state'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetCenterDisplay - {e}')
+            logging.debug(f' Exception teslaEV_GetCenterDisplay - {e}')
             return(None)
 
     def teslaEV_GetStatusTimestamp(self, EVid):
         try:
             return(self.carInfo[EVid]['vehicle_state']['timestamp'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetStatusTimestamp - {e}')
+            logging.debug(f' Exception teslaEV_GetStatusTimestamp - {e}')
             return(None)
 
     def teslaEV_GetTimeSinceLastStatusUpdate(self, EVid):
@@ -1336,34 +1336,34 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(timeNow - self.update_time[EVid]['status'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetTimeSinceLastStatusUpdate - {e}')
+            logging.debug(f' Exception teslaEV_GetTimeSinceLastStatusUpdate - {e}')
             return(0)
 
     def teslaEV_HomeLinkNearby(self, EVid):
-        #logging.debug('teslaEV_HomeLinkNearby: for {EVid}')
+        #logging.debug(f'teslaEV_HomeLinkNearby: for {EVid}')
         try:
             return(self.carInfo[EVid]['vehicle_state']['homelink_nearby'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_HomeLinkNearby - {e}')
+            logging.debug(f' Exception teslaEV_HomeLinkNearby - {e}')
             return(None)
 
     def teslaEV_nbrHomeLink(self, EVid):
-        logging.debug('teslaEV_nbrHomeLink: for {EVid}')
+        logging.debug(f'teslaEV_nbrHomeLink: for {EVid}')
         try:
             return(self.carInfo[EVid]['vehicle_state']['homelink_device_count'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_nbrHomeLink - {e}')
+            logging.debug(f' Exception teslaEV_nbrHomeLink - {e}')
             return(None)
 
     def teslaEV_GetLockState(self, EVid):
-        #logging.debug('teslaEV_GetLockState: for {EVid}')
+        #logging.debug(f'teslaEV_GetLockState: for {EVid}')
         try:
             return(self.carInfo[EVid]['vehicle_state']['locked'])
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetLockState - {e}')
+            logging.debug(f' Exception teslaEV_GetLockState - {e}')
             return(None)
     def teslaEV_GetWindoStates(self, EVid):
-        #logging.debug('teslaEV_GetWindoStates: for {EVid}')
+        #logging.debug(f'teslaEV_GetWindoStates: for {EVid}')
         try:
             temp = {}
             if 'fd_window' in self.carInfo[EVid]['vehicle_state']:
@@ -1382,49 +1382,49 @@ class teslaEVAccess(teslaAccess):
                 temp['RearRight'] = self.carInfo[EVid]['vehicle_state']['rp_window']
             else:
                 temp['RearRight'] = None
-            logging.debug('teslaEV_GetWindoStates {EVid} {temp}')
+            logging.debug(f'teslaEV_GetWindoStates {EVid} {temp}')
             return(temp)
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetWindoStates - {e}')
+            logging.debug(f' Exception teslaEV_GetWindoStates - {e}')
             return(temp)
         
 
     def teslaEV_GetOdometer(self, EVid):
         try:
-            #logging.debug('teslaEV_GetOdometer: for {EVid}')
+            #logging.debug(f'teslaEV_GetOdometer: for {EVid}')
             if 'odometer' in self.carInfo[EVid]['vehicle_state']:
                 return(round(self.carInfo[EVid]['vehicle_state']['odometer'], 2))
             else:
                 return(0.0)
         except Exception as e:
-            logging.debug(' Exception teslaEV_GetOdometer - {e}')
+            logging.debug(f' Exception teslaEV_GetOdometer - {e}')
             return(None)
         
 
     #def teslaEV_GetSunRoofPercent(self, EVid):
     #    try:
-    #        #logging.debug('teslaEV_GetSunRoofState: for {EVid}')
+    #        #logging.debug(f'teslaEV_GetSunRoofState: for {EVid}')
     #        if 'sun_roof_percent_open' in self.carInfo[EVid]['vehicle_state']:
     #            return(round(self.carInfo[EVid]['vehicle_state']['sun_roof_percent_open']))
     #        else:
     #            return(None)
     #    except Exception as e:
-    #       logging.debug(' Exception teslaEV_GetSunRoofPercent - {e}')
+    #       logging.debug(f' Exception teslaEV_GetSunRoofPercent - {e}')
     #        return(None)
         
     def teslaEV_GetSunRoofState(self, EVid):
-        #logging.debug('teslaEV_GetSunRoofState: for {EVid}')
+        #logging.debug(f'teslaEV_GetSunRoofState: for {EVid}')
         try:
             if 'sun_roof_state' in self.carInfo[EVid]['vehicle_config'] and self.sunroofInstalled:
                 return(round(self.carInfo[EVid]['vehicle_state']['sun_roof_state']))
             else:
                 return(None)
         except Exception as e:
-            logging.error('teslaEV_GetSunRoofState Excaption: {e}')
+            logging.error(f'teslaEV_GetSunRoofState Excaption: {e}')
             return(None)
 
     def teslaEV_GetTrunkState(self, EVid):
-        #logging.debug('teslaEV_GetTrunkState: for {EVid}')
+        #logging.debug(f'teslaEV_GetTrunkState: for {EVid}')
         try:
             if self.carInfo[EVid]['vehicle_state']['rt'] == 0:
                 return(0)
@@ -1433,11 +1433,11 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(None)
         except Exception as e:
-            logging.error('teslaEV_GetTrunkState Excaption: {e}')
+            logging.error(f'teslaEV_GetTrunkState Excaption: {e}')
             return(None)
 
     def teslaEV_GetFrunkState(self, EVid):
-        #logging.debug('teslaEV_GetFrunkState: for {EVid}')
+        #logging.debug(f'teslaEV_GetFrunkState: for {EVid}')
         try:
             if self.carInfo[EVid]['vehicle_state']['ft'] == 0:
                 return(0)
@@ -1446,7 +1446,7 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(None)
         except Exception as e:
-            logging.error('teslaEV_GetFrunkState Excaption: {e}')
+            logging.error(f'teslaEV_GetFrunkState Excaption: {e}')
             return(None)
         
 
@@ -1454,7 +1454,7 @@ class teslaEVAccess(teslaAccess):
 # Controls
 ################
     def teslaEV_FlashLights(self, EVid):
-        logging.debug('teslaEV_GetVehicleInfo: for {EVid}')       
+        logging.debug(f'teslaEV_GetVehicleInfo: for {EVid}')       
 
         try:
 
@@ -1463,7 +1463,7 @@ class teslaEVAccess(teslaAccess):
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
                 code, temp = self._teslaEV_send_ev_command(EVid, '/flash_lights')  
-                logging.debug('temp {temp}')
+                logging.debug(f'temp {temp}')
             #temp = r.json()
                 if  code in ['ok']:
                     temp['response']['result']
@@ -1473,26 +1473,26 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(code, state)
         except Exception as e:
-            logging.error('Exception teslaEV_FlashLight for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_FlashLight for vehicle id {EVid}: {e}')
             return('error', e)
 
 
     def teslaEV_HonkHorn(self, EVid):
-        logging.debug('teslaEV_HonkHorn for {EVid}')
+        logging.debug(f'teslaEV_HonkHorn for {EVid}')
         #S = self.teslaApi.teslaConnect()
         #with requests.Session() as s:
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            logging.debug('teslaEV_HonkHorn {code} - {state}')
+            logging.debug(f'teslaEV_HonkHorn {code} - {state}')
             if state in ['asleep']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
           
                 code, temp = self._teslaEV_send_ev_command(EVid, '/honk_horn')   
-                logging.debug('teslaEV_HonkHorn {code} - {temp}')
+                logging.debug(f'teslaEV_HonkHorn {code} - {temp}')
                 #temp = r.json()
                 if code in ['ok']:
-                    logging.debug(code, temp['response']['result'])
+ 
                     return(code, temp['response']['result'])
                 else:
                     return(code, temp)
@@ -1500,12 +1500,12 @@ class teslaEVAccess(teslaAccess):
                 return('error', state)
     
         except Exception as e:
-            logging.error('Exception teslaEV_HonkHorn for vehicle id {EVid}: {e}')           
+            logging.error(f'Exception teslaEV_HonkHorn for vehicle id {EVid}: {e}')           
             return('error', e)
 
 
     def teslaEV_PlaySound(self, EVid, sound):
-        logging.debug('teslaEV_PlaySound for {EVid}')
+        logging.debug(f'teslaEV_PlaySound for {EVid}')
 
         try:
 
@@ -1515,10 +1515,10 @@ class teslaEVAccess(teslaAccess):
             if state in ['online']:    
                 payload = {'sound' : sound}        
                 code, res = self._teslaEV_send_ev_command(EVid, '/remote_boombox', payload ) 
-                logging.debug('teslaEV_PlaySound {res}')
+                logging.debug(f'teslaEV_PlaySound {res}')
                 #temp = r.json()
                 if code in  ['ok']:
-                    logging.debug(code, res['response']['result'])
+
                     return(code, res['response']['result'])
                 else:
                     return(code, res)
@@ -1526,13 +1526,13 @@ class teslaEVAccess(teslaAccess):
                 return('error', 'error')
     
         except Exception as e:
-            logging.error('Exception teslaEV_PlaySound for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_PlaySound for vehicle id {EVid}: {e}')
             return('error', e)
 
 # Needs to be updated 
 
     def teslaEV_Doors(self, EVid, ctrl):
-        logging.debug('teslaEV_Doors {ctrl} for {EVid}')
+        logging.debug(f'teslaEV_Doors {ctrl} for {EVid}')
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
@@ -1544,7 +1544,7 @@ class teslaEVAccess(teslaAccess):
                 elif ctrl == 'lock':
                     code, res = self._teslaEV_send_ev_command(EVid, '/door_lock' )
                 else:
-                    logging.debug('Unknown door control passed: {ctrl}')
+                    logging.debug(f'Unknown door control passed: {ctrl}')
                     return('error', 'Unknown door control passed: {ctrl}')
                 if code in ['ok']:
                     return(code, res['response']['result'])
@@ -1554,13 +1554,13 @@ class teslaEVAccess(teslaAccess):
                 return('error', state)
 
         except Exception as e:
-            logging.error('Exception teslaEV_Doors for vehicle id {EVid}: {e}')
-            logging.error('Trying to reconnect')            
+            logging.error(f'Exception teslaEV_Doors for vehicle id {EVid}: {e}')
+            logging.error(f'Trying to reconnect')            
             return('error', e)
 
 
     def teslaEV_TrunkFrunk(self, EVid, frunkTrunk):
-        logging.debug('teslaEV_Doors {frunkTrunk} for {EVid}')
+        logging.debug(f'teslaEV_Doors {frunkTrunk} for {EVid}')
         
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
@@ -1572,7 +1572,7 @@ class teslaEVAccess(teslaAccess):
                 elif frunkTrunk.upper()  == 'TRUNK' or frunkTrunk.upper() == 'REAR':
                         cmd = 'rear' 
                 else:
-                    logging.debug('Unknown trunk command passed: {cmd}')
+                    logging.debug(f'Unknown trunk command passed: {cmd}')
                     return('error', 'Unknown trunk command passed: {cmd}')
                 payload = {'which_trunk':cmd}      
                 code, res = self._teslaEV_send_ev_command(EVid, '/actuate_trunk', payload ) 
@@ -1585,12 +1585,12 @@ class teslaEVAccess(teslaAccess):
                 return('error', state)
                     
         except Exception as e:
-            logging.error('Exception teslaEV_TrunkFrunk for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_TrunkFrunk for vehicle id {EVid}: {e}')
             return('error', e)
 
 
     def teslaEV_HomeLink(self, EVid):
-        logging.debug('teslaEV_HomeLink for {EVid}')
+        logging.debug(f'teslaEV_HomeLink for {EVid}')
 
 
         try:
@@ -1604,7 +1604,7 @@ class teslaEVAccess(teslaAccess):
                         'lon':self.carInfo[EVid]['drive_state']['longitude']}    
                 code, res = self._teslaEV_send_ev_command(EVid, '/trigger_homelink', payload ) 
                 if code in ['ok']:
-                    logging.debug(code, res['response']['result'])
+
                     return(code, res['response']['result'])
                 else:
                     return(code, state)
@@ -1612,7 +1612,7 @@ class teslaEVAccess(teslaAccess):
                 return('error', state)
 
         except Exception as e:
-            logging.error('Exception teslaEV_HomeLink for vehicle id {EVid}: {e}')
+            logging.error(f'Exception teslaEV_HomeLink for vehicle id {EVid}: {e}')
        
             return('error', e)
 
