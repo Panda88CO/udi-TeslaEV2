@@ -210,7 +210,7 @@ class TeslaEVController(udi_interface.Node):
         #while not self.customParam_done or not self.customNsDone and not self.config_done:
         while not self.config_done and not self.portalReady:
             logging.info('Waiting for node to initialize')
-            logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done, self.TEVcloud.customNsDone(),self.config_don))
+            logging.debug(' 1 2 3: {} {} {}'.format(self.customParam_done, self.TEVcloud.customNsDone(),self.config_done))
             time.sleep(1)
 
         logging.debug(f'Portal Credentials: {self.portalID} {self.portalSecret}')
