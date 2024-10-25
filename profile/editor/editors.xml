@@ -22,6 +22,7 @@
   
   <editor id = "MINU" > 
       <range  uom="44" min="0" max="1440"   />
+      <range  uom="25" subset="0-1,99" nls="UNKNOWN"/>
   </editor>
   
   <editor id = "NUMBER" > 
