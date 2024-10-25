@@ -53,7 +53,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     def poll(self):
         
-        logging.debug('Climate node {self.EVid}')
+        logging.debug(f'Climate node {self.EVid}')
         try:
             if self.TEV.carState != 'Offline':
                 self.updateISYdrivers()
@@ -61,10 +61,10 @@ class teslaEV_ClimateNode(udi_interface.Node):
                 logging.info('Car appears off-line/sleeping - not updating data')
 
         except Exception as e:
-            logging.error('Climate Poll exception : {e}')
+            logging.error(f'Climate Poll exception : {e}')
 
     def forceUpdateISYdrivers(self):
-        logging.debug('forceUpdateISYdrivers: {self.EVid}')
+        logging.debug(f'forceUpdateISYdrivers: {self.EVid}')
         time.sleep(1)
         self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
@@ -72,7 +72,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     def updateISYdrivers(self):
         try:
-            logging.info('Climate setDriverTemp {self.EVid}')
+            logging.info(f'Climate setDriverTemp {self.EVid}')
 
             self.setDriverTemp('GV1', self.TEV.teslaEV_GetCabinTemp(self.EVid))
             self.setDriverTemp('GV2', self.TEV.teslaEV_GetOutdoorTemp(self.EVid))
@@ -115,7 +115,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             except ValueError:
                 self.EV_setDriver('GV20', None, 25)
         except Exception as e:
-            logging.error('updateISYdrivers climate node  failed: {e}')
+            logging.error(f'updateISYdrivers climate node  failed: {e}')
 
 
     def ISYupdate (self, command):
@@ -135,9 +135,9 @@ class teslaEV_ClimateNode(udi_interface.Node):
         elif windowCtrl == 0:
             code, res = self.TEV.teslaEV_Windows(self.EVid, 'close')
         else:
-            logging.error('Wrong command for evWndows: {windowCtrl}')
+            logging.error(f'Wrong command for evWndows: {windowCtrl}')
             code = 'error'
-            res = 'Wrong command for evWndows: {windowCtrl}'
+            res = f'Wrong command for evWndows: {windowCtrl}'
         if code in ['ok']:
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)    
         else:
@@ -155,10 +155,10 @@ class teslaEV_ClimateNode(udi_interface.Node):
         elif sunroofCtrl == 0:
             code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'close')            
         else:
-            logging.error('Wrong command for evSunroof: {sunroofCtrl}')
+            logging.error(f'Wrong command for evSunroof: {sunroofCtrl}')
 
             code = 'error'
-            res = 'Wrong command for evSunroof: {sunroofCtrl}'
+            res = f'Wrong command for evSunroof: {sunroofCtrl}'
         if code in ['ok']:
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)    
         else:
@@ -175,9 +175,9 @@ class teslaEV_ClimateNode(udi_interface.Node):
         elif autoCond == 0:
             code, res = self.TEV.teslaEV_AutoCondition(self.EVid, 'stop')
         else:
-            logging.error('Wrong command for evAutoCondition: {autoCond}')
+            logging.error(f'Wrong command for evAutoCondition: {autoCond}')
             code = 'error'
-            res = 'Wrong command for evAutoCondition: {autoCond}'
+            res = f'Wrong command for evAutoCondition: {autoCond}'
         if code in ['ok']:
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
             self.EV_setDriver('GV10',autoCond, 25 )
@@ -198,9 +198,9 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if self.TEV.teslaEV_DefrostMax(self.EVid, 'off'):
                 self.EV_setDriver('GV11', self.teslaEV_PreConditioningEnabled(self.EVid), 25)
         else:
-            logging.error('Wrong command for evDefrostMax: {defrost}')
+            logging.error(f'Wrong command for evDefrostMax: {defrost}')
             code = 'error'
-            res = 'Wrong command for evAutoCondition: {autoCond}'
+            res = f'Wrong command for evDefrostMax: {defrost}'
         if code in ['ok']:
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
         else:
@@ -311,9 +311,9 @@ class teslaEV_ClimateNode(udi_interface.Node):
         elif wheel == 0:
             code, res = self.TEV.teslaEV_SteeringWheelHeat(self.EVid, 'off')            
         else:
-            logging.error('Wrong command for evDefrostMax: {wheel}') 
+            logging.error(f'Wrong command for evDefrostMax: {wheel}') 
             code = 'error'
-            res = 'Wrong command for evDefrostMax: {wheel}'
+            res = f'Wrong command for evDefrostMax: {wheel}'
         if code in ['ok']:
             self.EV_setDriver('GV21', self.command_res2ISY(res),25)
         else:

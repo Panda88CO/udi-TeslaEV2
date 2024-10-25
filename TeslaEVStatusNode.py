@@ -20,7 +20,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def __init__(self, polyglot, primary, address, name, evid, TEV):
         super(teslaEV_StatusNode, self).__init__(polyglot, primary, address, name)
-        logging.info(f'_init_ Tesla EV  Status Node')
+        logging.info('_init_ Tesla EV  Status Node')
         self.poly = polyglot
         self.ISYforced = False
         self.EVid = evid
@@ -96,7 +96,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
             elif code in['offline', 'overload', 'error', 'unknown']:
                 self.EV_setDriver('GV13', self.code2ISY(code), 25)
-                logging.info(f'Car appears off-line/sleeping or overload  - not updating data')
+                logging.info('Car appears off-line/sleeping or overload  - not updating data')
             else:
                 self.EV_setDriver('GV13', 99, 25)
         except Exception as e:
@@ -161,7 +161,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                     logging.debug('GV18: {}'.format(round(location['latitude'], 3)))
                     self.EV_setDriver('GV18', round(location['latitude'], 3), 56)
                 else:
-                    logging.debug(f'GV18: NONE')
+                    logging.debug('GV18: NONE')
                     self.EV_setDriver('GV18', None, 25)
             else:
                 self.EV_setDriver('GV17', 98, 25)
@@ -304,28 +304,28 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV12', 1, 25)
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
         else:
-            logging.info(f'Not able to send command - EV is not online')
+            logging.info('Not able to send command - EV is not online')
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
             self.EV_setDriver('GV12', None, 25)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
 
     def evOpenTrunk (self, command):
-        logging.info(f'evOpenTrunk called')   
+        logging.info('evOpenTrunk called')   
         code, res = self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Trunk')
         logging.debug(f'Trunk result {code} - {res}')
         if code in ['ok']:
             self.EV_setDriver('GV11', 1, 25)
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)    
         else:
-            logging.info(f'Not able to send command - EV is not online')
+            logging.info('Not able to send command - EV is not online')
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
             self.EV_setDriver('GV11', None, 25)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
 
     def evHomelink (self, command):
-        logging.info(f'evHomelink called')
+        logging.info('evHomelink called')
         code, res = self.TEV.teslaEV_HomeLink(self.EVid)
         if code in ['ok']:
              self.EV_setDriver('GV21', self.command_res2ISY(res), 25)

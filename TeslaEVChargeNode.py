@@ -38,7 +38,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
         logging.info('_init_ Tesla Charge Node COMPLETE')
         
     def start(self):                
-        logging.info('Start Tesla EV charge Node: {self.EVid}')  
+        logging.info(f'Start Tesla EV charge Node: {self.EVid}')  
         #self.EV_setDriver('ST', 1)
         self.nodeReady = True
         self.updateISYdrivers()
@@ -50,7 +50,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
     
     def poll(self):
         
-        logging.debug('Charge node {self.EVid}')
+        logging.debug(f'Charge node {self.EVid}')
         try:
             if self.TEV.carState != 'Offline':
                 self.updateISYdrivers()
@@ -68,7 +68,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
 
     def updateISYdrivers(self):
         try:
-            logging.info('ChargeNode updateISYdrivers {self.EVid}')
+            logging.info(f'ChargeNode updateISYdrivers {self.EVid}')
             self.EV_setDriver('GV1', self.bool2ISY(self.TEV.teslaEV_FastChargerPresent(self.EVid)), 25)
             self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_ChargePortOpen(self.EVid)),25)
             self.EV_setDriver('GV3', self.latch2ISY(self.TEV.teslaEV_ChargePortLatched(self.EVid)),25)
@@ -112,7 +112,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
             except ValueError:
                 self.EV_setDriver('GV20', None, 25)
         except Exception as e:
-            logging.error('updateISYdrivers charge node failed: {e}')
+            logging.error(f'updateISYdrivers charge node failed: {e}')
 
     def ISYupdate (self, command):
         logging.info('ISY-update called')
@@ -129,9 +129,9 @@ class teslaEV_ChargeNode(udi_interface.Node):
         elif chargePort == 0:
             code, res = self.TEV.teslaEV_ChargePort(self.EVid, 'close')
         else:
-            logging.debug('Wrong parameter passed to evChargePort : {chargePort}')
+            logging.debug(f'Wrong parameter passed to evChargePort : {chargePort}')
             code = 'error'
-            res = 'Wrong parameter passed to evChargePort : {chargePort}'
+            res = f'Wrong parameter passed to evChargePort : {chargePort}'
 
         if code in ['ok']:
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
@@ -165,7 +165,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
                 self.EV_setDriver('GV21', self.code2ISY(code), 25)      
                 self.EV_setDriver('GV6', None, 25)              
         else:
-            logging.debug('Wrong parameter passed to evChargeControl : {chargeCtrl}')
+            logging.debug(f'Wrong parameter passed to evChargeControl : {chargeCtrl}')
             self.EV_setDriver('GV6', None, 25)
 
 

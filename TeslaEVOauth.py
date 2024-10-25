@@ -228,7 +228,7 @@ class teslaEVAccess(teslaAccess):
                             self.next_wake_call = timeNow + int(delay)
                     return(code, state)
                 else:          
-                    logging.warning('Too many calls to wake API - need to wait {delay} secods')
+                    logging.warning(f'Too many calls to wake API - need to wait {delay} secods')
                     return(code, state)
         except Exception as e:
             logging.error(f'_teslaEV_wake_ev Exception : {e}')
@@ -784,7 +784,7 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_send_ev_command(EVid, '/charge_stop' )
                 else:
                     logging.debug(f'Unknown teslaEV_Charging command passed for vehicle id (start, stop) {EVid}: {ctrl}')
-                    return('error', 'unknown command sent {ctrl}')
+                    return('error', f'unknown command sent {ctrl}')
                 if code in  ['ok']:
                     return(code, res['response']['result'])
                 else:
