@@ -99,11 +99,7 @@
   <editor id = "ONOFF" > 
      <range  uom="25" subset="0-1,99" nls="ONOFF" />
   </editor>
-  
-  <editor id = "SUNROOFCTRL" > 
-     <range  uom="25" subset="0-2" nls="SUNROOFCTRL"  />  
-  </editor>
-  
+    
   <editor id = "AUTOCONCTRL" > 
      <range  uom="25" subset="0-1" nls="PREC_STATUS"  />  
   </editor>
@@ -184,7 +180,6 @@
   </editor>
   
    <editor id = "CARSTATE" > 
-     
      <range  uom="25" subset="0-5,99" nls="CARSTATE"  />  
   </editor>
 
