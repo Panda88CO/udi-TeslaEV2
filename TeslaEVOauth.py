@@ -635,7 +635,7 @@ class teslaEVAccess(teslaAccess):
         try:
             timeNow = int(time.time())
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['charge_state']['timestamp']/1000 ))
-            logging.debug(f'state : {self.carInfo[EVid]['state'] }')
+            logging.debug('state : {}'.format(self.carInfo[EVid]['state']))
             if 'timestamp' in self.carInfo[EVid]['charge_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['charge'] = float(self.carInfo[EVid]['charge_state']['timestamp']/1000)
                 return(int(timeNow - self.update_time[EVid]['charge']))
@@ -911,7 +911,7 @@ class teslaEVAccess(teslaAccess):
             timeNow = int(time.time())
 
             logging.debug('Time Now {} Last UPdate {}'.format(timeNow,self.carInfo[EVid]['climate_state']['timestamp']/1000 ))
-            logging.debug(f'state : {self.carInfo[EVid]['state'] }')            
+            logging.debug('state : {}'.format(self.carInfo[EVid]['state']))            
             if 'timestamp' in self.carInfo[EVid]['climate_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['climate'] = float(self.carInfo[EVid]['climate_state']['timestamp']/1000)
                 return(int(timeNow - self.update_time[EVid]['climate']))
@@ -1332,7 +1332,7 @@ class teslaEVAccess(teslaAccess):
         try:
             timeNow = int(time.time())
             logging.debug('Time Now {} Last Update {}'.format(timeNow,self.carInfo[EVid]['vehicle_state']['timestamp']/1000 ))
-            logging.debug(f'state : {self.carInfo[EVid]['state']}')            
+            logging.debug('state : {}'.format(self.carInfo[EVid]['state']))            
             if 'timestamp' in self.carInfo[EVid]['vehicle_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['status'] = float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)
                 return(int(timeNow - self.update_time[EVid]['status'] ))
