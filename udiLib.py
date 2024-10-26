@@ -230,20 +230,7 @@ def period2ISY(self, period):
     else:
         return(None)
 
-def EV_setDriver(self, key, value, Unit=None):
-    logging.debug('EV_setDriver : {key} {value} {Unit}')
-    try:
-        if value is None:
-            logging.debug('None value passed = seting 99, UOM 25')
-            self.node.setDriver(key, 99, True, True, 25)
-        else:
-            if Unit:
-                self.node.setDriver(key, value, True, True, Unit)
-            else:
-                self.node.setDriver(key, value)
-    except ValueError: #A non number was passed 
-        self.node.setDriver(key, 99, True, True, 25)
-        
+
 
 def tempUnitAdjust(self, tempC):
     if self.TEV.teslaEV_GetTempUnit() == 0:

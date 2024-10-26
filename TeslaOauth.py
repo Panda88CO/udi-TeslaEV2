@@ -251,6 +251,7 @@ class teslaAccess(OAuth):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
+            response = None
             payload = body
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
@@ -339,10 +340,8 @@ class teslaAccess(OAuth):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
-            #self._oAuthTokensRefresh()  #force refresh
+            response = None
             accessToken = self.getAccessToken()
-            #portal_token = self.getPortalToken(self.portalId, self.portalSecret)
-            #refresh_token = self._oauthTokens.get('refresh_token')
             self.poly.Notices.clear()
         except ValueError as err:
             logging.warning('Access token is not yet available. Please authenticate.')
