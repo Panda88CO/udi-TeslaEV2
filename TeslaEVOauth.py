@@ -249,6 +249,13 @@ class teslaEVAccess(teslaAccess):
         payload = params
         code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command'+str(command),  payload )
 
+        if code in ['ok'] and not res['response']['result']:
+            # something went wrong - try again
+            logging.debug('Something went wrong - trying again {}'.format(res['response']))
+            time.sleep(5)                              
+            code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command'+str(command),  payload ) 
+            logging.debug(f'_teslaEV_send_ev_command {code} - {res}')
+                    
         if code in ['overload']:
             return(code, self.get_delay(res))
         else:
@@ -1494,8 +1501,8 @@ class teslaEVAccess(teslaAccess):
                 code, temp = self._teslaEV_send_ev_command(EVid, '/honk_horn')   
                 logging.debug(f'teslaEV_HonkHorn {code} - {temp}')
                 #temp = r.json()
+
                 if code in ['ok']:
- 
                     return(code, temp['response']['result'])
                 else:
                     return(code, temp)
