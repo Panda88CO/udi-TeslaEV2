@@ -80,6 +80,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         return(self.chargeNodeReady and self.climateNodeReady)
 
     def update_time(self):
+        logging.debug('update_time')
         try:
             temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
             self.EV_setDriver('GV19', temp ,20)   

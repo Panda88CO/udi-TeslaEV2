@@ -665,7 +665,7 @@ class teslaEVAccess(teslaAccess):
                 return(timeNow-self.update_time[EVid]['charge'] )
         except Exception as e:
             logging.debug(f'Exception teslaEV_GetTimeSinceLastChargeUpdate - {e}')
-            return(None)  
+            return(timeNow-self.update_time[EVid]['charge'] )
         
     def teslaEV_FastChargerPresent(self, EVid):
         #logging.debug(f'teslaEV_FastchargerPresent for {EVid}')
@@ -933,7 +933,7 @@ class teslaEVAccess(teslaAccess):
             timeNow = int(time.time())
 
             logging.debug('Time Now {} Last UPdate {} , {} - '.format(timeNow,self.update_time[EVid], self.carInfo[EVid] ))
-            logging.debug('state : {}'.format(self.carInfo[EVid]['state']))            
+            logging.debug('state : {}'.format(self.carInfo[EVid]['state']))           
             if 'timestamp' in self.carInfo[EVid]['climate_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['climate'] = float(self.carInfo[EVid]['climate_state']['timestamp']/1000)
                 return(int(timeNow - self.update_time[EVid]['climate']))
@@ -941,7 +941,7 @@ class teslaEVAccess(teslaAccess):
                 return(timeNow - self.update_time[EVid]['climate'])
         except Exception as e:
             logging.debug(f' Exception teslaEV_GetTimeSinceLastClimateUpdate - {e}')
-            return(0)
+            return(int(timeNow - self.update_time[EVid]['climate']))
 
     def teslaEV_GetCabinTemp(self, EVid):
         try:
@@ -1362,7 +1362,7 @@ class teslaEVAccess(teslaAccess):
                 return(timeNow - self.update_time[EVid]['status'])
         except Exception as e:
             logging.debug(f' Exception teslaEV_GetTimeSinceLastStatusUpdate - {e}')
-            return(0)
+            return(timeNow - self.update_time[EVid]['status'])
 
     def teslaEV_HomeLinkNearby(self, EVid):
         #logging.debug(f'teslaEV_HomeLinkNearby: for {EVid}')
