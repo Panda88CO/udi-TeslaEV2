@@ -208,6 +208,7 @@ class teslaEVAccess(teslaAccess):
                             self.update_time[site['vin']]['climate'] = time_now
                             self.update_time[site['vin']]['charge'] = time_now
                             self.update_time[site['vin']]['status'] = time_now
+                        logging.debug('timinng info : {} {}'.format(self.carInfo[site['vin']], self.update_time[site['vin']] ))
             return(code, EVs)
         except Exception as e:
             logging.error(f'teslaEV_get_vehicles Exception : {e}')
