@@ -194,7 +194,7 @@ class teslaEVAccess(teslaAccess):
                         self.ev_list.append(site['vin']) # vin needed to send commands
                         self.carInfo[site['vin']] = site
                         # initialize start time 
-                        time_now = int(time.time())*1000
+                        time_now = int(time.time())
                         if 'vehicle_state' not in self.carInfo[site['vin']]:
                             self.carInfo[site['vin']]['state'] = 'unknown'
                             self.carInfo[site['vin']]['vehicle_state'] = {}
