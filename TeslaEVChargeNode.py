@@ -112,24 +112,17 @@ class teslaEV_ChargeNode(udi_interface.Node):
                 self.EV_setDriver('GV16', self.TEV.teslaEV_charge_miles_added_rated(self.EVid), 116)
             else:
                 self.EV_setDriver('GV16', self.TEV.teslaEV_charge_miles_added_rated(self.EVid)*1.6 , 83 )
-            '''            try:
-                temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
-                self.EV_setDriver('GV19', temp ,20)   
-            except ValueError:
-                self.EV_setDriver('GV19', None, 25)    
-            try: 
-                temp =  round(float(self.TEV.teslaEV_GetTimeSinceLastChargeUpdate(self.EVid)/60/60),2)
-            except ValueError:
-                self.EV_setDriver('GV20', None, 25)
-            '''
+
         except Exception as e:
             logging.error(f'updateISYdrivers charge node failed: {e}')
 
     def ISYupdate (self, command):
         logging.info('ISY-update called')
-        self.TEV.teslaEV_update_connection_status(self.EVid) 
-        self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
+        code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
+        code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
+        self.update_time()
+        self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
      
 
     def evChargePort (self, command):

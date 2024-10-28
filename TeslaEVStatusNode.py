@@ -182,22 +182,6 @@ class teslaEV_StatusNode(udi_interface.Node):
             else:
                 self.EV_setDriver('GV17', 98, 25)
                 self.EV_setDriver('GV18', 98, 25)            
-
-            '''
-            try:
-                temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
-                self.EV_setDriver('GV19', temp ,20)   
-            except ValueError:
-                self.EV_setDriver('GV19', None, 25)                                                 
-            try:
-                temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
-                self.EV_setDriver('GV20', temp, 20)
-            except ValueError:
-                self.EV_setDriver('GV20', None, 25)           
-            '''
-            #else:
-            #    logging.info(f'System not ready yet')
-
         except Exception as e:
             logging.error(f'updateISYdriver Status node failed: {e}')
 
@@ -207,6 +191,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
         code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
+        self.update_time()
         self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
 
     def evWakeUp (self, command):
