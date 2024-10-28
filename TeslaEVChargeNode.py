@@ -63,6 +63,17 @@ class teslaEV_ChargeNode(udi_interface.Node):
     def chargeNodeReady (self):
         return(self.nodeReady )
    
+    def update_time(self):
+        try:
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
+            self.EV_setDriver('GV19', temp ,20)   
+        except ValueError:
+            self.EV_setDriver('GV19', None, 25)                                                 
+        try:
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
+            self.EV_setDriver('GV20', temp, 20)
+        except ValueError:
+            self.EV_setDriver('GV20', None, 25)          
 
 
 
@@ -101,8 +112,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
                 self.EV_setDriver('GV16', self.TEV.teslaEV_charge_miles_added_rated(self.EVid), 116)
             else:
                 self.EV_setDriver('GV16', self.TEV.teslaEV_charge_miles_added_rated(self.EVid)*1.6 , 83 )
-
-            try:
+            '''            try:
                 temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
                 self.EV_setDriver('GV19', temp ,20)   
             except ValueError:
@@ -111,6 +121,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
                 temp =  round(float(self.TEV.teslaEV_GetTimeSinceLastChargeUpdate(self.EVid)/60/60),2)
             except ValueError:
                 self.EV_setDriver('GV20', None, 25)
+            '''
         except Exception as e:
             logging.error(f'updateISYdrivers charge node failed: {e}')
 

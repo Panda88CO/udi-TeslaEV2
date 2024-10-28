@@ -79,6 +79,18 @@ class teslaEV_StatusNode(udi_interface.Node):
     def ready(self):
         return(self.chargeNodeReady and self.climateNodeReady)
 
+    def update_time(self):
+        try:
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
+            self.EV_setDriver('GV19', temp ,20)   
+        except ValueError:
+            self.EV_setDriver('GV19', None, 25)                                                 
+        try:
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
+            self.EV_setDriver('GV20', temp, 20)
+        except ValueError:
+            self.EV_setDriver('GV20', None, 25)          
+
     def poll (self, type ):    
         logging.info(f'Status Node Poll for {self.EVid} - poll type: {type}')        
 
@@ -97,10 +109,14 @@ class teslaEV_StatusNode(udi_interface.Node):
             elif code in['offline', 'overload', 'error', 'unknown']:
                 self.EV_setDriver('GV13', self.code2ISY(code), 25)
                 logging.info('Car appears off-line/sleeping or overload  - not updating data')
+
             else:
                 self.EV_setDriver('GV13', 99, 25)
+            self.update_time()
+            self.climateNode.update_time()
+            self.chargeNode.update_time()
         except Exception as e:
-            logging.error(f'Status Poll exception : {e}')
+                logging.error(f'Status Poll exception : {e}')
 
 
 
@@ -167,6 +183,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                 self.EV_setDriver('GV17', 98, 25)
                 self.EV_setDriver('GV18', 98, 25)            
 
+            '''
             try:
                 temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
                 self.EV_setDriver('GV19', temp ,20)   
@@ -177,6 +194,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                 self.EV_setDriver('GV20', temp, 20)
             except ValueError:
                 self.EV_setDriver('GV20', None, 25)           
+            '''
             #else:
             #    logging.info(f'System not ready yet')
 
@@ -374,8 +392,8 @@ class teslaEV_StatusNode(udi_interface.Node):
             {'driver': 'GV12', 'value': 0, 'uom': 25}, #frunk
             {'driver': 'GV13', 'value': 99, 'uom': 25}, #car State
             #{'driver': 'GV16', 'value': 99, 'uom': 25}, #longitude
-            {'driver': 'GV17', 'value': 99, 'uom': 25}, #longitude
-            {'driver': 'GV18', 'value': 99, 'uom': 25}, #latitude
+            {'driver': 'GV17', 'value': 99, 'uom': 56}, #longitude
+            {'driver': 'GV18', 'value': 99, 'uom': 56}, #latitude
             {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours
             {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update hours
             {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status

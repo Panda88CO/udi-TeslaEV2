@@ -1,5 +1,5 @@
 <editors> 
-  <editor id = "NODE_ST" > 
+  <editor id = "NODEST" > 
      <range  uom="25" subset="0-1"  nls='BOOLSTATE'/>
   </editor>
   
@@ -7,7 +7,7 @@
      <range  uom="25" subset="0-1" nls="API" />
   </editor>
 
-  <editor id = "DURATION_H" > 
+  <editor id = "DURATIONH" > 
      <range  uom="20"  min="0" max="1000" prec="2" />
       <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor> 
@@ -74,7 +74,8 @@
      <range uom="51" min="0" max="100" prec="1" />
      <range uom="25" subset="0-1, 99" nls="OPENCLOSE"/>
   </editor>
-   <editor id = "PERCENT_INP" > 
+  
+   <editor id = "PERCENTINP" > 
      <range uom="51" min="0" max="100" prec="1" />
   </editor>
   
@@ -88,11 +89,11 @@
     <range  uom="25" subset="0-1,99" nls="UNKNOWN" />
   </editor>
 
-  <editor id = "HEAT_LVL" > 
+  <editor id = "HEATLVL" > 
      <range  uom="25" subset="0-3,99" nls="HEAT_LVL" />
   </editor>
   
-  <editor id = "PREC_STATUS" > 
+  <editor id = "PRECSTATUS" > 
      <range  uom="25" subset="0-2,99" nls="PREC_STATUS" />
   </editor>
   
@@ -132,7 +133,7 @@
      <range  uom="25" subset="0-1,99" nls="UNKNOWN"  />
   </editor>
 
-  <editor id = "AMPS_INP" > 
+  <editor id = "AMPSINP" > 
      <range  uom="1" min="0" max="300" prec="1" />
   </editor>
 
@@ -171,11 +172,11 @@
      <range  uom="25" subset="0-2,99" nls="CPLSTATE"  />  
   </editor>
 
-  <editor id = "T_UNIT" > 
+  <editor id = "TUNIT" > 
      <range  uom="25" subset="0-1,99" nls="T_UNIT"  />  
   </editor>
 
-   <editor id = "D_UNIT" > 
+   <editor id = "DUNIT" > 
      <range  uom="25" subset="0-1" nls="D_UNIT"  />  
   </editor>
   
@@ -193,11 +194,11 @@
      <range  uom="25" subset="98,99" nls="UNKNOWN"  />  
   </editor>
 
-  <editor id = "IDEA_DIST" > 
+  <editor id = "IDEALDIST" > 
      <range  uom="56" min="0" max="500" prec="2" />
      <range  uom="25" subset="0-2,99" nls="UNKNOWN"  />  
   </editor>
-     <editor id = "LAST_CMD" > 
+     <editor id = "LASTCMD" > 
      <range  uom="25" subset="0-4,99" nls="CMD_RES"  />  
   </editor>
 </editors> 

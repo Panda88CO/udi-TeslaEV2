@@ -252,7 +252,7 @@ class teslaEVAccess(teslaAccess):
         if code in ['ok'] and not res['response']['result']:
             # something went wrong - try again
             logging.debug('Something went wrong - trying again {}'.format(res['response']))
-            time.sleep(5)                              
+            time.sleep(5)
             code, res = self._callApi('POST','/vehicles/'+str(EVid) +'/command'+str(command),  payload ) 
             logging.debug(f'_teslaEV_send_ev_command {code} - {res}')
                     
