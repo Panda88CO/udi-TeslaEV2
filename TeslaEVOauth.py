@@ -444,11 +444,11 @@ class teslaEVAccess(teslaAccess):
 
 
     def teslaEV_GetLocation(self, EVid):
-        logging.debug('teslaEV_GetLocation: {} for {}'.format(EVid,self.carInfo[EVid]['drive_state'] ))
-        temp = {}
-        temp['longitude'] = None
-        temp['latitude'] = None
         try:
+            temp = {}
+            temp['longitude'] = None
+            temp['latitude'] = None
+            logging.debug('teslaEV_GetLocation: {} for {}'.format(EVid,self.carInfo[EVid]['drive_state'] ))
             if 'longitude' in self.carInfo[EVid]['drive_state']:
                 temp['longitude'] = self.carInfo[EVid]['drive_state']['longitude']
                 temp['latitude'] = self.carInfo[EVid]['drive_state']['latitude']
