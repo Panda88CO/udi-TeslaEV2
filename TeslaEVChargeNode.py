@@ -42,6 +42,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
         #self.EV_setDriver('ST', 1)
         self.nodeReady = True
         self.updateISYdrivers()
+        self.update_time()
 
         
 
