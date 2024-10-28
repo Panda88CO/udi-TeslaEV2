@@ -190,14 +190,24 @@ class teslaEVAccess(teslaAccess):
                 for indx, site in enumerate(temp['response']):
                     if 'vin' in site:
                         EVs[str(site['vin'])] = site
-                        #self.ev_list.append(site['id'])
+                        # self.ev_list.append(site['id'])
                         self.ev_list.append(site['vin']) # vin needed to send commands
                         self.carInfo[site['vin']] = site
+                        # initialize start time 
+                        time_now = int(time.time())*1000
+                        if 'vehicle_state' not in self.carInfo[site['vin']]:
+                            self.carInfo[site['vin']]['state'] = 'unknown'
+                            self.carInfo[site['vin']]['vehicle_state'] = {}
+                            self.carInfo[site['vin']]['vehicle_state']['timestamp'] = time_now
+                            self.carInfo[site['vin']]['climate_state'] = {}
+                            self.carInfo[site['vin']]['climate_state']['timestamp'] = time_now
+                            self.carInfo[site['vin']]['charge_state'] = {}
+                            self.carInfo[site['vin']]['charge_state']['timestamp'] = time_now
                         if site['vin'] not in self.update_time:
                             self.update_time[site['vin']] = {}
-                            self.update_time[site['vin']]['climate'] = self.time_start
-                            self.update_time[site['vin']]['charge'] = self.time_start
-                            self.update_time[site['vin']]['status'] = self.time_start
+                            self.update_time[site['vin']]['climate'] = time_now
+                            self.update_time[site['vin']]['charge'] = time_now
+                            self.update_time[site['vin']]['status'] = time_now
             return(code, EVs)
         except Exception as e:
             logging.error(f'teslaEV_get_vehicles Exception : {e}')
@@ -242,6 +252,10 @@ class teslaEVAccess(teslaAccess):
             payload = {'endpoints':'charge_state;climate_state;drive_state;vehicle_config;vehicle_state'}
         code, res = self._callApi('GET','/vehicles/'+str(EVid) +'/vehicle_data', payload  )
         logging.debug(f'vehicel data: {code} {res}')
+
+
+
+
         return(code, res)
 
     def _teslaEV_send_ev_command(self, EVid , command, params=None):
@@ -299,7 +313,7 @@ class teslaEVAccess(teslaAccess):
                 if code == 'ok' and state in ['online']:
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
-                        self.carInfo[EVid] = self.process_EV_data(res)                     
+                        self.carInfo[EVid] = self.process_EV_data(res)
                         return(code, res)
                     else:
                         return(code, state)
@@ -1338,7 +1352,7 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_GetTimeSinceLastStatusUpdate(self, EVid):
         try:
             timeNow = int(time.time())
-            logging.debug('Time Now {} Last Update {}'.format(timeNow,self.carInfo[EVid]['vehicle_state']['timestamp']/1000 ))
+            logging.debug('Time Now {} Last Update {}'.format(timeNow, self.carInfo[EVid]['vehicle_state']['timestamp']/1000 ))
             logging.debug('state : {}'.format(self.carInfo[EVid]['state']))            
             if 'timestamp' in self.carInfo[EVid]['vehicle_state'] and self.carInfo[EVid]['state'] in ['online']:
                 self.update_time[EVid]['status'] = float(self.carInfo[EVid]['vehicle_state']['timestamp']/1000)
