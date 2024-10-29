@@ -50,15 +50,15 @@ class teslaEV_ChargeNode(udi_interface.Node):
         logging.debug('stop - Cleaning up')
     
     def poll(self):
-        
-        logging.debug(f'Charge node {self.EVid}')
-        try:
-            if self.TEV.carState != 'Offline':
-                self.updateISYdrivers()
-            else:
-                logging.info('Car appears off-line/sleeping - not updating data')
-        except Exception as e:
-            logging.error('Charge Poll exception : {e}')
+        pass 
+        #logging.debug(f'Charge node {self.EVid}')
+        #try:
+        #    if self.TEV.carState != 'Offline':
+        #        self.updateISYdrivers()
+        #    else:
+        #        logging.info('Car appears off-line/sleeping - not updating data')
+        #except Exception as e:
+        #    logging.error('Charge Poll exception : {e}')
 
 
     def chargeNodeReady (self):

@@ -53,16 +53,16 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
 
     def poll(self):
-        
-        logging.debug(f'Climate node {self.EVid}')
-        try:
-            if self.TEV.carState != 'Offline':
-                self.updateISYdrivers()
-            else:
-                logging.info('Car appears off-line/sleeping - not updating data')
+        pass
+        #logging.debug(f'Climate node {self.EVid}')
+        #try:
+        #    if self.TEV.carState != 'Offline':
+        #        self.updateISYdrivers()
+        #    else:
+        #        logging.info('Car appears off-line/sleeping - not updating data')
 
-        except Exception as e:
-            logging.error(f'Climate Poll exception : {e}')
+        #except Exception as e:
+        #    logging.error(f'Climate Poll exception : {e}')
 
     def forceUpdateISYdrivers(self):
         logging.debug(f'forceUpdateISYdrivers: {self.EVid}')
