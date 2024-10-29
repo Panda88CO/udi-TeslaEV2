@@ -198,7 +198,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def evWakeUp (self, command):
         logging.info(f'EVwakeUp called')
-        code, res = self.TEV._teslaEV_Wake(self.EVid)
+        code, res = self.TEV._teslaEV_wake_ev(self.EVid)
         logging.debug(f'Wake result {code} - {res}')
         if code in ['ok']:               
             code, res = self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
