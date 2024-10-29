@@ -222,7 +222,7 @@ class teslaEVAccess(teslaAccess):
             code, state = self.teslaEV_update_connection_status(EVid)
             if code == 'ok':
                 if timeNow >= self.next_wake_call:
-                    if state in ['asleep']:
+                    if state in ['asleep','offline']:
                         code, res  = self._callApi('POST','/vehicles/'+str(EVid) +'/wake_up')
                         logging.debug(f'wakeup: {code} - {res}')
                         if code in  ['ok']:
