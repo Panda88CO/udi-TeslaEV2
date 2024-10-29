@@ -85,43 +85,8 @@ class teslaEVAccess(teslaAccess):
         self.next_command_call = temp
         self.next_chaging_call = temp
         self.next_device_data_call = temp
-
-
         time.sleep(1)
 
-        #while not self.handleCustomParamsDone:
-        #    logging.debug(f'Waiting for customParams to complete - getAccessToken')
-        #    time.sleep(0.2)
-        # self.getAccessToken()
-    
-    # The OAuth class needs to be hooked to these 3 handlers
-    #def customDataHandler(self, data):
-    #    logging.debug(f'customDataHandler called')
-        #while not self.handleCustomParamsDone:
-        #    logging.debug(f'Waiting for customDataHandler to complete')
-        #    time.sleep(1)
-    #    super().customDataHandler(data)
-    #    self.customDataHandlerDone = True
-    #    logging.debug(f'customDataHandler Finished')
-
-    ##def customNsHandler(self, key, data):
-    ##    logging.debug(f'customNsHandler called')
-    #    #while not self.customParamsDone():
-    #    #    logging.debug(f'Waiting for customNsHandler to complete')
-    #    #    time.sleep(1)
-    #    #self.updateOauthConfig()
-    #    super().customNsHandler(key, data)
-    #    self.customNsHandlerDone = True
-    #    logging.debug(f'customNsHandler Finished')
-
-    #def oauthHandler(self, token):
-    #    logging.debug(f'oauthHandler called')
-    #    while not (self.customParamsDone() and self.customNsDone()):
-    #        logging.debug(f'Waiting for initilization to complete before oAuth')
-    #        time.sleep(5)
- 
-        #self.customOauthHandlerDone = True
-    #    logging.debug(f'oauthHandler Finished')
 
     def customNsDone(self):
         return(self.customNsHandlerDone)
@@ -131,11 +96,6 @@ class teslaEVAccess(teslaAccess):
 
     def customParamsDone(self):
         return(self.handleCustomParamsDone)
-
-    #def customOauthDone(self):
-    #    return(self.customOauthHandlerDone )
-    # Your service may need to access custom params as well...
-
 
 
     def location_enabled(self):
@@ -499,52 +459,7 @@ class teslaEVAccess(teslaAccess):
 ####################
 # Charge Data
 ####################
-    '''
-    def teslaEV_GetChargingInfo(self, EVid):
-        logging.debug(f'teslaEV_GetChargingInfo: for {EVid}')
-        temp = {}
-        if 'fast_charger_present' in  self.carInfo[EVid]['charge_state']:
-            temp['fast_charger_present'] = self.carInfo[EVid]['charge_state']['fast_charger_present']
-        if 'charge_port_latch' in  self.carInfo[EVid]['charge_state']:    
-            temp['charge_port_latch'] =  self.carInfo[EVid]['charge_state']['charge_port_latch']
-        if 'charge_port_door_open' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_port_door_open'] =  self.carInfo[EVid]['charge_state']['charge_port_door_open']
-        if 'battery_range' in  self.carInfo[EVid]['charge_state']: 
-            temp['battery_range'] = self.carInfo[EVid]['charge_state']['battery_range']            
-        if 'battery_level' in  self.carInfo[EVid]['charge_state']: 
-            temp['battery_level'] = self.carInfo[EVid]['charge_state']['battery_level']
-        if 'charge_current_request_max' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_current_request_max'] = self.carInfo[EVid]['charge_state']['charge_current_request_max']
-        if 'charging_state' in  self.carInfo[EVid]['charge_state']: 
-            temp['charging_state'] = self.carInfo[EVid]['charge_state']['charging_state']
-        if 'charge_enable_request' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_enable_request'] = self.carInfo[EVid]['charge_state']['charge_enable_request']
-        if 'charger_power' in  self.carInfo[EVid]['charge_state']: 
-            temp['charger_power'] = self.carInfo[EVid]['charge_state']['charger_power']
-        if 'charge_limit_soc' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_limit_soc'] = self.carInfo[EVid]['charge_state']['charge_limit_soc']      
-        if 'charge_current_request_max' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_current_request_max'] = self.carInfo[EVid]['charge_state']['charge_current_request_max']      
-        if 'charge_current_request' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_current_request'] = self.carInfo[EVid]['charge_state']['charge_current_request']      
-        if 'charger_actual_current' in  self.carInfo[EVid]['charge_state']: 
-            temp['charger_actual_current'] = self.carInfo[EVid]['charge_state']['charger_actual_current']      
-        if 'charge_amps' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_amps'] = self.carInfo[EVid]['charge_state']['charge_amps']      
-        if 'time_to_full_charge' in  self.carInfo[EVid]['charge_state']: 
-            temp['time_to_full_charge'] = self.carInfo[EVid]['charge_state']['time_to_full_charge']      
-        if 'charge_energy_added' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_energy_added'] = self.carInfo[EVid]['charge_state']['charge_energy_added']      
-        if 'charge_miles_added_rated' in  self.carInfo[EVid]['charge_state']: 
-            temp['charge_miles_added_rated'] = self.carInfo[EVid]['charge_state']['charge_miles_added_rated']      
-        if 'charger_voltage' in  self.carInfo[EVid]['charge_state']: 
-            temp['charger_voltage'] = self.carInfo[EVid]['charge_state']['charger_voltage']                
-        if 'ideal_battery_range' in  self.carInfo[EVid]['charge_state']: 
-            temp['ideal_battery_range'] = self.carInfo[EVid]['charge_state']['ideal_battery_range']   
-        if 'timestamp' in  self.carInfo[EVid]['charge_state']: 
-            temp['timestamp'] = int(self.carInfo[EVid]['charge_state']['timestamp'] /1000) # Tesla reports in miliseconds                
-        return(temp)
-    '''
+
 
     def teslaEV_GetChargeTimestamp(self, EVid):
         try:
@@ -666,7 +581,7 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(timeNow-self.update_time[EVid]['charge'] )
         except Exception as e:
-            logging.debug(f'Exception teslaEV_GetTimeSinceLastChargeUpdate - {e}')
+            logging.debug(f'Exception - not online teslaEV_GetTimeSinceLastChargeUpdate - {e}')
             return(timeNow-self.update_time[EVid]['charge'] )
         
     def teslaEV_FastChargerPresent(self, EVid):
@@ -763,9 +678,7 @@ class teslaEVAccess(teslaAccess):
            
     def teslaEV_ChargePort(self, EVid, ctrl):
         logging.debug(f'teslaEV_ChargePort {ctrl} for {EVid}')
- 
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep', 'offline']:
@@ -793,11 +706,9 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_Charging(self, EVid, ctrl):
         logging.debug(f'teslaEV_Charging {ctrl} for {EVid}')
  
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
-            #s.auth = OAuth2BearerToken(S['access_token'])    
-            #payload = {}      
+    
             code, state = self.teslaEV_update_connection_status(EVid) 
             if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
@@ -885,43 +796,6 @@ class teslaEVAccess(teslaAccess):
 # Climate Data
 ####################
 
-    '''
-    def teslaEV_GetClimateInfo(self, EVid):
-        logging.debug(f'teslaEV_GetClimateInfo: for {EVid}')
-        temp = {}
-        if 'climate_state' in self.carInfo[EVid]:
-            if 'inside_temp' in self.carInfo[EVid]['climate_state']:
-                temp['inside_temp'] = self.carInfo[EVid]['climate_state']['inside_temp']
-            if 'outside_temp' in self.carInfo[EVid]['climate_state']:
-                temp['outside_temp'] = self.carInfo[EVid]['climate_state']['outside_temp']
-            if 'driver_temp_setting' in self.carInfo[EVid]['climate_state']:
-                temp['driver_temp_setting'] = self.carInfo[EVid]['climate_state']['driver_temp_setting']
-            if 'passenger_temp_setting' in self.carInfo[EVid]['climate_state']:
-                temp['passenger_temp_setting'] = self.carInfo[EVid]['climate_state']['passenger_temp_setting']
-            if 'seat_heater_left' in self.carInfo[EVid]['climate_state']:
-                temp['seat_heater_left'] = self.carInfo[EVid]['climate_state']['seat_heater_left']
-            if 'seat_heater_right' in self.carInfo[EVid]['climate_state']:
-                temp['seat_heater_right'] = self.carInfo[EVid]['climate_state']['seat_heater_right']
-            if 'seat_heater_rear_center' in self.carInfo[EVid]['climate_state']:
-                temp['seat_heater_rear_center'] = self.carInfo[EVid]['climate_state']['seat_heater_rear_center']
-            if 'seat_heater_rear_left' in self.carInfo[EVid]['climate_state']:
-                temp['seat_heater_rear_left'] = self.carInfo[EVid]['climate_state']['seat_heater_rear_left']
-            if 'seat_heater_rear_right' in self.carInfo[EVid]['climate_state']:
-                temp['seat_heater_rear_right'] = self.carInfo[EVid]['climate_state']['seat_heater_rear_right']
-            if 'is_auto_conditioning_on' in self.carInfo[EVid]['climate_state']:
-                temp['is_auto_conditioning_on'] = self.carInfo[EVid]['climate_state']['is_auto_conditioning_on']
-            if 'is_preconditioning' in self.carInfo[EVid]['climate_state']:
-                temp['is_preconditioning'] = self.carInfo[EVid]['climate_state']['is_preconditioning']
-            if 'max_avail_temp' in self.carInfo[EVid]['climate_state']:
-                temp['max_avail_temp'] = self.carInfo[EVid]['climate_state']['max_avail_temp']
-            if 'min_avail_temp' in self.carInfo[EVid]['climate_state']:
-                temp['min_avail_temp'] = self.carInfo[EVid]['climate_state']['min_avail_temp']
-            if 'timestamp' in  self.carInfo[EVid]['climate_state']: 
-                temp['timestamp'] = int(self.carInfo[EVid]['climate_state']['timestamp'] /1000) # Tesla reports in miliseconds
-        if 'steering_wheel_heater' in self.carInfo[EVid]['vehicle_state']: 
-            self.steeringWheeelHeat = self.carInfo[EVid]['vehicle_state']['steering_wheel_heater']
-            self.steeringWheelHeatDetected = True
-    '''
 
     def teslaEV_GetClimateTimestamp(self, EVid):
         try:
@@ -942,7 +816,7 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(timeNow - self.update_time[EVid]['climate'])
         except Exception as e:
-            logging.debug(f' Exception teslaEV_GetTimeSinceLastClimateUpdate - {e}')
+            logging.debug(f' Exception - not online teslaEV_GetTimeSinceLastClimateUpdate - {e}')
             return(int(timeNow - self.update_time[EVid]['climate']))
 
     def teslaEV_GetCabinTemp(self, EVid):
@@ -1279,62 +1153,7 @@ class teslaEVAccess(teslaAccess):
 ####################
 # Status Data
 ####################
-    '''
-    def teslaEV_GetStatusInfo(self, EVid):
-
-        temp = {}
-        if 'vehicle_state' in self.carInfo[EVid]:
-            if 'center_display_state' in self.carInfo[EVid]['vehicle_state']:
-                temp['center_display_state'] = self.carInfo[EVid]['vehicle_state']['center_display_state']
-            if 'homelink_device_count' in self.carInfo[EVid]['vehicle_state']:    
-                temp['homelink_device_count'] = self.carInfo[EVid]['vehicle_state']['homelink_device_count']
-            if 'homelink_nearby' in self.carInfo[EVid]['vehicle_state']:    
-                temp['homelink_nearby'] = self.carInfo[EVid]['vehicle_state']['homelink_nearby']
-            if 'hfd_window' in self.carInfo[EVid]['vehicle_state']:        
-                temp['fd_window'] = self.carInfo[EVid]['vehicle_state']['fd_window']
-            if 'fp_window' in self.carInfo[EVid]['vehicle_state']:    
-                temp['fp_window'] = self.carInfo[EVid]['vehicle_state']['fp_window']
-            if 'rd_window' in self.carInfo[EVid]['vehicle_state']:    
-                temp['rd_window'] = self.carInfo[EVid]['vehicle_state']['rd_window']
-            if 'rp_window' in self.carInfo[EVid]['vehicle_state']:    
-                temp['rp_window'] = self.carInfo[EVid]['vehicle_state']['rp_window']
-            if 'ft' in self.carInfo[EVid]['vehicle_state']:    
-                temp['frunk'] = self.carInfo[EVid]['vehicle_state']['ft']
-            if 'rt' in self.carInfo[EVid]['vehicle_state']:    
-                temp['trunk'] = self.carInfo[EVid]['vehicle_state']['rt']
-            if 'locked' in self.carInfo[EVid]['vehicle_state']:    
-                temp['locked'] = self.carInfo[EVid]['vehicle_state']['locked']
-            if 'odometer' in self.carInfo[EVid]['vehicle_state']:    
-                temp['odometer'] = self.carInfo[EVid]['vehicle_state']['odometer']
-            if 'sun_roof_percent_open' in self.carInfo[EVid]['vehicle_state']:    
-                temp['sun_roof_percent_open'] = self.carInfo[EVid]['vehicle_state']['sun_roof_percent_open']
-            #if 'sun_roof_state' in self.carInfo[EVid]['vehicle_state']:
-            #    temp['sun_roof_state'] = self.carInfo[EVid]['vehicle_state']['sun_roof_state']
-            if 'state' in self.carInfo[EVid]['vehicle_state']:    
-                temp['state'] = self.carInfo[EVid]['state']
-            if 'timestamp' in  self.carInfo[EVid]['vehicle_state']: 
-                temp['timestamp'] = int(self.carInfo[EVid]['vehicle_state']['timestamp'] /1000) # Tesla reports in miliseconds
-        
-            if 'can_actuate_trunks' in  self.carInfo[EVid]['vehicle_config']: 
-                self.canActuateTrunks = self.carInfo[EVid]['vehicle_config']['can_actuate_trunks']    
-            if 'sun_roof_installed' in  self.carInfo[EVid]['vehicle_config']: 
-                if type(self.carInfo[EVid]['vehicle_config']['sun_roof_installed']) != int:
-                    self.sunroofInstalled = False
-                else:   
-                    self.sunroofInstalled = (self.carInfo[EVid]['vehicle_config']['sun_roof_installed']   > 0)
-            if 'rear_seat_heaters' in  self.carInfo[EVid]['vehicle_config']: 
-                if type (self.carInfo[EVid]['vehicle_config']['rear_seat_heaters']) !=  int:
-                    self.rearSeatHeat = False
-                else:
-                    self.rearSeatHeat = (self.carInfo[EVid]['vehicle_config']['rear_seat_heaters']   > 0)
-                
-            if 'steering_wheel_heater' in self.carInfo[EVid]['vehicle_state']: 
-                self.steeringWheeelHeat = self.carInfo[EVid]['vehicle_state']['steering_wheel_heater']
-                self.steeringWheelHeatDetected = True
-    '''
-        
-
-
+  
     def teslaEV_GetCenterDisplay(self, EVid):
 
         #logging.debug(f'teslaEV_GetCenterDisplay: for {EVid}')
@@ -1363,7 +1182,7 @@ class teslaEVAccess(teslaAccess):
             else:
                 return(timeNow - self.update_time[EVid]['status'])
         except Exception as e:
-            logging.debug(f' Exception teslaEV_GetTimeSinceLastStatusUpdate - {e}')
+            logging.debug(f' Exception - not online teslaEV_GetTimeSinceLastStatusUpdate - {e}')
             return(timeNow - self.update_time[EVid]['status'])
 
     def teslaEV_HomeLinkNearby(self, EVid):
@@ -1506,8 +1325,7 @@ class teslaEVAccess(teslaAccess):
 
     def teslaEV_HonkHorn(self, EVid):
         logging.debug(f'teslaEV_HonkHorn for {EVid}')
-        #S = self.teslaApi.teslaConnect()
-        #with requests.Session() as s:
+
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
             logging.debug(f'teslaEV_HonkHorn {code} - {state}')
@@ -1556,7 +1374,7 @@ class teslaEVAccess(teslaAccess):
             logging.error(f'Exception teslaEV_PlaySound for vehicle id {EVid}: {e}')
             return('error', e)
 
-# Needs to be updated 
+
 
     def teslaEV_Doors(self, EVid, ctrl):
         logging.debug(f'teslaEV_Doors {ctrl} for {EVid}')

@@ -336,14 +336,6 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
-    '''
-    def setDistUnit(self,command):
-        logging.debug(f'setDistUnit')
-        distUnit = int(float(command.get('value')))   
-        self.TEV.teslaEV_SetDistUnit( distUnit )
-
-        self.forceUpdateISYdrivers()
-    '''   
 
     id = 'evstatus'
     commands = { 'UPDATE': ISYupdate, 

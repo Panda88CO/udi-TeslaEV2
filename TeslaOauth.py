@@ -88,23 +88,9 @@ class teslaAccess(OAuth):
         #    time.sleep(1)       
         logging.debug('customDataHandler result: {}'.format(super().customDataHandler(data)))
         self.customDataHandlerDone = True
-        logging.debug(f'customDataHandler Finished')
-    '''    
+        logging.debug('customDataHandler Finished')
 
-    def customDataHandler(self, data):
-        if data.get('token'):
-            logging.info(f'Migrating tokens to the new version')
-            # Save token data to the new oAuthTokens custom
-            Custom(self.poly, 'oauthTokens').load(data['token'], True)
 
-            # Save customdata without the key 'token'
-            newData = { key: value for key, value in data.items() if key != 'token' }
-            Custom(self.poly, 'customdata').load(newData, True)
-            
-            # Continue processing as if it was in the right place
-            self.customNsHandler('oauthTokens', data['token'])
-    '''
-        
     def customNsHandler(self, key, data):
         logging.debug(f'customNsHandler called {key} {data}')
         #while not self.customParamsDone():
@@ -139,11 +125,6 @@ class teslaAccess(OAuth):
         return(self.customDataHandlerDone )
 
 
-    #def customOauthDone(self):
-    #    return(self.customOauthHandlerDone )
-    # Your service may need to access custom params as well...
-
-    
 
                 
     def cloud_set_region(self, region):
