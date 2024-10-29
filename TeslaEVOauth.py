@@ -766,7 +766,7 @@ class teslaEVAccess(teslaAccess):
         #with requests.Session() as s:
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:
                 if ctrl == 'open':
@@ -797,7 +797,7 @@ class teslaEVAccess(teslaAccess):
             #s.auth = OAuth2BearerToken(S['access_token'])    
             #payload = {}      
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:
                 if ctrl == 'start':  
@@ -825,7 +825,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug(f'teslaEV_SetChargeLimit {limit} for {EVid}')
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 if int(limit) > 100 or int(limit) < 0:
@@ -853,7 +853,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug(f'teslaEV_SetChargeLimitAmps {limit} for {EVid} -')
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
        
@@ -1064,7 +1064,7 @@ class teslaEVAccess(teslaAccess):
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 #self.teslaEV_GetLocation()
@@ -1093,7 +1093,7 @@ class teslaEVAccess(teslaAccess):
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:                
                 if cmd not in ['vent','close', 'stop'] :
@@ -1120,7 +1120,7 @@ class teslaEVAccess(teslaAccess):
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 if ctrl == 'start':  
@@ -1150,7 +1150,7 @@ class teslaEVAccess(teslaAccess):
     
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
 
@@ -1175,7 +1175,7 @@ class teslaEVAccess(teslaAccess):
  
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:                
                 payload = {}    
@@ -1207,7 +1207,7 @@ class teslaEVAccess(teslaAccess):
         logging.debug(f'teslaEV_SetSeatHeating {levelHeat}, {seat} for {EVid}')
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:
+            if state in ['asleep', 'offline']:
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
 
@@ -1244,7 +1244,7 @@ class teslaEVAccess(teslaAccess):
         try:
             if self.steeringWheelHeatDetected:
                 code, state = self.teslaEV_update_connection_status(EVid) 
-                if state in ['asleep']:
+                if state in ['asleep', 'offline']:
                     code, state = self._teslaEV_wake_ev(EVid)
                 if state in ['online']:    
 
@@ -1484,7 +1484,7 @@ class teslaEVAccess(teslaAccess):
         try:
 
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:             
+            if state in ['asleep', 'offline']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
                 code, temp = self._teslaEV_send_ev_command(EVid, '/flash_lights')  
@@ -1509,7 +1509,7 @@ class teslaEVAccess(teslaAccess):
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
             logging.debug(f'teslaEV_HonkHorn {code} - {state}')
-            if state in ['asleep']:             
+            if state in ['asleep', 'offline']:             
                 state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
           
@@ -1535,7 +1535,7 @@ class teslaEVAccess(teslaAccess):
         try:
 
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:             
+            if state in ['asleep', 'offline']:             
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 payload = {'sound' : sound}        
@@ -1561,7 +1561,7 @@ class teslaEVAccess(teslaAccess):
 
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:             
+            if state in ['asleep', 'offline']:             
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
                 if ctrl == 'unlock':  
@@ -1589,7 +1589,7 @@ class teslaEVAccess(teslaAccess):
         
         try:
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:             
+            if state in ['asleep', 'offline']:             
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
                 if frunkTrunk.upper() == 'FRUNK' or frunkTrunk.upper() == 'FRONT':
@@ -1621,7 +1621,7 @@ class teslaEVAccess(teslaAccess):
         try:
 
             code, state = self.teslaEV_update_connection_status(EVid) 
-            if state in ['asleep']:             
+            if state in ['asleep', 'offline']:             
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:   
             
