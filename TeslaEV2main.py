@@ -362,42 +362,6 @@ class TeslaEVController(udi_interface.Node):
             logging.info(f'Not all nodes ready: {E}')
 
 
-    '''
-    def shortPoll(self):
-        logging.info('Tesla EV Controller shortPoll(HeartBeat)')
-        self.heartbeat()
-        try:
-            temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
-            logging.debug('short poll list {temp_list}')
-            for indx, vehicleID in enumerate(temp_list):
-                logging.debug('short poll loop {} {}'.format(indx, vehicleID))
-                #code, data =  self.TEVcloud.teslaEV_update_connection_status(vehicleID)
-                #if self.TEVcloud.teslaEV_GetCarState(vehicleID) == 'online':
-                code, data  = self.TEVcloud.teslaEV_UpdateCloudInfoAwake(vehicleID)
-                logging.debug('Main short Poll status {} - {}'.format(code, data))
-                self.status_nodes[vehicleID].poll(code)
-
-        except Exception as E:
-            logging.info('Not all nodes ready: {}'.format(E))
-
-
-        
-    def longPoll(self):
-        logging.info('Tesla EV  Controller longPoll - connected = {}'.format(self.TEVcloud.authenticated()))        
-
-        try:
-            #logging.debug('self.vehicleList {}'.format(self.TEVcloud.teslaEV_get_vehicle_list()))
-            temp_list = self.TEVcloud.teslaEV_get_vehicle_list()
-            logging.debug('long poll list {}'.format(temp_list))
-            for indx, vehicleID in enumerate (temp_list):
-                logging.debug('long poll loop {} {} {}'.format(indx, vehicleID, temp_list))
-                code, data =  self.TEVcloud.teslaEV_UpdateCloudInfo(vehicleID)
-                logging.debug('Main Long Poll status {} - {}'.format(code, data))
-                self.status_nodes[vehicleID].poll(code)
-
-        except Exception as E:
-            logging.info('Not all nodes ready: {E}')
-    '''
 
     def poll(self, type ): # dummey poll function
         if type in [ 'long']:
