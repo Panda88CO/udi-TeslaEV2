@@ -39,25 +39,26 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.poly.addNode(self, conn_status = None, rename = True)
         self.wait_for_node_done()
         self.node = self.poly.getNode(address)
-        logging.info('_init_ Tesla EV  Status Node COMLETE')
+        logging.info(f'_init_ Tesla EV  Status Node COMLETE')
 
 
     def start(self):       
-        logging.info('Start Tesla EV Status Node for {self.EVid}') 
+        logging.info(f'Start Tesla EV Status Node for {self.EVid}') 
 
         #self.EV_setDriver('ST', 1)
         #self.forceUpdateISYdrivers()
         self.createSubNodes()
         self.updateISYdrivers()
+        self.update_time()
         self.statusNodeReady = True
         
     def createSubNodes(self):
-        logging.debug('Creating sub nodes for {self.EVid}')
+        logging.debug(f'Creating sub nodes for {self.EVid}')
         nodeAdr = 'cl'+str(self.EVid)[-14:]
         nodeName = self.poly.getValidName('Climate Info')
         nodeAdr = self.poly.getValidAddress(nodeAdr)
         #if not self.poly.getNode(nodeAdr):
-        logging.info('Creating ClimateNode: {nodeAdr} - {self.address} {nodeAdr} {nodeName} {self.EVid}')
+        logging.info(f'Creating ClimateNode: {nodeAdr} - {self.address} {nodeAdr} {nodeName} {self.EVid}')
         self.climateNode = teslaEV_ClimateNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
 
 
@@ -65,7 +66,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         nodeName = self.poly.getValidName('Charging Info')
         nodeAdr = self.poly.getValidAddress(nodeAdr)
         #if not self.poly.getNode(nodeAdr):
-        logging.info('Creating ChargingNode: {nodeAdr} - {self.address} {nodeAdr} {nodeName} {self.EVid}')
+        logging.info(f'Creating ChargingNode: {nodeAdr} - {self.address} {nodeAdr} {nodeName} {self.EVid}')
         self.chargeNode = teslaEV_ChargeNode(self.poly, self.address, nodeAdr, nodeName, self.EVid, self.TEV )
 
 
@@ -73,38 +74,59 @@ class teslaEV_StatusNode(udi_interface.Node):
         return(self.climateNodeReady and self.chargeNodeReady )
 
     def stop(self):
-        logging.debug('stop - Cleaning up')
+        logging.debug(f'stop - Cleaning up')
 
 
     def ready(self):
         return(self.chargeNodeReady and self.climateNodeReady)
 
-    def poll (self, code = 'ok'):    
-        logging.info('Status Node Poll for {self.EVid} - code: {code}')        
+    def update_time(self):
+        logging.debug('update_time')
+        try:
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
+            self.EV_setDriver('GV19', temp ,20)
+        except ValueError:
+            self.EV_setDriver('GV19', None, 25)
+        try:
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
+            self.EV_setDriver('GV20', temp, 20)
+        except ValueError:
+            self.EV_setDriver('GV20', None, 25)
+
+    def poll (self, type ):    
+        logging.info(f'Status Node Poll for {self.EVid} - poll type: {type}')        
 
         try:
-            if code == 'ok':
+            if type in ['short']:
+                code, state  = self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
+            elif type in ['long']:
+                code, state =  self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
+            else:
+                return
+            logging.debug(f'Poll data code {code} , {state}')
+            if code in ['ok']:
                 self.updateISYdrivers()
                 self.climateNode.updateISYdrivers()
                 self.chargeNode.updateISYdrivers()
 
-            elif code in['offline', 'overload', 'error', 'unknown']:
+            elif code in['offline', 'asleep', 'overload', 'error', 'unknown']:
                 self.EV_setDriver('GV13', self.code2ISY(code), 25)
                 logging.info('Car appears off-line/sleeping or overload  - not updating data')
+
             else:
                 self.EV_setDriver('GV13', 99, 25)
+            self.update_time()
+            self.climateNode.update_time()
+            self.chargeNode.update_time()
         except Exception as e:
-            logging.error('Status Poll exception : {e}')
+                logging.error(f'Status Poll exception : {e}')
 
 
 
     def updateISYdrivers(self):
         try:
             
-            logging.info('updateISYdrivers - Status for {self.EVid}')
-
-            temp = {}
-
+            logging.info(f'updateISYdrivers - Status for {self.EVid}')
 
             self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid), 25)
 
@@ -144,12 +166,12 @@ class teslaEV_StatusNode(udi_interface.Node):
    
             if self.TEV.location_enabled():
                 location = self.TEV.teslaEV_GetLocation(self.EVid)
-                logging.debug('teslaEV_GetLocation {location}')
+                logging.debug(f'teslaEV_GetLocation {location}')
                 if location['longitude']:
                     logging.debug('GV17: {}'.format(round(location['longitude'], 3)))
                     self.EV_setDriver('GV17', round(location['longitude'], 3), 56)
                 else:
-                    logging.debug('GV17: NONE')
+                    logging.debug(f'GV17: NONE')
                     self.EV_setDriver('GV17', None, 25)
                 if location['latitude']:
                     logging.debug('GV18: {}'.format(round(location['latitude'], 3)))
@@ -160,35 +182,22 @@ class teslaEV_StatusNode(udi_interface.Node):
             else:
                 self.EV_setDriver('GV17', 98, 25)
                 self.EV_setDriver('GV18', 98, 25)            
-
-            try:
-                temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
-                self.EV_setDriver('GV19', temp ,20)   
-            except ValueError:
-                self.EV_setDriver('GV19', None, 25)                                                 
-            try:
-                temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
-                self.EV_setDriver('GV20', temp, 20)
-            except ValueError:
-                self.EV_setDriver('GV20', None, 25)           
-            #else:
-            #    logging.info('System not ready yet')
-
         except Exception as e:
-            logging.error('updateISYdriver Status node failed: {e}')
+            logging.error(f'updateISYdriver Status node failed: {e}')
 
     def ISYupdate (self, command):
-        logging.info('ISY-update status node  called')
+        logging.info(f'ISY-update status node  called')
         code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
         code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.updateISYdrivers()
+        self.update_time()
         self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
 
     def evWakeUp (self, command):
-        logging.info('EVwakeUp called')
-        code, res = self.TEV._teslaEV_Wake(self.EVid)
-        logging.debug('Wake result {code} - {res}')
+        logging.info(f'EVwakeUp called')
+        code, res = self.TEV._teslaEV_wake_ev(self.EVid)
+        logging.debug(f'Wake result {code} - {res}')
         if code in ['ok']:               
             code, res = self.TEV.teslaEV_UpdateCloudInfoAwake(self.EVid)
             self.updateISYdrivers()
@@ -197,9 +206,9 @@ class teslaEV_StatusNode(udi_interface.Node):
 
 
     def evHonkHorn (self, command):
-        logging.info('EVhonkHorn called')        
+        logging.info(f'EVhonkHorn called')        
         code, res = self.TEV.teslaEV_HonkHorn(self.EVid)
-        logging.info('return  {code} - {res}')
+        logging.info(f'return  {code} - {res}')
         if code in ['ok']:
              self.EV_setDriver('GV21', self.command_res2ISY(res),25)
         else:
@@ -212,9 +221,9 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.forceUpdateISYdrivers()
 
     def evFlashLights (self, command):
-        logging.info('EVflashLights called')
+        logging.info(f'EVflashLights called')
         code, res = self.TEV.teslaEV_FlashLights(self.EVid)
-        logging.info('return  {code} - {res}')
+        logging.info(f'return  {code} - {res}')
         if code in ['ok']:
              self.EV_setDriver('GV21', self.command_res2ISY(res),25)
         else:
@@ -227,7 +236,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.forceUpdateISYdrivers()
 
     def evControlDoors (self, command):
-        logging.info('EVctrlDoors called')
+        logging.info(f'EVctrlDoors called')
         #self.TEV.teslaEV_Wake(self.EVid)
  
         doorCtrl = int(float(command.get('value')))
@@ -240,11 +249,11 @@ class teslaEV_StatusNode(udi_interface.Node):
             #code, res =  self.TEV.teslaEV_Doors(self.EVid, 'lock')
             #self.EV_setDriver('GV3', doorCtrl )            
         else:
-            logging.error('Unknown command for evControlDoors {command}')
+            logging.error(f'Unknown command for evControlDoors {command}')
             self.EV_setDriver('GV21', self.command_res2ISY('error'), 25)
             return('error', 'code wrong')
         code, res =  self.TEV.teslaEV_Doors(self.EVid, cmd)
-        logging.info('return  {code} - {res}')
+        logging.info(f'return  {code} - {res}')
         self.EV_setDriver('GV3', doorCtrl, 25)
         if code in ['ok']:
              self.EV_setDriver('GV21', self.command_res2ISY(res),25)
@@ -254,7 +263,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
 
     def evPlaySound (self, command):
-        logging.info('evPlaySound called')
+        logging.info(f'evPlaySound called')
         #self.TEV.teslaEV_Wake(self.EVid)
         sound = int(float(command.get('value')))
         if sound == 0 or sound == 2000: 
@@ -268,7 +277,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     # needs update
     def evControlSunroof (self, command):
-        logging.info('evControlSunroof called')
+        logging.info(f'evControlSunroof called')
         #self.TEV.teslaEV_Wake(self.EVid)
         sunroofCtrl = int(float(command.get('value')))
         res = False
@@ -280,7 +289,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         elif sunroofCtrl == 2:
             code, res = self.TEV.teslaEV_SunRoof(self.EVid, 'stop')                  
         else:
-            logging.error('Wrong command for evSunroof: {sunroofCtrl}')
+            logging.error(f'Wrong command for evSunroof: {sunroofCtrl}')
             code = 'error'
         if code in ['ok']:
              self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
@@ -290,10 +299,10 @@ class teslaEV_StatusNode(udi_interface.Node):
 
 
     def evOpenFrunk (self, command):
-        logging.info('evOpenFrunk called')
+        logging.info(f'evOpenFrunk called')
         #self.TEV.teslaEV_Wake(self.EVid)     
         code, res = self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Frunk')
-        logging.debug('Frunk result {code} - {res}')
+        logging.debug(f'Frunk result {code} - {res}')
         if code in ['ok']:
             self.EV_setDriver('GV12', 1, 25)
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
@@ -307,7 +316,7 @@ class teslaEV_StatusNode(udi_interface.Node):
     def evOpenTrunk (self, command):
         logging.info('evOpenTrunk called')   
         code, res = self.TEV.teslaEV_TrunkFrunk(self.EVid, 'Trunk')
-        logging.debug('Trunk result {code} - {res}')
+        logging.debug(f'Trunk result {code} - {res}')
         if code in ['ok']:
             self.EV_setDriver('GV11', 1, 25)
             self.EV_setDriver('GV21', self.command_res2ISY(res), 25)    
@@ -327,14 +336,6 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
-    '''
-    def setDistUnit(self,command):
-        logging.debug('setDistUnit')
-        distUnit = int(float(command.get('value')))   
-        self.TEV.teslaEV_SetDistUnit( distUnit )
-
-        self.forceUpdateISYdrivers()
-    '''   
 
     id = 'evstatus'
     commands = { 'UPDATE': ISYupdate, 
@@ -368,8 +369,8 @@ class teslaEV_StatusNode(udi_interface.Node):
             {'driver': 'GV12', 'value': 0, 'uom': 25}, #frunk
             {'driver': 'GV13', 'value': 99, 'uom': 25}, #car State
             #{'driver': 'GV16', 'value': 99, 'uom': 25}, #longitude
-            {'driver': 'GV17', 'value': 99, 'uom': 25}, #longitude
-            {'driver': 'GV18', 'value': 99, 'uom': 25}, #latitude
+            {'driver': 'GV17', 'value': 99, 'uom': 56}, #longitude
+            {'driver': 'GV18', 'value': 99, 'uom': 56}, #latitude
             {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours
             {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update hours
             {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status

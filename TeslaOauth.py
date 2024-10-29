@@ -43,7 +43,7 @@ class teslaAccess(OAuth):
     yourApiEndpoint = 'https://my.isy.io/api/tesla'
     def __init__(self, polyglot, scope):
         super().__init__(polyglot)
-        logging.info('OAuth initializing')
+        logging.info(f'OAuth initializing')
   
         self.poly = polyglot
         self.scope = scope
@@ -70,61 +70,47 @@ class teslaAccess(OAuth):
         #self.poly.subscribe(self.poly.OAUTH, self.oauthHandler)
         self.poly = polyglot
         self.customParams = Custom(polyglot, 'customparams')
-        logging.info('External service connectivity initialized...')
+        logging.info(f'External service connectivity initialized...')
 
         #time.sleep(1)
 
         #while not self.handleCustomParamsDone:
-        #    logging.debug('Waiting for customParams to complete - getAccessToken')
+        #    logging.debug(f'Waiting for customParams to complete - getAccessToken')
         #    time.sleep(0.2)
         # self.getAccessToken()
     
     # The OAuth class needs to be hooked to these 3 handlers
     
     def customDataHandler(self, key, data):
-        logging.debug('customDataHandler called {data}')
+        logging.debug(f'customDataHandler called {data}')
         #while not self.handleCustomParamsDone:
-        #    logging.debug('Waiting for customDataHandler to complete')
+        #    logging.debug(f'Waiting for customDataHandler to complete')
         #    time.sleep(1)       
         logging.debug('customDataHandler result: {}'.format(super().customDataHandler(data)))
         self.customDataHandlerDone = True
         logging.debug('customDataHandler Finished')
-    '''    
 
-    def customDataHandler(self, data):
-        if data.get('token'):
-            logging.info('Migrating tokens to the new version')
-            # Save token data to the new oAuthTokens custom
-            Custom(self.poly, 'oauthTokens').load(data['token'], True)
 
-            # Save customdata without the key 'token'
-            newData = { key: value for key, value in data.items() if key != 'token' }
-            Custom(self.poly, 'customdata').load(newData, True)
-            
-            # Continue processing as if it was in the right place
-            self.customNsHandler('oauthTokens', data['token'])
-    '''
-        
     def customNsHandler(self, key, data):
-        logging.debug('customNsHandler called {key} {data}')
+        logging.debug(f'customNsHandler called {key} {data}')
         #while not self.customParamsDone():
-        #    logging.debug('Waiting for customNsHandler to complete')
+        #    logging.debug(f'Waiting for customNsHandler to complete')
         #    time.sleep(1)
         #self.updateOauthConfig()
         super().customNsHandler(key, data)
-        logging.debug('customerNSHandler results: {}'.format(super().customNsHandler(key, data)))
+        logging.debug(f'customerNSHandler results: {super().customNsHandler(key, data)}')
         if key == 'oauthTokens': # stored oauthToken values processed
             self.customNsHandlerDone = True
-        logging.debug('customNsHandler Finished')
+        logging.debug(f'customNsHandler Finished')
 
     def oauthHandler(self, token):
-        logging.debug('oauthHandler called')
+        logging.debug(f'oauthHandler called')
         super().oauthHandler(token)
         #while not self.customNsDone():
-        #    logging.debug('Waiting for initilization to complete before oAuth')
+        #    logging.debug(f'Waiting for initilization to complete before oAuth')
         #    time.sleep(5)
 
-        logging.debug('oauthHandler result: {}'.format(super().oauthHandler(token)))
+        logging.debug(f'oauthHandler result: {super().oauthHandler(token)}')
         self.oauthHandlerCalled = True
         #while not self.authendication_done :
         #time.sleep(2)
@@ -139,11 +125,6 @@ class teslaAccess(OAuth):
         return(self.customDataHandlerDone )
 
 
-    #def customOauthDone(self):
-    #    return(self.customOauthHandlerDone )
-    # Your service may need to access custom params as well...
-
-    
 
                 
     def cloud_set_region(self, region):
@@ -155,7 +136,7 @@ class teslaAccess(OAuth):
         oauthSettingsUpdate['token_parameters'] = {}
         # Example for a boolean field
 
-        logging.debug('region {self.region}')
+        logging.debug(f'region {self.region}')
         oauthSettingsUpdate['scope'] = self.scope 
         oauthSettingsUpdate['auth_endpoint'] = 'https://auth.tesla.com/oauth2/v3/authorize'
         oauthSettingsUpdate['token_endpoint'] = 'https://auth.tesla.com/oauth2/v3/token'
@@ -170,7 +151,7 @@ class teslaAccess(OAuth):
         elif region.upper() == 'CN':
             endpoint = self.EndpointCN
         else:
-            logging.error('Unknow region specified {self.region}')
+            logging.error(f'Unknow region specified {self.region}')
             return
            
         self.yourApiEndpoint = endpoint+self.api 
@@ -178,8 +159,8 @@ class teslaAccess(OAuth):
         
         self.updateOauthSettings(oauthSettingsUpdate)
         #time.sleep(0.1)
-        logging.debug('getOauthSettings: {}'.format(self.getOauthSettings()))
-        #logging.debug('Updated oAuth config 2: {}'.format(temp))
+        logging.debug(f'getOauthSettings: {self.getOauthSettings()}')
+        #logging.debug(f'Updated oAuth config 2: {}'.format(temp))
         #self.handleCustomParamsDone = True
         #self.poly.Notices.clear()
 
@@ -197,12 +178,12 @@ class teslaAccess(OAuth):
         except ValueError as err:
             logging.warning('Access token is not yet available. Please authenticate.')
             self.poly.Notices['auth'] = 'Please initiate authentication'
-            logging.debug('_callAPI oauth error: {err}')
+            logging.debug(f'_callAPI oauth error: {err}')
             return (False)
         except ValueError as err:
             logging.warning('Access token is not yet available. Please authenticate.')
             self.poly.Notices['auth'] = 'Please initiate authentication'
-            logging.debug('_callAPI oauth error: {err}')
+            logging.debug(f'_callAPI oauth error: {err}')
             return
         #return('expiry' in self._oauthTokens)
  
@@ -213,7 +194,7 @@ class teslaAccess(OAuth):
 
 
     def getPortalToken(self, client_id, portal_secret):
-        #logging.debug('getPortalToken {} {}'.format(client_id, portal_secret))
+        #logging.debug(f'getPortalToken {} {}'.format(client_id, portal_secret))
         token_refresh = True
         now = int(time.time())
         if 'expiry' in self.token_info:
@@ -229,7 +210,7 @@ class teslaAccess(OAuth):
                 'client_id': client_id ,
                 'client_secret' : portal_secret,            
             }
-            logging.debug('Before post header = {headers}, body = {body}')
+            logging.debug(f'Before post header = {headers}, body = {body}')
             response = requests.post('https://my.isy.io/o2/token', headers=headers, data=body)
 
             if response.status_code == 200:
@@ -251,25 +232,26 @@ class teslaAccess(OAuth):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
+            response = None
             payload = body
             #self._oAuthTokensRefresh()  #force refresh
             accessToken = self.getAccessToken()
             portalToken = self.getPortalToken(self.portalId, self.portal_secret)
-            #logging.debug('Tokens: P={} T={}'.format(portalToken, accessToken))
+            #logging.debug(f'Tokens: P={} T={}'.format(portalToken, accessToken))
             #refresh_token = self._oauthTokens.get('refresh_token')
-            #logging.debug('call api tokens: {} {}'.format(refresh_token, accessToken))
+            #logging.debug(f'call api tokens: {} {}'.format(refresh_token, accessToken))
             self.poly.Notices.clear()
         except ValueError as err:
             logging.warning('Access token is not yet available. Please authenticate.')
             self.poly.Notices['auth'] = 'Please initiate authentication'
-            logging.debug('_callAPI oauth error: {err}')
+            logging.debug(f'_callAPI oauth error: {err}')
             return
         if accessToken is None:
-            logging.error('Access token is not available')
+            logging.error(f'Access token is not available')
             return None
 
         if url is None:
-            logging.error('url is required')
+            logging.error(f'url is required')
             return None
 
         completeUrl = self.yourPortalEndpoint + url
@@ -294,7 +276,7 @@ class teslaAccess(OAuth):
                 #payload = json.dumps(body)
                 payload = body
 
-        logging.debug(' call info url={completeUrl}, header {headers}, body ={payload}')
+        logging.debug(f' call info url={completeUrl}, header {headers}, body ={payload}')
 
         try:
             if method == 'GET':
@@ -307,7 +289,7 @@ class teslaAccess(OAuth):
                 response = requests.post(completeUrl, headers=headers, json=payload)
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
-            logging.debug('request response: {response}')
+            logging.debug(f'request response: {response}')
 
             
             
@@ -339,22 +321,20 @@ class teslaAccess(OAuth):
         # When calling an API, get the access token (it will be refreshed if necessary)
         #self.apiLock.acquire()
         try:
-            #self._oAuthTokensRefresh()  #force refresh
+            response = None
             accessToken = self.getAccessToken()
-            #portal_token = self.getPortalToken(self.portalId, self.portalSecret)
-            #refresh_token = self._oauthTokens.get('refresh_token')
             self.poly.Notices.clear()
         except ValueError as err:
             logging.warning('Access token is not yet available. Please authenticate.')
             self.poly.Notices['auth'] = 'Please initiate authentication'
-            logging.debug('_callAPI oauth error: {err}')
+            logging.debug(f'_callAPI oauth error: {err}')
             return
         if accessToken is None:
-            logging.error('Access token is not available')
+            logging.error(f'Access token is not available')
             return None
 
         if url is None:
-            logging.error('url is required')
+            logging.error(f'url is required')
             return None
 
         completeUrl = self.yourApiEndpoint + url
@@ -366,8 +346,8 @@ class teslaAccess(OAuth):
         }
 
         if method in [ 'PATCH', 'POST'] and body is None:
-            logging.error('body is required when using {method} {completeUrl}')
-        logging.debug('call info url={completeUrl}, header {headers}, body ={body}')
+            logging.error(f'body is required when using {method} {completeUrl}')
+        logging.debug(f'call info url={completeUrl}, header {headers}, body ={body}')
 
         try:
             if method == 'GET':
@@ -380,7 +360,7 @@ class teslaAccess(OAuth):
                 response = requests.post(completeUrl, headers=headers, json=body)
             elif method == 'PUT':
                 response = requests.put(completeUrl, headers=headers)
-            logging.debug('API response: {response}')
+            logging.debug(f'API response: {response}')
             response.raise_for_status()
             #self.apiLock.release()
             
@@ -390,6 +370,6 @@ class teslaAccess(OAuth):
                 return response.text
 
         except requests.exceptions.HTTPError as error:
-            logging.error("Call {method} {completeUrl} failed: {error}")
+            logging.error(f"Call {method} {completeUrl} failed: {error}")
             #self.apiLock.release()
             return None

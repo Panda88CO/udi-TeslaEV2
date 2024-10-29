@@ -2,11 +2,11 @@
    <nodeDef id="controller" nls="nlscontroller">
       <editors />
       <sts>
-         <st id="ST" editor="NODE_ST" />
+         <st id="ST" editor="" />
          <st id="GV0" editor="API" />
          <st id="GV1" editor="NBREV" />
-         <st id="GV2" editor="D_UNIT" />
-         <st id="GV3" editor="T_UNIT" />
+         <st id="GV2" editor="DUNIT" />
+         <st id="GV3" editor="TUNIT" />
       </sts>
       <cmds>
          <sends>
@@ -23,7 +23,7 @@
    <nodeDef id="evstatus" nls="nlsevstatus">
       <editors />
       <sts>
-         <!--<st id="ST" editor="NODE_ST" />-->
+         <!--<st id="ST" editor="NODEST" />-->
          <st id="GV1" editor="CONSOLE" />
          <st id="GV2" editor="BOOLSTATE" />
          <st id="GV0" editor="NUMBER" />
@@ -38,12 +38,12 @@
          <st id="GV11" editor="OPENCLOSE" />
          <st id="GV12" editor="OPENCLOSE" />
          <st id="GV13" editor="CARSTATE" />
-         <!-- <st id="GV16" editor="IDEA_DIST" /> !-->
+         <!-- <st id="GV16" editor="IDEADIST" /> !-->
          <st id="GV17" editor="LONGITUDE" />         
          <st id="GV18" editor="LATITUDE" />  
-         <st id="GV19" editor="DURATION_H" />         
-         <st id="GV20" editor="DURATION_H" />    
-         <st id="GV21" editor="LAST_CMD" />   
+         <st id="GV19" editor="DURATIONH" />         
+         <st id="GV20" editor="DURATIONH" />    
+         <st id="GV21" editor="LASTCMD" />   
       </sts>
       <cmds>
          <sends>
@@ -57,13 +57,13 @@
                <p id="" editor="LOCKUNLOCK" init="GV3" /> 
             </cmd>
             <cmd id="SUNROOF" > 
-               <p id="" editor="SUNROOFCTRL" init="" /> 
+               <p id="" editor="SUNROOFCTRL" init="0" /> 
             </cmd >
             <cmd id="TRUNK" /> 
             <cmd id="FRUNK" /> 
             <cmd id="HOMELINK" /> 
             <cmd id="PLAYSOUND" > 
-               <p id="" editor="SOUNDS" init="" /> 
+               <p id="" editor="SOUNDS" init="0" /> 
             </cmd >
          </accepts>
       </cmds>
@@ -72,25 +72,25 @@
    <nodeDef id="evclimate" nls="nlsevclimate">
       <editors />
       <sts>
-         <!--<st id="ST" editor="NODE_ST" />-->
+         <!--<st id="ST" editor="NODEST" />-->
          <st id="GV1" editor="TEMP" />
          <st id="GV2" editor="TEMP" />
          <st id="GV3" editor="TEMP" />
          <st id="GV4" editor="TEMP" />
-         <st id="GV5" editor="HEAT_LVL" />
-         <st id="GV6" editor="HEAT_LVL" />
-         <st id="GV7" editor="HEAT_LVL" />
-         <st id="GV8" editor="HEAT_LVL" />
-         <st id="GV9" editor="HEAT_LVL" />
-         <st id="GV10" editor="PREC_STATUS" />
-         <st id="GV11" editor="PREC_STATUS" />
+         <st id="GV5" editor="HEATLVL" />
+         <st id="GV6" editor="HEATLVL" />
+         <st id="GV7" editor="HEATLVL" />
+         <st id="GV8" editor="HEATLVL" />
+         <st id="GV9" editor="HEATLVL" />
+         <st id="GV10" editor="PRECSTATUS" />
+         <st id="GV11" editor="PRECSTATUS" />
          <st id="GV12" editor="TEMP" />
          <st id="GV13" editor="TEMP" />
-         <st id="GV14" editor="HEAT_LVL" />
+         <st id="GV14" editor="HEATLVL" />
 
-         <st id="GV19" editor="DURATION_H" />
-         <st id="GV20" editor="DURATION_H" />   
-         <st id="GV21" editor="LAST_CMD" />  
+         <st id="GV19" editor="DURATIONH" />
+         <st id="GV20" editor="DURATIONH" />   
+         <st id="GV21" editor="LASTCMD" />  
       </sts>
       <cmds>
          <sends>
@@ -98,10 +98,10 @@
          <accepts>
             <cmd id="UPDATE" /> 
             <cmd id="SUNROOF" > 
-                  <p id="" editor="SUNROOFCTRL" init="" /> 
+                  <p id="" editor="SUNROOFCTRL" init="0" /> 
             </cmd>
             <cmd id="WINDOWS" > 
-                  <p id="" editor="WINDOWCTRL" init="" /> 
+                  <p id="" editor="WINDOWCTRL" init="0" /> 
             </cmd >            
             <cmd id="AUTOCON"> 
                   <p id="" editor="AUTOCONCTRL" init="GV10" /> 
@@ -139,7 +139,7 @@
    <nodeDef id="evcharge" nls="nlsevcharge">
       <editors />
       <sts>
-         <!--<st id="ST" editor="NODE_ST" />-->
+         <!--<st id="ST" editor="NODEST" />-->
          <st id="GV1" editor="PRESENT" />
          <st id="GV2" editor="OPENCLOSE" />
          <st id="GV3" editor="CPLSTATE" />
@@ -158,9 +158,9 @@
          <st id="GV15" editor="KWH" />
          <st id="GV16" editor="DISTANCE" />
 
-         <st id="GV19" editor="DURATION_H" />
-         <st id="GV20" editor="DURATION_H" />
-         <st id="GV21" editor="LAST_CMD" />  
+         <st id="GV19" editor="DURATIONH" />
+         <st id="GV20" editor="DURATIONH" />
+         <st id="GV21" editor="LASTCMD" />  
 
       </sts>
       <cmds>
@@ -175,10 +175,10 @@
                    <p id="" editor="CHARGECTRL" init="GV6" /> 
             </cmd >
             <cmd id="BATPERCENT" >
-                  <p id="" editor="PERCENT_INP" init="GV9" /> 
+                  <p id="" editor="PERCENTINP" init="GV9" /> 
             </cmd >
             <cmd id="CHARGEAMPS" >
-                   <p id="" editor="AMPS_INP" init="GV5" /> 
+                   <p id="" editor="AMPSINP" init="GV5" /> 
             </cmd >
 
          </accepts>
