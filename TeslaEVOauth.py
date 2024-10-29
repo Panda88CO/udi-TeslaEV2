@@ -315,7 +315,7 @@ class teslaEVAccess(teslaAccess):
                     code, res = self._teslaEV_get_ev_data(EVid)
                     if code == 'ok':
                         self.carInfo[EVid] = self.process_EV_data(res)
-                        return(code, res)
+                        return(code, res['state'])
                     else:
                         return(code, state)
                 elif code == 'overload':
@@ -325,7 +325,7 @@ class teslaEVAccess(teslaAccess):
                     return(code, state)
             except Exception as e:
                 logging.debug(f'Exception teslaEV_UpdateCloudInfo: {e}')
-                return('error')
+                return('error', 'error')
    
     '''
     def extract_gui_info(self, EVid):
