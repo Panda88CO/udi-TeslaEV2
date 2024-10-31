@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-
-import threading
+from threading import Timer
 
 from TeslaEVChargeNode import teslaEV_ChargeNode
 from TeslaEVClimateNode import teslaEV_ClimateNode 
@@ -12,7 +11,30 @@ except ImportError:
     import logging
     logging.basicConfig(level=logging.DEBUG)
 
-               
+class RepeatTimer(object):
+    def __init__(self, interval, function, *args, **kwargs):
+        self._timer     = None
+        self.interval   = interval
+        self.function   = function
+        self.args       = args
+        self.kwargs     = kwargs
+        self.is_running = False
+        self.start()
+
+    def _run(self):
+        self.is_running = False
+        self.start()
+        self.function(*self.args, **self.kwargs)
+
+    def start(self):
+        if not self.is_running:
+            self._timer = Timer(self.interval, self._run)
+            self._timer.start()
+            self.is_running = True
+
+    def stop(self):
+        self._timer.cancel()
+        self.is_running = False
                
 class teslaEV_StatusNode(udi_interface.Node):
     from  udiLib import node_queue, command_res2ISY, wait_for_node_done, tempUnitAdjust, latch2ISY, chargeState2ISY, setDriverTemp, cond2ISY,  code2ISY, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -50,7 +72,8 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.createSubNodes()
         self.updateISYdrivers()
         #self.update_time()
-        self.display_time_since(self.display_update_sec)
+        self.timer = RepeatTimer(1, self.display_time_since)
+        #timer = self.display_time_since(self.display_update_sec)
         self.statusNodeReady = True
         
     def createSubNodes(self):
@@ -97,7 +120,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def display_time_since(self, update):
         logging.debug('display_time_since')
-        threading.Timer(update, self.display_time_since, [update]).start()
+        #threading.Timer(update, self.display_time_since, [update]).start()
         self.update_time()
         self.climateNode.update_time()
         self.chargeNode.update_time()
