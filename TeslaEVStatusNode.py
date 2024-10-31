@@ -50,7 +50,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.createSubNodes()
         self.updateISYdrivers()
         #self.update_time()
-        self.display_time_since()
+        self.display_time_since(self.display_update_sec)
         self.statusNodeReady = True
         
     def createSubNodes(self):
@@ -95,12 +95,13 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV20', None, 25)
 
 
-    def display_time_since(self):
-        logging.debug(self.time_last_update)
+    def display_time_since(self, update):
+        logging.debug('display_time_since')
+        threading.Timer(update, self.display_time_since, [update]).start()
         self.update_time()
         self.climateNode.update_time()
         self.chargeNode.update_time()        
-        threading.Timer(self.display_update_sec, self.display_time_since).start()
+        
 
     def poll (self, type ):    
         logging.info(f'Status Node Poll for {self.EVid} - poll type: {type}')        
