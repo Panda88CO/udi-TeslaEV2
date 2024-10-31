@@ -19,7 +19,7 @@ class RepeatTimer(Timer):
             self.function(*self.args, **self.kwargs)
 
 
-class CountupTimer(object):
+class CountUpTimer(object):
     def __init__ (self):        
         self.delayTimes = []
         self.updateInterval = 5

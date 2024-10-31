@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-import time
-import re
+import threading
+
 from TeslaEVChargeNode import teslaEV_ChargeNode
 from TeslaEVClimateNode import teslaEV_ClimateNode 
-
 try:
     import udi_interface
     logging = udi_interface.LOGGER
@@ -32,6 +31,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.climateNodeReady = False
         self.chargeNodeReady = False
         self.n_queue = []
+        self.display_update_sec = 60
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.poly.subscribe(self.poly.START, self.start, address)
 
@@ -49,7 +49,8 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.forceUpdateISYdrivers()
         self.createSubNodes()
         self.updateISYdrivers()
-        self.update_time()
+        #self.update_time()
+        self.display_time_since()
         self.statusNodeReady = True
         
     def createSubNodes(self):
@@ -93,6 +94,14 @@ class teslaEV_StatusNode(udi_interface.Node):
         except ValueError:
             self.EV_setDriver('GV20', None, 25)
 
+
+    def display_time_since(self):
+        logging.debug(self.time_last_update)
+        self.update_time()
+        self.climateNode.update_time()
+        self.chargeNode.update_time()        
+        threading.Timer(self.display_update_sec, self.display_time_since).start()
+
     def poll (self, type ):    
         logging.info(f'Status Node Poll for {self.EVid} - poll type: {type}')        
 
@@ -115,6 +124,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
             else:
                 self.EV_setDriver('GV13', 99, 25)
+            
             self.update_time()
             self.climateNode.update_time()
             self.chargeNode.update_time()
