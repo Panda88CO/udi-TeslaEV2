@@ -18,8 +18,9 @@ class RepeatTimer(Timer):
         while not self.finished.wait(self.interval):
             self.function(*self.args, **self.kwargs)
 
+
 class CountupTimer(object):
-   def __init__ (self):        
+    def __init__ (self):        
         self.delayTimes = []
         self.updateInterval = 5
         self.timeRemain = []
@@ -28,10 +29,23 @@ class CountupTimer(object):
         self.lock = Lock()
         self.callback = None
 
-
     def timerCallback (self,  callback, updateInterval = 5):
         self.callback = callback
         self.updateInterval = updateInterval
+
+    def startTimer(self, delayTimes):
+        self.lock.acquire()
+        if not self.timerRunning:
+            self.timer = RepeatTimer(self.updateInterval, self.timeUpdate )
+            self.timer.start()
+            self.timerRunning = True
+
+    def timeUpdate(self):
+        activeDelays = False
+        self.lock.acquire()
+        if self.callback and activeDelays:
+            self.callback(self.timeRemain)     
+        self.lock.release()
 
 
     # updated the reporting interval in sec

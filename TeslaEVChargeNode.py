@@ -66,13 +66,13 @@ class teslaEV_ChargeNode(udi_interface.Node):
    
     def update_time(self):
         try:
-            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
-            self.EV_setDriver('GV19', temp ,20)   
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60), 0)
+            self.EV_setDriver('GV19', temp ,44)   
         except ValueError:
             self.EV_setDriver('GV19', None, 25)                                                 
         try:
-            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
-            self.EV_setDriver('GV20', temp, 20)
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60), 0)
+            self.EV_setDriver('GV20', temp, 44)
         except ValueError:
             self.EV_setDriver('GV20', None, 25)          
 

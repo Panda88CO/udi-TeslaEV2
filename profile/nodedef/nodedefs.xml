@@ -41,8 +41,8 @@
          <!-- <st id="GV16" editor="IDEADIST" /> !-->
          <st id="GV17" editor="LONGITUDE" />         
          <st id="GV18" editor="LATITUDE" />  
-         <st id="GV19" editor="DURATIONH" />         
-         <st id="GV20" editor="DURATIONH" />    
+         <st id="GV19" editor="MINU" />         
+         <st id="GV20" editor="MINU" />    
          <st id="GV21" editor="LASTCMD" />   
       </sts>
       <cmds>
@@ -88,8 +88,8 @@
          <st id="GV13" editor="TEMP" />
          <st id="GV14" editor="HEATLVL" />
 
-         <st id="GV19" editor="DURATIONH" />
-         <st id="GV20" editor="DURATIONH" />   
+         <st id="GV19" editor="MINU" />
+         <st id="GV20" editor="MINU" />   
          <st id="GV21" editor="LASTCMD" />  
       </sts>
       <cmds>
@@ -158,8 +158,8 @@
          <st id="GV15" editor="KWH" />
          <st id="GV16" editor="DISTANCE" />
 
-         <st id="GV19" editor="DURATIONH" />
-         <st id="GV20" editor="DURATIONH" />
+         <st id="GV19" editor="MINU" />
+         <st id="GV20" editor="MINU" />
          <st id="GV21" editor="LASTCMD" />  
 
       </sts>

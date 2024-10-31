@@ -83,13 +83,13 @@ class teslaEV_StatusNode(udi_interface.Node):
     def update_time(self):
         logging.debug('update_time')
         try:
-            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
-            self.EV_setDriver('GV19', temp ,20)
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60),0)
+            self.EV_setDriver('GV19', temp ,44)
         except ValueError:
             self.EV_setDriver('GV19', None, 25)
         try:
-            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
-            self.EV_setDriver('GV20', temp, 20)
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60), 0)
+            self.EV_setDriver('GV20', temp, 44)
         except ValueError:
             self.EV_setDriver('GV20', None, 25)
 
@@ -371,8 +371,8 @@ class teslaEV_StatusNode(udi_interface.Node):
             #{'driver': 'GV16', 'value': 99, 'uom': 25}, #longitude
             {'driver': 'GV17', 'value': 99, 'uom': 56}, #longitude
             {'driver': 'GV18', 'value': 99, 'uom': 56}, #latitude
-            {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours
-            {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update hours
+            {'driver': 'GV19', 'value': 0, 'uom': 44},  #Last combined update Hours
+            {'driver': 'GV20', 'value': 0, 'uom': 44},  #Last update hours
             {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status
             ]
 
