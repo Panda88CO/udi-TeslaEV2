@@ -100,7 +100,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         threading.Timer(update, self.display_time_since, [update]).start()
         self.update_time()
         self.climateNode.update_time()
-        self.chargeNode.update_time()        
+        self.chargeNode.update_time()
         
 
     def poll (self, type ):    
