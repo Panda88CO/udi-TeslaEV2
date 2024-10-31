@@ -1,10 +1,10 @@
 ND-controller-NAME=Tesla EV Info
 ND-controller-ICON=EnergyMonitor
 CMD-nlscontroller-UPDATE-NAME=Update System Data
-ST-nlscontroller-ST-NAME=Controller Connected
+ST-nlscontroller-ST-NAME=Status
 ST-nlscontroller-GV0-NAME=Connected to Tesla Cloud
-API-0=Not Connected
-API-1=Connected
+STATUS-0=Disconnected
+STATUS-1=Connected
 ST-nlscontroller-GV1-NAME=Number of EVs
 ST-nlscontroller-GV2-NAME=Distance Unit
 D_UNIT-0=Km
