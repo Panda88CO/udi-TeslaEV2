@@ -48,7 +48,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.EV_setDriver('ST', 1)
         #self.forceUpdateISYdrivers()
         self.createSubNodes()
-        self.ISYupdate()
+        self.ISYupdate(None)
         self.statusNodeReady = True
         
     def createSubNodes(self):
