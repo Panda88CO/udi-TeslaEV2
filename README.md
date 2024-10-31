@@ -40,6 +40,8 @@ LongPoll = default 120min (7200sec) (12 call/day) - likely to wake the EV
     Polls data from car. If it is asleep it will wake the car and retrieve data
     Note, one can increase this and manually wake the car from the CA to reduce power used when car is awake 
 
+Some considerations on poll interval (given the APU constraint) - Pooling too often will prevent car from going to sleep(using more battery).  Pooling too slow so car goes to sleep will require a wakeup that is limited to 15 times per day.  It may be better to let ISY control when to update data it one wants the least battery use. 
+
 ## Notes 
 If additional fields for control or display is desired contact author @ https://github.com/Panda88CO/udi-TeslaEV
 
