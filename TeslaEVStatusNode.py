@@ -12,28 +12,32 @@ except ImportError:
     logging.basicConfig(level=logging.DEBUG)
 
 class RepeatTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
+    def __init__(self, interval, function):
+        logging.debug('Timer init')
         self._timer     = None
         self.interval   = interval
         self.function   = function
-        self.args       = args
-        self.kwargs     = kwargs
+        #self.args       = args
+        #self.kwargs     = kwargs
         self.is_running = False
         self.start()
 
     def _run(self):
+        logging.debug('Timer Run')
         self.is_running = False
         self.start()
         logging.debug('Timer Running')
-        self.function(*self.args, **self.kwargs)
+        self.function()
 
     def start(self):
+        logging.debug('Timer start')
         if not self.is_running:
             self._timer = Timer(self.interval, self._run)
             self._timer.start()
             self.is_running = True
 
     def stop(self):
+        logging.debug('Timer stop')
         self._timer.cancel()
         self.is_running = False
                
@@ -57,7 +61,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.display_update_sec = 60
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.poly.subscribe(self.poly.START, self.start, address)
-
+        self.timer = None
         self.poly.ready()
         self.poly.addNode(self, conn_status = None, rename = True)
         self.wait_for_node_done()
@@ -73,10 +77,12 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.createSubNodes()
         self.updateISYdrivers()
         #self.update_time()
-        self.timer = RepeatTimer(60, self.display_time_since, None)
         #timer = self.display_time_since(self.display_update_sec)
         self.statusNodeReady = True
-        
+        self.timer = RepeatTimer(60, self.display_time_since)
+
+
+
     def createSubNodes(self):
         logging.debug(f'Creating sub nodes for {self.EVid}')
         nodeAdr = 'cl'+str(self.EVid)[-14:]
