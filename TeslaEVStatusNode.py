@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #from threading import Timer
-from uditimers import ReportTimer
+from apscheduler.schedulers.background import BackgroundScheduler
+#from uditimers import ReportTimer
 from TeslaEVChargeNode import teslaEV_ChargeNode
 from TeslaEVClimateNode import teslaEV_ClimateNode 
 try:
@@ -82,9 +83,11 @@ class teslaEV_StatusNode(udi_interface.Node):
         #timer = self.display_time_since(self.display_update_sec)
         self.statusNodeReady = True
         #self.timer = RepeatTimer(60, self.display_update)
-        self.reportTimer.timerReportInterval(60)
-        self.reportTimer.timerCallback(self.display_update, 60)
-
+        #self.reportTimer.timerReportInterval(60)
+        #self.reportTimer.timerCallback(self.display_update, 60)
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.add_job(self.display_update, 'interval', seconds=self.display_update_sec)
+        self.scheduler.start()
 
     def createSubNodes(self):
         logging.debug(f'Creating sub nodes for {self.EVid}')
@@ -109,7 +112,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def stop(self):
         logging.debug(f'stop - Cleaning up')
-
+        self.scheduler.shutdown()
 
     def ready(self):
         return(self.chargeNodeReady and self.climateNodeReady)
