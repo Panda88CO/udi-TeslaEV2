@@ -20,7 +20,8 @@ class RepeatTimer(Timer):
 
 
 class ReportTimer(object):
-    def __init__ (self):        
+    def __init__ (self):  
+        logging.debug('ReportTimer')      
         self.delayTimes = []
         self.updateInterval = 5
         self.timeRemain = []
@@ -30,6 +31,7 @@ class ReportTimer(object):
         self.callback = None
 
     def timerCallback (self,  callback, updateInterval = 5):
+        logging.debug('timerCallback')   
         self.callback = callback
         self.updateInterval = updateInterval
 
@@ -50,6 +52,7 @@ class ReportTimer(object):
 
     # updated the reporting interval in sec
     def timerReportInterval (self, reportInterval):
+        logging.debug('timerReportInterval'):
         #self.lock.acquire()
         self.updateInterval = reportInterval
         if self.timerRunning:
