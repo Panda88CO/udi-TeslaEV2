@@ -144,7 +144,6 @@ class teslaEV_StatusNode(udi_interface.Node):
             logging.info(f'updateISYdrivers - Status for {self.EVid}')
 
             self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid), 25)
-
             self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)), 25)
             self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid), 25)
 
@@ -202,8 +201,8 @@ class teslaEV_StatusNode(udi_interface.Node):
     def ISYupdate (self, command):
         logging.info(f'ISY-update status node  called')
         code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
         code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
+        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
         self.updateISYdrivers()
         self.update_time()
         self.EV_setDriver('GV21', self.command_res2ISY(code), 25)

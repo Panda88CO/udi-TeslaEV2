@@ -7,6 +7,7 @@ STATUS-1=Connected
 ST-nlscontroller-GV0-NAME=Connected to Tesla Cloud
 API-0=Disonnected
 API-1=Connected
+
 ST-nlscontroller-GV1-NAME=Number of EVs
 ST-nlscontroller-GV2-NAME=Distance Unit
 D_UNIT-0=Km
