@@ -69,7 +69,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.wait_for_node_done()
         self.node = self.poly.getNode(address)
         logging.info(f'_init_ Tesla EV  Status Node COMLETE')
-        self.reportTimer = ReportTimer()
+
 
 
     def start(self):       
