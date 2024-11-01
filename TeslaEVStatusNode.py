@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-#from threading import Timer
+
 from apscheduler.schedulers.background import BackgroundScheduler
-#from uditimers import ReportTimer
 from TeslaEVChargeNode import teslaEV_ChargeNode
 from TeslaEVClimateNode import teslaEV_ClimateNode 
 try:
@@ -12,37 +11,7 @@ except ImportError:
     import logging
     logging.basicConfig(level=logging.DEBUG)
 
-'''
-class RepeatTimer(object):
-    def __init__(self, interval, function):
-        logging.debug('Timer init')
-        self._timer     = None
-        self.interval   = interval
-        self.function   = function
-        #self.args       = args
-        #self.kwargs     = kwargs
-        self.is_running = False
-        self.start()
 
-    def _run(self):
-        logging.debug('Timer Run')
-        self.is_running = False
-        self.start()
-        logging.debug('Timer Running')
-        self.function
-
-    def start(self):
-        logging.debug('Timer start')
-        if not self.is_running:
-            self._timer = Timer(self.interval, self._run)
-            self._timer.start()
-            self.is_running = True
-
-    def stop(self):
-        logging.debug('Timer stop')
-        self._timer.cancel()
-        self.is_running = False
-    '''
 class teslaEV_StatusNode(udi_interface.Node):
     from  udiLib import node_queue, command_res2ISY, wait_for_node_done, tempUnitAdjust, latch2ISY, chargeState2ISY, setDriverTemp, cond2ISY,  code2ISY, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
@@ -69,7 +38,6 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.wait_for_node_done()
         self.node = self.poly.getNode(address)
         logging.info(f'_init_ Tesla EV  Status Node COMLETE')
-
 
 
     def start(self):       
@@ -179,7 +147,6 @@ class teslaEV_StatusNode(udi_interface.Node):
 
             self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)), 25)
             self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid), 25)
-
 
             self.EV_setDriver('GV3', self.bool2ISY(self.TEV.teslaEV_GetLockState(self.EVid)), 25)
             if self.TEV.teslaEV_GetDistUnit() == 1:
