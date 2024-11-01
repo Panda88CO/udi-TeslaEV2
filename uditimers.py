@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from threading import Timer, Lock
+from threading import Timer
 
 try:
     import udi_interface
@@ -19,14 +19,14 @@ class RepeatTimer(Timer):
             self.function(*self.args, **self.kwargs)
 
 
-class CountUpTimer(object):
+class ReportTimer(object):
     def __init__ (self):        
         self.delayTimes = []
         self.updateInterval = 5
         self.timeRemain = []
         self.timerRunning = False
         self.timer_cleared = True
-        self.lock = Lock()
+        #self.lock = Lock()
         self.callback = None
 
     def timerCallback (self,  callback, updateInterval = 5):
@@ -34,7 +34,7 @@ class CountUpTimer(object):
         self.updateInterval = updateInterval
 
     def startTimer(self, delayTimes):
-        self.lock.acquire()
+        #self.lock.acquire()
         if not self.timerRunning:
             self.timer = RepeatTimer(self.updateInterval, self.timeUpdate )
             self.timer.start()
@@ -42,15 +42,15 @@ class CountUpTimer(object):
 
     def timeUpdate(self):
         activeDelays = False
-        self.lock.acquire()
+        #self.lock.acquire()
         if self.callback and activeDelays:
             self.callback(self.timeRemain)     
-        self.lock.release()
+        #self.lock.release()
 
 
     # updated the reporting interval in sec
     def timerReportInterval (self, reportInterval):
-        self.lock.acquire()
+        #self.lock.acquire()
         self.updateInterval = reportInterval
         if self.timerRunning:
             self.timer.cancel()
@@ -58,7 +58,7 @@ class CountUpTimer(object):
         self.timer = RepeatTimer(reportInterval, self.timeUpdate )
         self.timer.start()
         self.timerRunning = True
-        self.lock.release() 
+        #self.lock.release() 
 
 
     def stop(self):
@@ -72,7 +72,7 @@ class CountdownTimer(object):
         self.timeRemain = []
         self.timerRunning = False
         self.timer_cleared = True
-        self.lock = Lock()
+        #self.lock = Lock()
         self.callback = None
         #self.timer = RepeatTimer(self.updateInterval, self.timeUpdate )
 
@@ -84,7 +84,7 @@ class CountdownTimer(object):
 
     # list of delays with format [{'ch':channel, 'on':on in min, 'off':off in min}]
     def addDelays(self, delayTimes):
-        self.lock.acquire()
+        #self.lock.acquire()
         if not self.timerRunning:
             self.timer = RepeatTimer(self.updateInterval, self.timeUpdate )
             self.timer.start()
@@ -109,12 +109,12 @@ class CountdownTimer(object):
                     self.timeRemain.append(delayTimes[indx])
             else:
                 logging.debug('not supported yet - needs to redo code')
-        self.lock.release()
+        #self.lock.release()
 
    
     # updated the reporting interval in sec
     def timerReportInterval (self, reportInterval):
-        self.lock.acquire()
+        #self.lock.acquire()
         self.updateInterval = reportInterval
         if self.timerRunning:
             self.timer.cancel()
@@ -122,12 +122,12 @@ class CountdownTimer(object):
         self.timer = RepeatTimer(reportInterval, self.timeUpdate )
         self.timer.start()
         self.timerRunning = True
-        self.lock.release() 
+        #self.lock.release() 
 
     # updated the remainig time in the running count down timer         
     def timeUpdate(self):
         activeDelays = False
-        self.lock.acquire()
+        #self.lock.acquire()
         for delay in range(0,len(self.timeRemain)):
             if 'delayOn' in self.timeRemain[delay]:
                 self.timeRemain[delay]['delayOn'] -= self.updateInterval
@@ -168,7 +168,7 @@ class CountdownTimer(object):
         #        self.timer_cleared = True
 
             
-        self.lock.release()
+        #self.lock.release()
     
     def stop(self):
         self.timerRunning = False

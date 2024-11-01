@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from threading import Timer
-
+#from threading import Timer
+from uditimers import ReportTimer
 from TeslaEVChargeNode import teslaEV_ChargeNode
 from TeslaEVClimateNode import teslaEV_ClimateNode 
 try:
@@ -11,6 +11,7 @@ except ImportError:
     import logging
     logging.basicConfig(level=logging.DEBUG)
 
+'''
 class RepeatTimer(object):
     def __init__(self, interval, function):
         logging.debug('Timer init')
@@ -40,7 +41,7 @@ class RepeatTimer(object):
         logging.debug('Timer stop')
         self._timer.cancel()
         self.is_running = False
-               
+    '''
 class teslaEV_StatusNode(udi_interface.Node):
     from  udiLib import node_queue, command_res2ISY, wait_for_node_done, tempUnitAdjust, latch2ISY, chargeState2ISY, setDriverTemp, cond2ISY,  code2ISY, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
@@ -67,6 +68,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.wait_for_node_done()
         self.node = self.poly.getNode(address)
         logging.info(f'_init_ Tesla EV  Status Node COMLETE')
+        self.reportTimer = ReportTimer()
 
 
     def start(self):       
@@ -79,8 +81,9 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.update_time()
         #timer = self.display_time_since(self.display_update_sec)
         self.statusNodeReady = True
-        self.timer = RepeatTimer(60, self.display_update)
-
+        #self.timer = RepeatTimer(60, self.display_update)
+        self.reportTimer.timerReportInterval(60)
+        self.reportTimer.timerCallback(self.display_update, 60)
 
 
     def createSubNodes(self):
