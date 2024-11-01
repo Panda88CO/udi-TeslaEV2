@@ -1,10 +1,13 @@
 ND-controller-NAME=Tesla EV Info
 ND-controller-ICON=EnergyMonitor
 CMD-nlscontroller-UPDATE-NAME=Update System Data
-ST-nlscontroller-ST-NAME=Status
-ST-nlscontroller-GV0-NAME=Connected to Tesla Cloud
-STATUS-0=Disconnected
+ST-nlscontroller-ST-NAME=Controller Connected
+STATUS-0=Disonnected
 STATUS-1=Connected
+ST-nlscontroller-GV0-NAME=Connected to Tesla Cloud
+API-0=Disonnected
+API-1=Connected
+
 ST-nlscontroller-GV1-NAME=Number of EVs
 ST-nlscontroller-GV2-NAME=Distance Unit
 D_UNIT-0=Km
@@ -74,8 +77,8 @@ ST-nlsevstatus-GV16-NAME= Ideal Battery Distance
 ST-nlsevstatus-GV17-NAME= EV Longitude
 ST-nlsevstatus-GV18-NAME= EV Latitude
 
-ST-nlsevstatus-GV19-NAME= Hours since last car update
-ST-nlsevstatus-GV20-NAME= Hours since last status update
+ST-nlsevstatus-GV19-NAME= Time since last car update
+ST-nlsevstatus-GV20-NAME= Time since last status update
 ST-nlsevstatus-GV21-NAME= Last Command Status
 CMD_RES-0=OK
 CMD_RES-1=API Overload
@@ -140,8 +143,8 @@ ONOFF-0=Off
 ONOFF-1=On
 ONOFF-99=Unknown
 
-ST-nlsevclimate-GV19-NAME=Hours since car last update
-ST-nlsevclimate-GV20-NAME=Hours since climate last update
+ST-nlsevclimate-GV19-NAME= Time since car last update
+ST-nlsevclimate-GV20-NAME= Time since climate last update
 ST-nlsevclimate-GV21-NAME= Last Command Status
 CMD-nlsevclimate-UPDATE-NAME=Update EV Climate Data
 CMD-nlsevclimate-SUNROOF-NAME=Sunroof Control
@@ -209,8 +212,8 @@ ST-nlsevcharge-GV14-NAME=Time to full charge
 ST-nlsevcharge-GV15-NAME=Charge energy added
 ST-nlsevcharge-GV16-NAME=Charge miles added rated
 
-ST-nlsevcharge-GV19-NAME= Hours since car last update
-ST-nlsevcharge-GV20-NAME= Hours since charge last update
+ST-nlsevcharge-GV19-NAME= Time since car last update
+ST-nlsevcharge-GV20-NAME= Time since charge last update
 ST-nlsevcharge-GV21-NAME= Last Command Status
 CMD-nlsevcharge-UPDATE-NAME=Update System Data
 CMD-nlsevcharge-CHARGEPORT-NAME=Charge Port Control 

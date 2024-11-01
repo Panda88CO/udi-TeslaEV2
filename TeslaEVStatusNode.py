@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-import time
-import re
+from apscheduler.schedulers.background import BackgroundScheduler
 from TeslaEVChargeNode import teslaEV_ChargeNode
 from TeslaEVClimateNode import teslaEV_ClimateNode 
-
 try:
     import udi_interface
     logging = udi_interface.LOGGER
@@ -13,8 +11,7 @@ except ImportError:
     import logging
     logging.basicConfig(level=logging.DEBUG)
 
-               
-               
+
 class teslaEV_StatusNode(udi_interface.Node):
     from  udiLib import node_queue, command_res2ISY, wait_for_node_done, tempUnitAdjust, latch2ISY, chargeState2ISY, setDriverTemp, cond2ISY,  code2ISY, mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
 
@@ -32,9 +29,10 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.climateNodeReady = False
         self.chargeNodeReady = False
         self.n_queue = []
+        self.display_update_sec = 60
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.poly.subscribe(self.poly.START, self.start, address)
-
+        self.timer = None
         self.poly.ready()
         self.poly.addNode(self, conn_status = None, rename = True)
         self.wait_for_node_done()
@@ -48,9 +46,17 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.EV_setDriver('ST', 1)
         #self.forceUpdateISYdrivers()
         self.createSubNodes()
-        self.ISYupdate(None)
+        self.updateISYdrivers()
+
         self.statusNodeReady = True
-        
+        self.climateNode.updateISYdrivers()
+        self.chargeNode.updateISYdrivers()
+
+        self.scheduler = BackgroundScheduler()
+        self.scheduler.add_job(self.display_update, 'interval', seconds=self.display_update_sec)
+        self.scheduler.start()
+        self.display_update()
+
     def createSubNodes(self):
         logging.debug(f'Creating sub nodes for {self.EVid}')
         nodeAdr = 'cl'+str(self.EVid)[-14:]
@@ -74,7 +80,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def stop(self):
         logging.debug(f'stop - Cleaning up')
-
+        self.scheduler.shutdown()
 
     def ready(self):
         return(self.chargeNodeReady and self.climateNodeReady)
@@ -82,15 +88,24 @@ class teslaEV_StatusNode(udi_interface.Node):
     def update_time(self):
         logging.debug('update_time')
         try:
-            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60/60), 2)
-            self.EV_setDriver('GV19', temp ,20)
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastCarUpdate(self.EVid)/60),0)
+            self.EV_setDriver('GV19', temp ,44)
         except ValueError:
             self.EV_setDriver('GV19', None, 25)
         try:
-            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60/60), 2)
-            self.EV_setDriver('GV20', temp, 20)
+            temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60), 0)
+            self.EV_setDriver('GV20', temp, 44)
         except ValueError:
             self.EV_setDriver('GV20', None, 25)
+
+
+    def display_update(self):
+        logging.debug('display_update')
+        #threading.Timer(update, self.display_time_since, [update]).start()
+        self.update_time()
+        self.climateNode.update_time()
+        self.chargeNode.update_time()
+        
 
     def poll (self, type ):    
         logging.info(f'Status Node Poll for {self.EVid} - poll type: {type}')        
@@ -114,6 +129,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
             else:
                 self.EV_setDriver('GV13', 99, 25)
+            
             self.update_time()
             self.climateNode.update_time()
             self.chargeNode.update_time()
@@ -130,7 +146,6 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid), 25)
             self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)), 25)
             self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid), 25)
-
 
             self.EV_setDriver('GV3', self.bool2ISY(self.TEV.teslaEV_GetLockState(self.EVid)), 25)
             if self.TEV.teslaEV_GetDistUnit() == 1:
@@ -369,8 +384,8 @@ class teslaEV_StatusNode(udi_interface.Node):
             #{'driver': 'GV16', 'value': 99, 'uom': 25}, #longitude
             {'driver': 'GV17', 'value': 99, 'uom': 56}, #longitude
             {'driver': 'GV18', 'value': 99, 'uom': 56}, #latitude
-            {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours
-            {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update hours
+            {'driver': 'GV19', 'value': 0, 'uom': 44},  #Last combined update Hours
+            {'driver': 'GV20', 'value': 0, 'uom': 44},  #Last update hours
             {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status
             ]
 

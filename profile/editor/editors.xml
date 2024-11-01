@@ -21,10 +21,12 @@
   </editor>
   
   <editor id="MINU" > 
-      <range  uom="44" min="0" max="1440"   />
+      <range  uom="44" min="0" max="44640"   />
       <range  uom="25" subset="0,1,99" nls="UNKNOWN"/>
   </editor>
   
+
+
   <editor id="NUMBER" > 
      <range  uom="25" subset="0,1,2,3,98,99" nls="NUMBER"/>
   </editor>
