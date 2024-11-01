@@ -28,8 +28,8 @@ class ReportTimer(object):
         self.timerRunning = False
         self.timer_cleared = True
         #self.lock = Lock()
-        self.callback = None
-
+        self.timer.start()
+        
     def timerCallback (self,  callback, updateInterval = 5):
         logging.debug('timerCallback')   
         self.callback = callback
@@ -52,7 +52,7 @@ class ReportTimer(object):
 
     # updated the reporting interval in sec
     def timerReportInterval (self, reportInterval):
-        logging.debug('timerReportInterval'):
+        logging.debug('timerReportInterval')
         #self.lock.acquire()
         self.updateInterval = reportInterval
         if self.timerRunning:
