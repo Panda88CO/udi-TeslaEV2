@@ -24,6 +24,7 @@ class RepeatTimer(object):
     def _run(self):
         self.is_running = False
         self.start()
+        logging.debug('Timer Running')
         self.function(*self.args, **self.kwargs)
 
     def start(self):
@@ -72,7 +73,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         self.createSubNodes()
         self.updateISYdrivers()
         #self.update_time()
-        self.timer = RepeatTimer(1, self.display_time_since)
+        self.timer = RepeatTimer(60, self.display_time_since, None)
         #timer = self.display_time_since(self.display_update_sec)
         self.statusNodeReady = True
         
