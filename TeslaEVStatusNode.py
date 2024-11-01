@@ -27,7 +27,7 @@ class RepeatTimer(object):
         self.is_running = False
         self.start()
         logging.debug('Timer Running')
-        self.function()
+        self.function
 
     def start(self):
         logging.debug('Timer start')
@@ -79,7 +79,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         #self.update_time()
         #timer = self.display_time_since(self.display_update_sec)
         self.statusNodeReady = True
-        self.timer = RepeatTimer(60, self.display_time_since)
+        self.timer = RepeatTimer(60, self.display_update)
 
 
 
@@ -125,8 +125,8 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV20', None, 25)
 
 
-    def display_time_since(self, update):
-        logging.debug('display_time_since')
+    def display_update(self):
+        logging.debug('display_update')
         #threading.Timer(update, self.display_time_since, [update]).start()
         self.update_time()
         self.climateNode.update_time()
