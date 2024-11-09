@@ -119,9 +119,8 @@ class teslaEV_StatusNode(udi_interface.Node):
                 return
             logging.debug(f'Poll data code {code} , {state}')
             if code in ['ok']:
-                self.updateISYdrivers()
-                self.climateNode.updateISYdrivers()
-                self.chargeNode.updateISYdrivers()
+                self.update_all_drivers()
+
 
             elif code in['offline', 'asleep', 'overload', 'error', 'unknown']:
                 self.EV_setDriver('GV13', self.code2ISY(code), 25)
@@ -136,7 +135,10 @@ class teslaEV_StatusNode(udi_interface.Node):
         except Exception as e:
                 logging.error(f'Status Poll exception : {e}')
 
-
+    def update_all_drivers(self, code):
+        self.updateISYdrivers(code)
+        self.climateNode.updateISYdrivers(code)
+        self.chargeNode.updateISYdrivers(code)
 
     def updateISYdrivers(self):
         try:
@@ -198,13 +200,13 @@ class teslaEV_StatusNode(udi_interface.Node):
         except Exception as e:
             logging.error(f'updateISYdriver Status node failed: {e}')
 
-    def ISYupdate (self, command):
+    def ISYupdate (self, command=None):
         logging.info(f'ISY-update status node  called')
         code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
         code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
-        self.updateISYdrivers()
-        self.update_time()
+        self.update_all_drivers(code)
+        self.display_update()
         self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
 
     def evWakeUp (self, command):

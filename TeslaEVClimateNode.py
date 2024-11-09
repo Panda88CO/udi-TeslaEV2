@@ -123,11 +123,12 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     def ISYupdate (self, command):
         logging.info('ISY-update called')
-        code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
-        code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
-        self.updateISYdrivers()
-        self.update_time()
-        self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
+        super(teslaEV_ClimateNode, self).ISYupdate()
+        #code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
+        #code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
+        #super(teslaEV_ClimateNode, self).update_all_drivers(code)
+        #super(teslaEV_ClimateNode, self).display_update()
+        #self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
 
     def evWindows (self, command):
         logging.info('evWindows- called')
