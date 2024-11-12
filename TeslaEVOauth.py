@@ -260,7 +260,7 @@ class teslaEVAccess(teslaAccess):
                         return(code, state)            
             elif code == 'overload':
                 delay = self.next_wake_call - time.time()
-                return(code, delay)
+                return(code, state)
             else:
                 return(code, state)
             

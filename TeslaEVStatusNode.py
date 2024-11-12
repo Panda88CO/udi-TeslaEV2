@@ -122,8 +122,8 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.update_all_drivers(code)
             self.display_update()
 
-            if code in['ok', 'offline', 'asleep', 'overload', 'error', 'unknown']:
-                self.EV_setDriver('GV13', self.code2ISY(code), 25)
+            if state in[ 'offline', 'asleep', 'overload', 'error', 'unknown']:
+                self.EV_setDriver('GV13', self.state2ISY(state), 25)
                 logging.info('Car appears off-line/sleeping or overload  - not updating data')
 
             else:

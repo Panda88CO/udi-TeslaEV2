@@ -125,8 +125,10 @@ def state2ISY(self, state):
             return(1)
         elif state.lower() == 'asleep':
             return(2) 
-        elif state.lower() == 'unknown':
-            return(99)
+        elif state.lower() == 'overload':
+            return(4) 
+        elif state.lower() == 'error':
+            return(5)        
         else:          
             logging.error('Unknown state passed {state}')
             return(99)
@@ -137,7 +139,7 @@ def code2ISY(self, state):
     if state is not None:
         if state.lower() == 'offline':
             return(0)
-        elif state.lower() == 'online':
+        elif state.lower() == 'ok':
             return(1)
         elif state.lower() == 'overload':
             return(4) 
