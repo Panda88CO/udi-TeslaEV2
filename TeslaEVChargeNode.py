@@ -95,7 +95,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
                     else:
                         self.EV_setDriver('GV4', round(float(temp_range*1.6),1), 83)
 
-                self.EV_setDriver('BATLVL', self.TEV.teslaEV_GetBatteryLevel(self.EVid) , 51)
+                self.EV_setDriver('ST', self.TEV.teslaEV_GetBatteryLevel(self.EVid) , 51)
 
 
                 temp_current = self.TEV.teslaEV_MaxChargeCurrent(self.EVid) 
@@ -218,10 +218,12 @@ class teslaEV_ChargeNode(udi_interface.Node):
 
     drivers = [
             #{'driver': 'ST', 'value': 0, 'uom': 2},
+            {'driver': 'ST', 'value': 0, 'uom': 51},  #battery_level
             {'driver': 'GV1', 'value': 99, 'uom': 25},  #fast_charger_present
             {'driver': 'GV2', 'value': 99, 'uom': 25},  #charge_port_door_open
             {'driver': 'GV3', 'value': 99, 'uom': 25},  #charge_port_latch
-            {'driver': 'BATLVL', 'value': 0, 'uom': 51},  #battery_level
+
+            #{'driver': 'BATLVL', 'value': 0, 'uom': 51},  #battery_level
             {'driver': 'GV4', 'value': 0, 'uom': 83}, # Estimated range - Miles
             {'driver': 'GV5', 'value': 0, 'uom': 1},  #charge_current_request_max
             {'driver': 'GV6', 'value': 99, 'uom': 25},  #charging_state

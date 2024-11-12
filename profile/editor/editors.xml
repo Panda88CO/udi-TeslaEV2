@@ -1,10 +1,10 @@
 <editors> 
   <editor id="NODEST" > 
-     <range  uom="25" subset="0,1"  nls='STATUS'/>
+     <range  uom="25" subset="0,1,2"  nls='STATUS'/>
   </editor>
   
   <editor id="API" > 
-     <range  uom="25" subset="0,1" nls="STATUS" />
+     <range  uom="25" subset="0,1" nls="API" />
   </editor>
 
   <editor id="DURATIONH" > 

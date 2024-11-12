@@ -86,7 +86,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             if code in ['ok']:
                 logging.info(f'Climate setDriverTemp {self.EVid}')
 
-                self.setDriverTemp('GV1', self.TEV.teslaEV_GetCabinTemp(self.EVid))
+                self.setDriverTemp('ST', self.TEV.teslaEV_GetCabinTemp(self.EVid))
                 self.setDriverTemp('GV2', self.TEV.teslaEV_GetOutdoorTemp(self.EVid))
                 self.setDriverTemp('GV3', self.TEV.teslaEV_GetLeftTemp(self.EVid))
                 self.setDriverTemp('GV4', self.TEV.teslaEV_GetRightTemp(self.EVid))
@@ -345,7 +345,8 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
     drivers = [
             #{'driver': 'ST', 'value': 0, 'uom': 2},
-            {'driver': 'GV1', 'value': 0, 'uom': 4},  #inside_temp
+            {'driver': 'ST', 'value': 0, 'uom': 4},  #inside_temp
+            #{'driver': 'GV1', 'value': 0, 'uom': 4},  #inside_temp
             {'driver': 'GV2', 'value': 0, 'uom': 4},  #outside_temp
             {'driver': 'GV3', 'value': 0, 'uom': 4},  #driver_temp_setting
             {'driver': 'GV4', 'value': 0, 'uom': 4},  #passenger_temp_setting

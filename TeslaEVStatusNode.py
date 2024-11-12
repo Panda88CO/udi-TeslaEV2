@@ -123,11 +123,11 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.display_update()
 
             if state in[ 'offline', 'asleep', 'overload', 'error', 'unknown']:
-                self.EV_setDriver('GV13', self.state2ISY(state), 25)
+                self.EV_setDriver('ST', self.state2ISY(state), 25)
                 logging.info('Car appears off-line/sleeping or overload  - not updating data')
 
             else:
-                self.EV_setDriver('GV13', 99, 25)
+                self.EV_setDriver('ST', 99, 25)
             
 
 
@@ -176,7 +176,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         
                 self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), 25)
                 self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), 25)
-                self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+                self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
     
                 if self.TEV.location_enabled():
                     location = self.TEV.teslaEV_GetLocation(self.EVid)
@@ -206,7 +206,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         logging.info(f'ISY-update status node  called')
         code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
         code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
         self.update_all_drivers(code)
         self.display_update()
         self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
@@ -220,7 +220,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.update_all_drivers(teslaEV_ChargeNode)
             self.display_update()
         self.EV_setDriver('GV21', self.command_res2ISY(code), 25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
 
 
     def evHonkHorn (self, command):
@@ -231,7 +231,7 @@ class teslaEV_StatusNode(udi_interface.Node):
              self.EV_setDriver('GV21', self.command_res2ISY(res),25)
         else:
             self.EV_setDriver('GV21', self.code2ISY(code),25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
 
         #return(code, res)
             
@@ -248,7 +248,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV21', self.code2ISY(code),25)
 
         self.EV_setDriver('GV21', self.command_res2ISY(code),25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
 
 
         #self.forceUpdateISYdrivers()
@@ -278,7 +278,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         else:
             self.EV_setDriver('GV21', self.code2ISY(code),25)
             self.EV_setDriver('GV3', None, 25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
 
     def evPlaySound (self, command):
         logging.info(f'evPlaySound called')
@@ -290,7 +290,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                 self.EV_setDriver('GV21', self.command_res2ISY(res),25)
             else:
                 self.EV_setDriver('GV21', self.code2ISY(code),25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)),25)
 
 
     # needs update
@@ -313,7 +313,7 @@ class teslaEV_StatusNode(udi_interface.Node):
              self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
         else:
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
 
     def evOpenFrunk (self, command):
@@ -328,7 +328,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             logging.info('Not able to send command - EV is not online')
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
             self.EV_setDriver('GV12', None, 25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
 
     def evOpenTrunk (self, command):
@@ -342,7 +342,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             logging.info('Not able to send command - EV is not online')
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
             self.EV_setDriver('GV11', None, 25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
 
     def evHomelink (self, command):
@@ -352,7 +352,7 @@ class teslaEV_StatusNode(udi_interface.Node):
              self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
         else:
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
-        self.EV_setDriver('GV13', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+        self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
 
 
     id = 'evstatus'
@@ -371,7 +371,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     drivers = [
             #{'driver': 'ST', 'value': 0, 'uom': 2},
-            
+            {'driver': 'ST', 'value': 99, 'uom': 25}, #car State            
             {'driver': 'GV1', 'value': 99, 'uom': 25},  #center_display_state
             {'driver': 'GV2', 'value': 99, 'uom': 25},  # Homelink Nearby
             {'driver': 'GV0', 'value': 99, 'uom': 25},  # nbr homelink devices
@@ -385,7 +385,8 @@ class teslaEV_StatusNode(udi_interface.Node):
             #{'driver': 'GV10', 'value': 0, 'uom': 51}, #sun_roof_percent_open
             {'driver': 'GV11', 'value': 0, 'uom': 25}, #trunk
             {'driver': 'GV12', 'value': 0, 'uom': 25}, #frunk
-            {'driver': 'GV13', 'value': 99, 'uom': 25}, #car State
+
+            #{'driver': 'GV13', 'value': 99, 'uom': 25}, #car State
             #{'driver': 'GV16', 'value': 99, 'uom': 25}, #longitude
             {'driver': 'GV17', 'value': 99, 'uom': 56}, #longitude
             {'driver': 'GV18', 'value': 99, 'uom': 56}, #latitude
