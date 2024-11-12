@@ -126,9 +126,9 @@ def state2ISY(self, state):
         elif state.lower() == 'asleep':
             return(2) 
         elif state.lower() == 'overload':
-            return(4) 
+            return(4)
         elif state.lower() == 'error':
-            return(5)        
+            return(5)
         else:          
             logging.error('Unknown state passed {state}')
             return(99)
@@ -142,10 +142,10 @@ def code2ISY(self, state):
         elif state.lower() == 'ok':
             return(1)
         elif state.lower() == 'overload':
-            return(4) 
+            return(4)
         elif state.lower() == 'error':
             return(5)
-        else:          
+        else:
             logging.error('Unknown state passed {state}')
             return(99)
     else:
