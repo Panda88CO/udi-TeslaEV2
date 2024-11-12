@@ -39,8 +39,8 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.debug('Start TeslaEV Climate Node')  
         #self.EV_setDriver('ST', 1)
         self.nodeReady = True
-        self.updateISYdrivers()
-        self.update_time()
+        #self.updateISYdrivers()
+        #self.update_time()
         #self.tempUnit = self.TEV.teslaEV_GetTempUnit()
 
     def stop(self):
@@ -49,8 +49,6 @@ class teslaEV_ClimateNode(udi_interface.Node):
     def climateNodeReady (self):
         return(self.nodeReady )
     
-
-
 
     def poll(self):
         pass
@@ -64,11 +62,11 @@ class teslaEV_ClimateNode(udi_interface.Node):
         #except Exception as e:
         #    logging.error(f'Climate Poll exception : {e}')
 
-    def forceUpdateISYdrivers(self):
-        logging.debug(f'forceUpdateISYdrivers: {self.EVid}')
-        time.sleep(1)
-        self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
-        self.updateISYdrivers()
+    #def forceUpdateISYdrivers(self):
+    #   logging.debug(f'forceUpdateISYdrivers: {self.EVid}')
+    #    time.sleep(1)
+    #    self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
+    #    self.updateISYdrivers()
 
     def update_time(self):
         try:
@@ -83,47 +81,49 @@ class teslaEV_ClimateNode(udi_interface.Node):
             self.EV_setDriver('GV20', None, 25)
 
 
-    def updateISYdrivers(self):
+    def updateISYdrivers(self, code):
         try:
-            logging.info(f'Climate setDriverTemp {self.EVid}')
+            if code in ['ok']:
+                logging.info(f'Climate setDriverTemp {self.EVid}')
 
-            self.setDriverTemp('GV1', self.TEV.teslaEV_GetCabinTemp(self.EVid))
-            self.setDriverTemp('GV2', self.TEV.teslaEV_GetOutdoorTemp(self.EVid))
-            self.setDriverTemp('GV3', self.TEV.teslaEV_GetLeftTemp(self.EVid))
-            self.setDriverTemp('GV4', self.TEV.teslaEV_GetRightTemp(self.EVid))
-            seatHeat = self.TEV.teslaEV_GetSeatHeating(self.EVid)
-            if 'FrontLeft' not in seatHeat:
-                seatHeat['FrontLeft'] = None
-            if 'FrontRight' not in seatHeat:
-                seatHeat['FrontRight'] = None
-            if 'RearLeft' not in seatHeat:
-                seatHeat['RearLeft'] = None
-            if 'RearMiddle' not in seatHeat:
-                seatHeat['RearMiddle'] = None
-            if 'RearRight' not in seatHeat:                
-                seatHeat['RearRight'] = None
-            self.EV_setDriver('GV5', self.cond2ISY(seatHeat['FrontLeft']), 25)
-            self.EV_setDriver('GV6', self.cond2ISY(seatHeat['FrontRight']), 25)
-            self.EV_setDriver('GV7', self.cond2ISY(seatHeat['RearLeft']), 25)
-            self.EV_setDriver('GV8', self.cond2ISY(seatHeat['RearMiddle']), 25)
-            self.EV_setDriver('GV9', self.cond2ISY(seatHeat['RearRight']),25)
-            self.EV_setDriver('GV10', self.bool2ISY(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)), 25)
+                self.setDriverTemp('GV1', self.TEV.teslaEV_GetCabinTemp(self.EVid))
+                self.setDriverTemp('GV2', self.TEV.teslaEV_GetOutdoorTemp(self.EVid))
+                self.setDriverTemp('GV3', self.TEV.teslaEV_GetLeftTemp(self.EVid))
+                self.setDriverTemp('GV4', self.TEV.teslaEV_GetRightTemp(self.EVid))
+                seatHeat = self.TEV.teslaEV_GetSeatHeating(self.EVid)
+                if 'FrontLeft' not in seatHeat:
+                    seatHeat['FrontLeft'] = None
+                if 'FrontRight' not in seatHeat:
+                    seatHeat['FrontRight'] = None
+                if 'RearLeft' not in seatHeat:
+                    seatHeat['RearLeft'] = None
+                if 'RearMiddle' not in seatHeat:
+                    seatHeat['RearMiddle'] = None
+                if 'RearRight' not in seatHeat:                
+                    seatHeat['RearRight'] = None
+                self.EV_setDriver('GV5', self.cond2ISY(seatHeat['FrontLeft']), 25)
+                self.EV_setDriver('GV6', self.cond2ISY(seatHeat['FrontRight']), 25)
+                self.EV_setDriver('GV7', self.cond2ISY(seatHeat['RearLeft']), 25)
+                self.EV_setDriver('GV8', self.cond2ISY(seatHeat['RearMiddle']), 25)
+                self.EV_setDriver('GV9', self.cond2ISY(seatHeat['RearRight']),25)
+                self.EV_setDriver('GV10', self.bool2ISY(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)), 25)
 
-            self.EV_setDriver('GV11', self.bool2ISY(self.TEV.teslaEV_PreConditioningEnabled(self.EVid)), 25)
-            
-            self.setDriverTemp('GV12', self.TEV.teslaEV_MaxCabinTempCtrl(self.EVid))
+                self.EV_setDriver('GV11', self.bool2ISY(self.TEV.teslaEV_PreConditioningEnabled(self.EVid)), 25)
+                
+                self.setDriverTemp('GV12', self.TEV.teslaEV_MaxCabinTempCtrl(self.EVid))
 
-            self.setDriverTemp('GV13', self.TEV.teslaEV_MinCabinTempCtrl(self.EVid))
-            
-            self.EV_setDriver('GV14', self.cond2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)), 25) #need to be implemented        
-
+                self.setDriverTemp('GV13', self.TEV.teslaEV_MinCabinTempCtrl(self.EVid))
+                
+                self.EV_setDriver('GV14', self.cond2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)), 25) #need to be implemented        
+            else:
+                logging.info(f'No new data for climateNode for ({self.EVid}) -  code: {code}' )
         except Exception as e:
             logging.error(f'updateISYdrivers climate node  failed: {e}')
 
 
-    def ISYupdate (self, command):
-        logging.info('ISY-update called')
-        super(teslaEV_ClimateNode, self).ISYupdate()
+    #def ISYupdate (self, command):
+    #    logging.info('ISY-update called')
+        #super(teslaEV_ClimateNode, self).ISYupdate()
         #code, state = self.TEV.teslaEV_update_connection_status(self.EVid)
         #code, res = self.TEV.teslaEV_UpdateCloudInfo(self.EVid)
         #super(teslaEV_ClimateNode, self).update_all_drivers(code)
@@ -327,7 +327,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
 
     id = 'evclimate'
-    commands = { 'UPDATE' : ISYupdate, 
+    commands = { #'UPDATE' : ISYupdate, 
                  'WINDOWS' : evWindows,
                  'SUNROOF' : evSunroof,
                  'AUTOCON' : evAutoCondition,
