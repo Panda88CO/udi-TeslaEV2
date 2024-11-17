@@ -122,12 +122,12 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.update_all_drivers(code)
             self.display_update()
 
-            if state in[ 'offline', 'asleep', 'overload', 'error', 'unknown']:
-                self.EV_setDriver('ST', self.state2ISY(state), 25)
-                logging.info('Car appears off-line/sleeping or overload  - not updating data')
+            #if state in[ 'online', 'offline', 'asleep', 'overload', 'error', 'on-link']:
+            #    self.EV_setDriver('ST', self.state2ISY(state), 25)
+                #logging.info('Car appears off-line/sleeping or overload  - not updating data')
 
-            else:
-                self.EV_setDriver('ST', 99, 25)
+            #else:
+            #    self.EV_setDriver('ST', 99, 25)
             
 
 
@@ -141,6 +141,7 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def updateISYdrivers(self, code):
         try:
+            self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
             if code in ['ok']:
                 logging.info(f'updateISYdrivers - Status for {self.EVid}')
 
@@ -176,7 +177,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         
                 self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), 25)
                 self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), 25)
-                self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+                #self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
     
                 if self.TEV.location_enabled():
                     location = self.TEV.teslaEV_GetLocation(self.EVid)
