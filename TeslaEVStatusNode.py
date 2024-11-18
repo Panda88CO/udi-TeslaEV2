@@ -177,7 +177,7 @@ class teslaEV_StatusNode(udi_interface.Node):
         
                 self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), 25)
                 self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), 25)
-                #self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+
     
                 if self.TEV.location_enabled():
                     location = self.TEV.teslaEV_GetLocation(self.EVid)
