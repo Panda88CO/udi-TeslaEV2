@@ -116,8 +116,11 @@ def season2ISY(self, season):
         else:
             return (99)
     else:
-        return(None)        
+        return(None)   
+
+
 def state2ISY(self, state):
+    logging.debug(f'state2ISY : state {state}')
     if state is not None:
         if state.lower() == 'offline':
             return(0)
@@ -136,6 +139,7 @@ def state2ISY(self, state):
         return(None)
     
 def code2ISY(self, state):
+    logging.debug(f'code2ISY : state {state}')
     if state is not None:
         if state.lower() == 'offline':
             return(0)

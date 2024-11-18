@@ -141,7 +141,9 @@ class teslaEV_StatusNode(udi_interface.Node):
 
     def updateISYdrivers(self, code):
         try:
-            self.EV_setDriver('ST', self.state2ISY(self.TEV.teslaEV_GetCarState(self.EVid)), 25)
+            state = self.TEV.teslaEV_GetCarState(self.EVid)
+            logging.debug(f' state : {state}')
+            self.EV_setDriver('ST', self.state2ISY(state), 25)
             if code in ['ok']:
                 logging.info(f'updateISYdrivers - Status for {self.EVid}')
 
