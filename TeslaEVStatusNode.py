@@ -145,62 +145,62 @@ class teslaEV_StatusNode(udi_interface.Node):
             logging.debug(f' state : {state}')
             self.EV_setDriver('ST', self.state2ISY(state), 25)
             if code in ['ok']:
-                logging.info(f'updateISYdrivers - Status for {self.EVid}')
+                if state in ['online']:
+                    logging.info(f'updateISYdrivers - Status for {self.EVid}')
+                    self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid), 25)
+                    self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)), 25)
+                    self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid), 25)
 
-                self.EV_setDriver('GV1', self.TEV.teslaEV_GetCenterDisplay(self.EVid), 25)
-                self.EV_setDriver('GV2', self.bool2ISY(self.TEV.teslaEV_HomeLinkNearby(self.EVid)), 25)
-                self.EV_setDriver('GV0', self.TEV.teslaEV_nbrHomeLink(self.EVid), 25)
+                    self.EV_setDriver('GV3', self.bool2ISY(self.TEV.teslaEV_GetLockState(self.EVid)), 25)
+                    if self.TEV.teslaEV_GetDistUnit() == 1:
+                        self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 116)
+                    else:
+                        self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 83)
 
-                self.EV_setDriver('GV3', self.bool2ISY(self.TEV.teslaEV_GetLockState(self.EVid)), 25)
-                if self.TEV.teslaEV_GetDistUnit() == 1:
-                    self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 116)
-                else:
-                    self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 83)
+                    self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)),25)
+                    
+                    windows  = self.TEV.teslaEV_GetWindoStates(self.EVid)
+                    if 'FrontLeft' not in windows:
+                        windows['FrontLeft'] = None
+                    if 'FrontRight' not in windows:
+                        windows['FrontRight'] = None
+                    if 'RearLeft' not in windows:
+                        windows['RearLeft'] = None
+                    if 'RearRight' not in windows:
+                        windows['RearRight'] = None
+                    self.EV_setDriver('GV6', windows['FrontLeft'], 25)
+                    self.EV_setDriver('GV7', windows['FrontRight'], 25)
+                    self.EV_setDriver('GV8', windows['RearLeft'], 25)
+                    self.EV_setDriver('GV9', windows['RearRight'], 25)
+                    
+                    #self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
+                    #if self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
+                    #    self.EV_setDriver('GV10', self.openClose2ISY(self.TEV.teslaEV_GetSunRoofState(self.EVid)), 25)
+            
+                    self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), 25)
+                    self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), 25)
 
-                self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)),25)
-                
-                windows  = self.TEV.teslaEV_GetWindoStates(self.EVid)
-                if 'FrontLeft' not in windows:
-                    windows['FrontLeft'] = None
-                if 'FrontRight' not in windows:
-                    windows['FrontRight'] = None
-                if 'RearLeft' not in windows:
-                    windows['RearLeft'] = None
-                if 'RearRight' not in windows:
-                    windows['RearRight'] = None
-                self.EV_setDriver('GV6', windows['FrontLeft'], 25)
-                self.EV_setDriver('GV7', windows['FrontRight'], 25)
-                self.EV_setDriver('GV8', windows['RearLeft'], 25)
-                self.EV_setDriver('GV9', windows['RearRight'], 25)
-                
-                #self.EV_setDriver('GV10', self.TEV.teslaEV_GetSunRoofPercent(self.EVid), 51)
-                #if self.TEV.teslaEV_GetSunRoofState(self.EVid) != None:
-                #    self.EV_setDriver('GV10', self.openClose2ISY(self.TEV.teslaEV_GetSunRoofState(self.EVid)), 25)
         
-                self.EV_setDriver('GV11', self.TEV.teslaEV_GetTrunkState(self.EVid), 25)
-                self.EV_setDriver('GV12', self.TEV.teslaEV_GetFrunkState(self.EVid), 25)
-
-    
-                if self.TEV.location_enabled():
-                    location = self.TEV.teslaEV_GetLocation(self.EVid)
-                    logging.debug(f'teslaEV_GetLocation {location}')
-                    if location['longitude']:
-                        logging.debug('GV17: {}'.format(round(location['longitude'], 3)))
-                        self.EV_setDriver('GV17', round(location['longitude'], 3), 56)
+                    if self.TEV.location_enabled():
+                        location = self.TEV.teslaEV_GetLocation(self.EVid)
+                        logging.debug(f'teslaEV_GetLocation {location}')
+                        if location['longitude']:
+                            logging.debug('GV17: {}'.format(round(location['longitude'], 3)))
+                            self.EV_setDriver('GV17', round(location['longitude'], 3), 56)
+                        else:
+                            logging.debug(f'GV17: NONE')
+                            self.EV_setDriver('GV17', None, 25)
+                        if location['latitude']:
+                            logging.debug('GV18: {}'.format(round(location['latitude'], 3)))
+                            self.EV_setDriver('GV18', round(location['latitude'], 3), 56)
+                        else:
+                            logging.debug('GV18: NONE')
+                            self.EV_setDriver('GV18', None, 25)
                     else:
-                        logging.debug(f'GV17: NONE')
-                        self.EV_setDriver('GV17', None, 25)
-                    if location['latitude']:
-                        logging.debug('GV18: {}'.format(round(location['latitude'], 3)))
-                        self.EV_setDriver('GV18', round(location['latitude'], 3), 56)
-                    else:
-                        logging.debug('GV18: NONE')
-                        self.EV_setDriver('GV18', None, 25)
-                else:
-                    self.EV_setDriver('GV17', 98, 25)
-                    self.EV_setDriver('GV18', 98, 25)
+                        self.EV_setDriver('GV17', 98, 25)
+                        self.EV_setDriver('GV18', 98, 25)
             else:
-                logging.info(f'No new status node data for ({self.EVid}) - code; {code}')
+                logging.info(f'No new status node data for ({self.EVid}) - code: {code}, - state {state}')
 
         except Exception as e:
             logging.error(f'updateISYdriver Status node failed: {e}')
