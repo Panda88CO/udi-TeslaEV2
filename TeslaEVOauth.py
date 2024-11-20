@@ -925,12 +925,7 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_SteeringWheelHeatOn(self, EVid):
         #logging.debug(f'teslaEV_SteeringWheelHeatOn for {EVid}')
         try:
-            if (self.carInfo[EVid]['climate_state']['steering_wheel_heater']):
-                return(self.carInfo[EVid]['climate_state']['steering_wheel_heat_level'])
-            else:
-                return(None)
-            
-
+            return(self.carInfo[EVid]['climate_state']['steering_wheel_heat_level'])         
         except Exception as e:
             logging.error(f'teslaEV_SteeringWheelHeatOn Exception : {e}')
             return(None)

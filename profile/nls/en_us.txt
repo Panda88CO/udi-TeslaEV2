@@ -131,6 +131,7 @@ HEAT_LVL-1=Low Heat
 HEAT_LVL-2=Medium Heat
 HEAT_LVL-3=Maximum Heat
 HEAT_LVL-99=Unknown/Not installed
+
 ST-nlsevclimate-GV10-NAME=Auto Conditioning
 ST-nlsevclimate-GV11-NAME=Cabin Preconditioning
 PREC_STATUS-0=Disabled
