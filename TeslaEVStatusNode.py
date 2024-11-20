@@ -155,7 +155,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                     if self.TEV.teslaEV_GetDistUnit() == 1:
                         self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 116)
                     else:
-                        self.EV_setDriver('GV4', self.TEV.teslaEV_GetOdometer(self.EVid), 83)
+                        self.EV_setDriver('GV4', int(self.TEV.teslaEV_GetOdometer(self.EVid)*1.6), 83)
 
                     self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)),25)
                     
