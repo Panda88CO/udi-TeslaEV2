@@ -132,6 +132,16 @@ HEAT_LVL-2=Medium Heat
 HEAT_LVL-3=Maximum Heat
 HEAT_LVL-99=Unknown/Not installed
 
+SEAT-0=Front left
+SEAT-1=Front right
+SEAT-2=Rear left
+SEAT-3=Rear left back
+SEAT-4=Rear center
+SEAT-5=Rear right
+SEAT-6=Rear right back
+SEAT-7=Third row left
+SEAT-8=Third row right
+
 ST-nlsevclimate-GV10-NAME=Auto Conditioning
 ST-nlsevclimate-GV11-NAME=Cabin Preconditioning
 PREC_STATUS-0=Disabled

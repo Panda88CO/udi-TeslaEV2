@@ -104,7 +104,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
                     self.EV_setDriver('GV5', self.cond2ISY(seatHeat['FrontLeft']), 25)
                     self.EV_setDriver('GV6', self.cond2ISY(seatHeat['FrontRight']), 25)
                     self.EV_setDriver('GV7', self.cond2ISY(seatHeat['RearLeft']), 25)
-                    self.EV_setDriver('GV8', self.cond2ISY(seatHeat['RearMiddle']), 25)
+                    #self.EV_setDriver('GV8', self.cond2ISY(seatHeat['RearMiddle']), 25)
                     self.EV_setDriver('GV9', self.cond2ISY(seatHeat['RearRight']),25)
                     self.EV_setDriver('GV10', self.bool2ISY(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)), 25)
 
@@ -239,6 +239,34 @@ class teslaEV_ClimateNode(udi_interface.Node):
             self.EV_setDriver('GV3', None, 25)
             self.EV_setDriver('GV4', None, 25)
 
+
+    def evSetSeatHeat (self, command):
+        logging.info('evSetSeat1Heat called')
+  
+        driverTemp = None
+        passengerTemp = None
+        query = command.get("query")
+        seat_select = None
+        seatTemp = None
+        if 'seat.uom25' in query:
+            seat_select = int(query.get('seat.uom25'))
+        if 'heatlvl.uom25' in query:
+            seatTemp = int(query.get('heatlvl.uom25'))  
+        code, res = self.TEV.teslaEV_SetSeatHeating(self.EVid, seat_select, seatTemp)
+
+        if code in ['ok']:
+            self.EV_setDriver('GV21', self.command_res2ISY(res), 25)
+            if seat_select in [0,1,2,4,5]:
+                if seat_select in [1,2,3]:
+                    GVstr = 'GV'+str(seat_select+5)
+                else:
+                    GVstr ='GV'+str(seat_select+4)
+                self.setDriverTemp(GVstr, seatTemp )
+        else:
+            logging.info('Not able to send command - EV is not online')
+            self.EV_setDriver('GV21', self.code2ISY(code), 25)
+            #self.EV_setDriver('GV3', None, 25)
+
     def evSetSeat0Heat (self, command):
         logging.info('evSetSeat0Heat called')
 
@@ -252,6 +280,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             logging.info('Not able to send command - EV is not online')
             self.EV_setDriver('GV21', self.code2ISY(code), 25)
             self.EV_setDriver('GV5', None, 25)
+
 
     def evSetSeat1Heat (self, command):
         logging.info('evSetSeat1Heat called')
@@ -332,12 +361,13 @@ class teslaEV_ClimateNode(udi_interface.Node):
                  'SUNROOF' : evSunroof,
                  'AUTOCON' : evAutoCondition,
                  'CABINTEMP' : evSetCabinTemp,
-                 'DEFROST' : evDefrostMax,            
-                 'SEAT0' :evSetSeat0Heat,
-                 'SEAT1' :evSetSeat1Heat,
-                 'SEAT2' :evSetSeat2Heat,
-                 'SEAT4' :evSetSeat4Heat,
-                 'SEAT5' :evSetSeat5Heat,
+                 'DEFROST' : evDefrostMax,   
+                 'SEAT'  :evSetSeatHeat,   
+                 #'SEAT0' :evSetSeat0Heat,
+                 #'SEAT1' :evSetSeat1Heat,
+                 #'SEAT2' :evSetSeat2Heat,
+                 #'SEAT4' :evSetSeat4Heat,
+                 #'SEAT5' :evSetSeat5Heat,
 
                  'STEERINGW' : evSteeringWheelHeat,   
 

@@ -114,7 +114,12 @@
   
             <cmd id="DEFROST" > 
                   <p id="" editor="DEFROST" init="GV1" /> 
-            </cmd >                    
+            </cmd >    
+            <cmd id="SEAT" > 
+                  <p id="seat" editor="SEATSEL" init="0" /> 
+                  <p id="heatlvl" editor="HEAT" init="GV5" /> 
+            </cmd > 
+
             <cmd id="SEAT0" > 
                   <p id="" editor="HEAT" init="GV5" /> 
             </cmd >            
