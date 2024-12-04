@@ -3,7 +3,6 @@
 import sys
 import time 
 
-
 try:
     import udi_interface
     logging = udi_interface.LOGGER
