@@ -30,7 +30,7 @@
          <st id="GV0" editor="NUMBER" />
          <st id="GV3" editor="LOCKUNLOCK" />
          <st id="GV4" editor="ODOMETER" />
-         <st id="GV5" editor="BOOLSTATE" />
+         <!--<st id="GV5" editor="BOOLSTATE" />-->
          <st id="GV6" editor="WINDOW" />
          <st id="GV7" editor="WINDOW" />
          <st id="GV8" editor="WINDOW" />
@@ -43,7 +43,7 @@
          <st id="GV17" editor="LONGITUDE" />         
          <st id="GV18" editor="LATITUDE" />  
          <st id="GV19" editor="MINU" />         
-         <st id="GV20" editor="MINU" />    
+         <!--<st id="GV20" editor="MINU" />    -->
          <st id="GV21" editor="LASTCMD" />   
       </sts>
       <cmds>
@@ -90,7 +90,7 @@
          <st id="GV14" editor="HEATLVL" />
 
          <st id="GV19" editor="MINU" />
-         <st id="GV20" editor="MINU" />   
+         <!--<st id="GV20" editor="MINU" />    -->
          <st id="GV21" editor="LASTCMD" />  
       </sts>
       <cmds>
@@ -165,7 +165,7 @@
          <st id="GV16" editor="DISTANCE" />
 
          <st id="GV19" editor="MINU" />
-         <st id="GV20" editor="MINU" />
+         <!--<st id="GV20" editor="MINU" />    -->
          <st id="GV21" editor="LASTCMD" />  
 
       </sts>

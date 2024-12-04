@@ -74,12 +74,13 @@ class teslaEV_ClimateNode(udi_interface.Node):
             self.EV_setDriver('GV19', temp ,44)
         except ValueError:
             self.EV_setDriver('GV19', None, 25)
+        '''
         try:
             temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60), 0)
             self.EV_setDriver('GV20', temp, 44)
         except ValueError:
             self.EV_setDriver('GV20', None, 25)
-
+        '''
 
     def updateISYdrivers(self, code):
         try:
@@ -391,7 +392,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
             {'driver': 'GV13', 'value': 0, 'uom': 4}, #min_avail_temp   
             {'driver': 'GV14', 'value': 99, 'uom': 25}, #Steering Wheel Heat
             {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours           
-            {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update Hours          
+            #{'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update Hours          
             {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status
             ]
 

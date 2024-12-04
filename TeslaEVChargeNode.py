@@ -70,12 +70,13 @@ class teslaEV_ChargeNode(udi_interface.Node):
             self.EV_setDriver('GV19', temp ,44)   
         except ValueError:
             self.EV_setDriver('GV19', None, 25)                                                 
+        '''
         try:
             temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60), 0)
             self.EV_setDriver('GV20', temp, 44)
         except ValueError:
             self.EV_setDriver('GV20', None, 25)          
-
+        '''
 
 
     def updateISYdrivers(self, code):
@@ -239,7 +240,7 @@ class teslaEV_ChargeNode(udi_interface.Node):
             {'driver': 'GV15', 'value': 0, 'uom': 33},  #charge_energy_added           
             {'driver': 'GV16', 'value': 0, 'uom': 83},  #charge_miles_added_rated
             {'driver': 'GV19', 'value': 0, 'uom': 20},  #Last combined update Hours           
-            {'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update Hours
+            #{'driver': 'GV20', 'value': 0, 'uom': 20},  #Last update Hours
             {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status
 
             ]

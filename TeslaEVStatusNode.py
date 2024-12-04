@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from TeslaEVChargeNode import teslaEV_ChargeNode
+
 from TeslaEVClimateNode import teslaEV_ClimateNode
-
-
+from TeslaEVChargeNode import teslaEV_ChargeNode
+from apscheduler.schedulers.background import BackgroundScheduler
 try:
     import udi_interface
     logging = udi_interface.LOGGER
@@ -95,12 +94,13 @@ class teslaEV_StatusNode(udi_interface.Node):
             self.EV_setDriver('GV19', temp ,44)
         except ValueError:
             self.EV_setDriver('GV19', None, 25)
+        '''
         try:
             temp = round(float(self.TEV.teslaEV_GetTimeSinceLastStatusUpdate(self.EVid)/60), 0)
             self.EV_setDriver('GV20', temp, 44)
         except ValueError:
             self.EV_setDriver('GV20', None, 25)
-
+        '''
 
     def display_update(self):
         logging.debug('display_update')
@@ -159,7 +159,7 @@ class teslaEV_StatusNode(udi_interface.Node):
                     else:
                         self.EV_setDriver('GV4', int(self.TEV.teslaEV_GetOdometer(self.EVid)*1.6), 83)
 
-                    self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)),25)
+                    #self.EV_setDriver('GV5', self.online2ISY(self.TEV.teslaEV_GetConnectionStatus(self.EVid)),25)
                     
                     windows  = self.TEV.teslaEV_GetWindoStates(self.EVid)
                     if 'FrontLeft' not in windows:
@@ -382,7 +382,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             {'driver': 'GV0', 'value': 99, 'uom': 25},  # nbr homelink devices
             {'driver': 'GV3', 'value': 99, 'uom': 25},  #locked
             {'driver': 'GV4', 'value': 0, 'uom': 116},  #odometer
-            {'driver': 'GV5', 'value': 99, 'uom': 25},  #state (on line)
+            #{'driver': 'GV5', 'value': 99, 'uom': 25},  #state (on line)
             {'driver': 'GV6', 'value': 99, 'uom': 25},  #fd_window
             {'driver': 'GV7', 'value': 99, 'uom': 25},  #fp_window
             {'driver': 'GV8', 'value': 99, 'uom': 25},  #rd_window
@@ -396,7 +396,7 @@ class teslaEV_StatusNode(udi_interface.Node):
             {'driver': 'GV17', 'value': 99, 'uom': 56}, #longitude
             {'driver': 'GV18', 'value': 99, 'uom': 56}, #latitude
             {'driver': 'GV19', 'value': 0, 'uom': 44},  #Last combined update Hours
-            {'driver': 'GV20', 'value': 0, 'uom': 44},  #Last update hours
+            #{'driver': 'GV20', 'value': 0, 'uom': 44},  #Last update hours
             {'driver': 'GV21', 'value': 99, 'uom': 25}, #Last Command status
             ]
 
