@@ -35,6 +35,7 @@ Restart node server and press authenticate (should only be needed first time).
 On authentication, you will need to grant the correct API permissions.  At a minimum the two following permissions need to be granted.
 - Vehicle Information
 - Vehicle Commands
+- Vehicle Location (new permission required if you set LOCATION_EN to true)
 
 If permissions need to be updated or changed, log into tesla.com and manage your third party apps.  These settings are in the Tesla website under Account Settings -> Security -> Third Party Apps -> Tesla Plugin for IoX.
 
