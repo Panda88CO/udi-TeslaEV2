@@ -251,6 +251,7 @@ class TeslaEVController(udi_interface.Node):
             if nodeName == None or nodeName == '':
                 # should not happen but just in case 
                 nodeName = 'ev'+str(EVid)
+            nodeName = str(nodeName)
             nodeAdr = 'ev'+str(EVid)[-14:]
                
             nodeName = self.poly.getValidName(nodeName)
