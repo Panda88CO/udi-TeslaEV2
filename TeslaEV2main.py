@@ -204,6 +204,7 @@ class TeslaEVController(udi_interface.Node):
 
     def start(self):
         logging.info('start')
+        nodeName = None
         #self.Parameters.load(customParams)
         self.poly.updateProfile()
         #self.poly.setCustomParamsDoc()
@@ -247,7 +248,7 @@ class TeslaEVController(udi_interface.Node):
             logging.debug(f'self.TEVcloud.teslaEV_update_vehicle_status {code} - {res}')
             if code in ['ok']:
                 nodeName = res['display_name']
-            else:
+            if nodeName == None or nodeName == '':
                 # should not happen but just in case 
                 nodeName = 'ev'+str(EVid)
             nodeAdr = 'ev'+str(EVid)[-14:]
