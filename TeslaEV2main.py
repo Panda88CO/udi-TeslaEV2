@@ -3,7 +3,6 @@
 import sys
 import time 
 
-
 try:
     import udi_interface
     logging = udi_interface.LOGGER
@@ -18,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 from TeslaEVOauth import teslaAccess
 
 
-VERSION = '0.1.38'
+VERSION = '0.1.49'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -64,7 +63,8 @@ class TeslaEVController(udi_interface.Node):
         self.portalReady = False
         self.poly.updateProfile()
         self.poly.ready()
-        self.poly.addNode(self)
+        self.poly.addNode(self, conn_status = None, rename = False)
+        #self.poly.addNode(self)
         self.wait_for_node_done()
         self.status_nodes = {}
         self.node = self.poly.getNode(self.address)
@@ -204,6 +204,7 @@ class TeslaEVController(udi_interface.Node):
 
     def start(self):
         logging.info('start')
+        nodeName = None
         #self.Parameters.load(customParams)
         self.poly.updateProfile()
         #self.poly.setCustomParamsDoc()
@@ -247,9 +248,10 @@ class TeslaEVController(udi_interface.Node):
             logging.debug(f'self.TEVcloud.teslaEV_update_vehicle_status {code} - {res}')
             if code in ['ok']:
                 nodeName = res['display_name']
-            else:
+            if nodeName == None or nodeName == '':
                 # should not happen but just in case 
                 nodeName = 'ev'+str(EVid)
+            nodeName = str(nodeName)
             nodeAdr = 'ev'+str(EVid)[-14:]
                
             nodeName = self.poly.getValidName(nodeName)

@@ -1,10 +1,10 @@
 <editors> 
   <editor id="NODEST" > 
-     <range  uom="25" subset="0,1"  nls='STATUS'/>
+     <range  uom="25" subset="0,1,2"  nls='STATUS'/>
   </editor>
   
   <editor id="API" > 
-     <range  uom="25" subset="0,1" nls="STATUS" />
+     <range  uom="25" subset="0,1" nls="API" />
   </editor>
 
   <editor id="DURATIONH" > 
@@ -116,6 +116,9 @@
   
   <editor id="HEAT" > 
      <range  uom="25" subset="0,1,2,3" nls="HEAT" />
+  </editor>
+  <editor id="SEATSEL" > 
+     <range  uom="25" subset="0-8" nls="SEAT" />
   </editor>
 
   <editor id="STEERINGW" > 
