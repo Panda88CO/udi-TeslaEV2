@@ -925,7 +925,7 @@ class teslaEVAccess(teslaAccess):
     def teslaEV_SteeringWheelHeatOn(self, EVid):
         #logging.debug(f'teslaEV_SteeringWheelHeatOn for {EVid}')
         try:
-            return(self.carInfo[EVid]['climate_state']['steering_wheel_heat_level'])         
+            return(self.carInfo[EVid]['climate_state']['steering_wheel_heater'])         
         except Exception as e:
             logging.error(f'teslaEV_SteeringWheelHeatOn Exception : {e}')
             return(None)
@@ -1082,8 +1082,9 @@ class teslaEVAccess(teslaAccess):
                 code, state = self._teslaEV_wake_ev(EVid)
             if state in ['online']:    
 
-                seats = [0, 1, 2, 4, 5 ] 
+                seats = [0, 1, 2,3, 4, 5, 6, 7, 8 ] 
                 rearSeats =  [2, 4, 5 ] 
+                thirdrow = [3,6,7,8]
                 if int(levelHeat) > 3 or int(levelHeat) < 0:
                     logging.error(f'Invalid seat heat level passed (0-3) : {levelHeat}')
                     return('error', 'Invalid seat heat level passed (0-3) : {levelHeat}')
@@ -1120,10 +1121,8 @@ class teslaEVAccess(teslaAccess):
                 if state in ['online']:    
 
                     payload = {}    
-                    if ctrl == 'on':
-                        payload = {'on':True}  
-                    elif  ctrl == 'off':
-                        payload = {'on':False}  
+                    if  0<= int(ctrl) <=3:
+                        payload = {'level':int(ctrl)}  
                     else:
                         logging.error(f'Wrong paralf.carInfo[id]meter for teslaEV_SteeringWheelHeat (on/off) for vehicle id {EVid} : {ctrl}')
                         return('error', 'Wrong parameter passed: {ctrl}')

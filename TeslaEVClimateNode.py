@@ -92,22 +92,43 @@ class teslaEV_ClimateNode(udi_interface.Node):
                     self.setDriverTemp('GV3', self.TEV.teslaEV_GetLeftTemp(self.EVid))
                     self.setDriverTemp('GV4', self.TEV.teslaEV_GetRightTemp(self.EVid))
                     seatHeat = self.TEV.teslaEV_GetSeatHeating(self.EVid)
-                    if 'FrontLeft' not in seatHeat:
+                    if 'seat_heater_left' in seatHeat:
+                        seatHeat['FrontLeft'] = seatHeat['seat_heater_left']
+                    elif 'FrontLeft' not in seatHeat:
                         seatHeat['FrontLeft'] = None
-                    if 'FrontRight' not in seatHeat:
+                    if 'seat_heater_left' in seatHeat:
+                        seatHeat['FrontRight'] = seatHeat['seat_heater_rigth']
+                    elif 'FrontRight' not in seatHeat:
                         seatHeat['FrontRight'] = None
-                    if 'RearLeft' not in seatHeat:
+                    if 'seat_heater_left' in seatHeat:
+                        seatHeat['RearLeft'] = seatHeat['seat_heater_rear_left']
+                    elif 'RearLeft' not in seatHeat:
                         seatHeat['RearLeft'] = None
-                    if 'RearMiddle' not in seatHeat:
+                    if 'seat_heater_rear_center' in seatHeat:
+                        seatHeat['RearMiddle'] = seatHeat['seat_heater_rear_center']
+                    elif 'RearMiddle' not in seatHeat:
                         seatHeat['RearMiddle'] = None
-                    if 'RearRight' not in seatHeat:                
+                    if 'seat_heater_rear_right' in seatHeat:
+                        seatHeat['RearRight'] = seatHeat['seat_heater_rigth']
+                    elif 'RearRight' not in seatHeat:             
                         seatHeat['RearRight'] = None
+                    if 'seat_heater_third_row_left' in seatHeat:
+                        seatHeat['ThirdLeft'] = seatHeat['seat_heater_third_row_left']
+                    elif 'ThirdLeft' not in seatHeat:             
+                        seatHeat['ThirdLeft'] = None
+                    if 'seat_heater_third_row_right' in seatHeat:
+                        seatHeat['ThirdRight'] = seatHeat['seat_heater_third_row_right']
+                    elif 'ThirdRight' not in seatHeat:             
+                        seatHeat['ThirdRight'] = None                        
+
                     self.EV_setDriver('GV5', self.cond2ISY(seatHeat['FrontLeft']), 25)
                     self.EV_setDriver('GV6', self.cond2ISY(seatHeat['FrontRight']), 25)
                     self.EV_setDriver('GV7', self.cond2ISY(seatHeat['RearLeft']), 25)
-                    #self.EV_setDriver('GV8', self.cond2ISY(seatHeat['RearMiddle']), 25)
+                    self.EV_setDriver('GV8', self.cond2ISY(seatHeat['RearMiddle']), 25)
                     self.EV_setDriver('GV9', self.cond2ISY(seatHeat['RearRight']),25)
                     self.EV_setDriver('GV10', self.bool2ISY(self.TEV.teslaEV_AutoConditioningRunning(self.EVid)), 25)
+                    self.EV_setDriver('GV15', self.cond2ISY(seatHeat['ThirdLeft']),25)
+                    self.EV_setDriver('GV16', self.cond2ISY(seatHeat['ThirdRight']),25)
 
                     self.EV_setDriver('GV11', self.bool2ISY(self.TEV.teslaEV_PreConditioningEnabled(self.EVid)), 25)
                     
@@ -115,7 +136,7 @@ class teslaEV_ClimateNode(udi_interface.Node):
 
                     self.setDriverTemp('GV13', self.TEV.teslaEV_MinCabinTempCtrl(self.EVid))
                     
-                    self.EV_setDriver('GV14', self.cond2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)), 25) #need to be implemented        
+                    self.EV_setDriver('GV14', self.bool2ISY(self.TEV.teslaEV_SteeringWheelHeatOn(self.EVid)), 25) #need to be implemented        
             else:
                 logging.info(f'No new data for climateNode for ({self.EVid}) -  code: {code}' )
         except Exception as e:
@@ -342,10 +363,8 @@ class teslaEV_ClimateNode(udi_interface.Node):
         logging.info('evSteeringWheelHeat called')
         wheel = int(float(command.get('value')))
 
-        if wheel == 1:
-            code, res = self.TEV.teslaEV_SteeringWheelHeat(self.EVid, 'on')
-        elif wheel == 0:
-            code, res = self.TEV.teslaEV_SteeringWheelHeat(self.EVid, 'off')            
+        if 0<= wheel <= 3:     
+            code, res = self.TEV.teslaEV_SteeringWheelHeat(self.EVid, wheel) 
         else:
             logging.error(f'Wrong command for evDefrostMax: {wheel}') 
             code = 'error'
@@ -386,7 +405,10 @@ class teslaEV_ClimateNode(udi_interface.Node):
             {'driver': 'GV7', 'value': 0, 'uom': 25},  #seat_heater_rear_left
             {'driver': 'GV8', 'value': 0, 'uom': 25},  #seat_heater_rear_center
             {'driver': 'GV9', 'value': 0, 'uom': 25},  #seat_heater_rear_right
-            {'driver': 'GV10', 'value': 0, 'uom': 25}, #is_auto_conditioning_on
+            {'driver': 'GV15', 'value': 0, 'uom': 25},  #seat_heater_third_left
+            {'driver': 'GV16', 'value': 0, 'uom': 25},  #seat_heater_third_right
+
+
             {'driver': 'GV11', 'value': 0, 'uom': 25}, #is_preconditioning
             {'driver': 'GV12', 'value': 0, 'uom': 4}, #max_avail_temp
             {'driver': 'GV13', 'value': 0, 'uom': 4}, #min_avail_temp   
