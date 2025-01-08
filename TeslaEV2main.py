@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 from TeslaEVOauth import teslaAccess
 
 
-VERSION = '0.1.49'
+VERSION = '0.1.51'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -243,32 +243,36 @@ class TeslaEVController(udi_interface.Node):
         #for indx in range(0,len(self.vehicleList)):
             #EVid = self.vehicleList[indx]
             #vehicleId = vehicle['vehicle_id']
+            nodeName = None
             logging.debug(f'loop: {indx} {EVid}')
             code, res = self.TEVcloud.teslaEV_update_vehicle_status(EVid)
             logging.debug(f'self.TEVcloud.teslaEV_update_vehicle_status {code} - {res}')
+
             if code in ['ok']:
-                nodeName = res['display_name']
-            if nodeName == None or nodeName == '':
-                # should not happen but just in case 
-                nodeName = 'ev'+str(EVid)
-            nodeName = str(nodeName)
-            nodeAdr = 'ev'+str(EVid)[-14:]
-               
-            nodeName = self.poly.getValidName(nodeName)
-            nodeAdr = self.poly.getValidAddress(nodeAdr)
-            code, res = self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
-            logging.debug(f'self.TEVcloud.teslaEV_UpdateCloudInfo {code} - {res}')    
-            if not self.poly.getNode(nodeAdr):
-                logging.debug('Node Address : {} {}'.format(self.poly.getNode(nodeAdr), nodeAdr))
-            logging.info(f'Creating Status node {nodeAdr} for {nodeName}')
-            #self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
-            self.status_nodes[EVid] = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EVid, self.TEVcloud)        
-            assigned_addresses.append(nodeAdr)
-            while not (self.status_nodes[EVid].subnodesReady() or self.status_nodes[EVid].statusNodeReady):
-                logging.debug(f'Subnodes {self.status_nodes[EVid].subnodesReady()}  Status {self.status_nodes[EVid].statusNodeReady}')
-                logging.debug('waiting for nodes to be created')
-                time.sleep(5)
-            
+                code1, res = self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
+                if code1 in ['ok']:
+                    nodeName = self.TEVcloud.teslaEV_GetName(EVid)
+                if nodeName == None or nodeName == '':
+                    # should not happen but just in case 
+                    nodeName = 'ev'+str(EVid)
+                nodeName = str(nodeName)
+                nodeAdr = 'ev'+str(EVid)[-14:]
+                
+                nodeName = self.poly.getValidName(nodeName)
+                nodeAdr = self.poly.getValidAddress(nodeAdr)
+                #code, res = self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
+                logging.debug(f'self.TEVcloud.teslaEV_UpdateCloudInfo {code} - {res}')    
+                if not self.poly.getNode(nodeAdr):
+                    logging.debug('Node Address : {} {}'.format(self.poly.getNode(nodeAdr), nodeAdr))
+                logging.info(f'Creating Status node {nodeAdr} for {nodeName}')
+                #self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
+                self.status_nodes[EVid] = teslaEV_StatusNode(self.poly, nodeAdr, nodeAdr, nodeName, EVid, self.TEVcloud)        
+                assigned_addresses.append(nodeAdr)
+                while not (self.status_nodes[EVid].subnodesReady() or self.status_nodes[EVid].statusNodeReady):
+                    logging.debug(f'Subnodes {self.status_nodes[EVid].subnodesReady()}  Status {self.status_nodes[EVid].statusNodeReady}')
+                    logging.debug('waiting for nodes to be created')
+                    time.sleep(5)
+                
 
                 #self.wait_for_node_done()     
                 #self.statusNodeReady = True

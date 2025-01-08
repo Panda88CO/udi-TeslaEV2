@@ -115,14 +115,14 @@
   </editor>
   
   <editor id="HEAT" > 
-     <range  uom="25" subset="0,1,2,3" nls="HEAT" />
+     <range  uom="25" subset="0,1,2,3" nls="HEAT_LVL" />
   </editor>
   <editor id="SEATSEL" > 
      <range  uom="25" subset="0-8" nls="SEAT" />
   </editor>
 
   <editor id="STEERINGW" > 
-     <range  uom="25" subset="0,1" nls="STEERINGW"  />  
+     <range  uom="25" subset="0-3" nls="STEERINGW"  />  
   </editor>
 
 
