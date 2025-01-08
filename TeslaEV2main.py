@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 from TeslaEVOauth import teslaAccess
 
 
-VERSION = '0.1.50'
+VERSION = '0.1.51'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY
@@ -246,8 +246,11 @@ class TeslaEVController(udi_interface.Node):
             logging.debug(f'loop: {indx} {EVid}')
             code, res = self.TEVcloud.teslaEV_update_vehicle_status(EVid)
             logging.debug(f'self.TEVcloud.teslaEV_update_vehicle_status {code} - {res}')
+
             if code in ['ok']:
-                nodeName = res['display_name']
+                code1, res = self.TEVcloud.teslaEV_UpdateCloudInfo(EVid)
+
+                nodeName = res['vehicle_state']['vehicle_name']
             if nodeName == None or nodeName == '':
                 # should not happen but just in case 
                 nodeName = 'ev'+str(EVid)
