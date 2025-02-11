@@ -17,7 +17,7 @@ from TeslaEVStatusNode import teslaEV_StatusNode
 from TeslaEVOauth import teslaAccess
 
 
-VERSION = '0.1.52'
+VERSION = '0.1.53'
 
 class TeslaEVController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done,tempUnitAdjust,  setDriverTemp, cond2ISY,  mask2key, heartbeat, state2ISY, bool2ISY, online2ISY, EV_setDriver, openClose2ISY

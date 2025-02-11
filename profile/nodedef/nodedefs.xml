@@ -162,10 +162,10 @@
          <accepts>
 
             <cmd id="CHARGEPORT" >
-                   <p id="" editor="CHARGEPORT" init="GV3" /> 
+                   <p id="" editor="CHARGEPORT" init="GV2" /> 
             </cmd >
             <cmd id="CHARGECTRL" >
-                   <p id="" editor="CHARGECTRL" init="GV6" /> 
+                   <p id="" editor="CHARGECTRL" init="GV7"/> 
             </cmd >
             <cmd id="BATPERCENT" >
                   <p id="" editor="PERCENTINP" init="GV9" /> 
