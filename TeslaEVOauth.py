@@ -639,7 +639,7 @@ class teslaEVAccess(teslaAccess):
             return(None)       
 
     def teslaEV_ChargeState(self, EVid):
-        #logging.debug(f'teslaEV_GetChargingState for {EVid}')
+        logging.debug(f'teslaEV_GetChargingState for {EVid}')
         try:
             return( self.carInfo[EVid]['charge_state']['charging_state'])  
         except Exception as e:

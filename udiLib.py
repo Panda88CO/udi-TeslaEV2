@@ -203,6 +203,7 @@ def latch2ISY(self, state):
 
 
 def chargeState2ISY(self, state):
+    logging.debug(f'chargeState2ISY {state}')
     if state is not None:
         stateL = state.lower()
         if stateL == 'disconnected':
