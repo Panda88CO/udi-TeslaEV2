@@ -70,8 +70,8 @@
   </editor>
 
   <editor id="PERCENT" > 
-     <range uom="51" min="0" max="100" prec="1" />
-     <range uom="25" subset="0,1, 99" nls="OPENCLOSE"/>
+      <range uom="25" subset="99" nls="UNKNOWN"/>
+      <range uom="51" min="0" max="100" prec="1" />
   </editor>
   
    <editor id="PERCENTINP" > 
@@ -107,7 +107,7 @@
   <editor id="CABINTEMP" > 
       <range  uom="17" min="59" max="83" step="1" prec="1"  /> 
       <range  uom="4" min="15" max="28" step="0.5" prec="1"  />  
-      <range  uom="25" subset="011,99" nls="UNKNOWN"  />      
+      <range  uom="25" subset="0,1,99" nls="UNKNOWN"  />      
   </editor>
   
   <editor id="DEFROST" > 
@@ -144,6 +144,12 @@
      <range  uom="25" subset="0,1,99" nls="UNKNOWN" />
   </editor>
 
+
+    <editor id="VOLTINP" > 
+     <range  uom="72" min="0" max="800" prec="1" />
+  </editor>
+
+
   <editor id="CHGSTATE" > 
      <range  uom="25" subset="0,1,2,3,4,5,99" nls="CHGSTATE"/>  
   </editor>
@@ -157,9 +163,18 @@
      <range  uom="25" subset="0,1,99" nls="UNKNOWN" />
   </editor>
 
+
+  <editor id="KWHINP" > 
+     <range  uom="33" min="0" max="300" prec="1" />
+  </editor>
+
   <editor id="KW" > 
      <range  uom="30" min="0" max="300" prec="1" />
      <range  uom="25" subset="0,1,99" nls="UNKNOWN" />
+  </editor>
+
+  <editor id="KWINP" > 
+     <range  uom="30" min="0" max="300" prec="1" />
   </editor>
 
   <editor id="CHARGEPORT" > 
